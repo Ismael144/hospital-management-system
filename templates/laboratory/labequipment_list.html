@@ -1,0 +1,110 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  All Lab Equipment
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper">
+    <div class="container-full">
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Lab Equipment</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Lab Equipment</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="controls d-flex align-items-center justify-content-end my-4">
+          <a href="{% url 'equipment_create' %}" class="btn btn-success d-flex align-items-center gap-3">
+            Create
+            <span><i class="fas fa-plus" style="font-size: 10px !important;"></i></span>
+          </a>
+        </div>
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Lab Equipment List</h3>
+          </div>
+          <div class="box-body">
+            <div class="table-responsive">
+              <table class="table border-no" id="data-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Equipment Name</th>
+                    <th>Equipment Code</th>
+                    <th>Purchase Date</th>
+                    <th>Status</th>
+                    <th>Location</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for equipment in equipments %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ equipment.name }}</td>
+                      <td>{{ equipment.code }}</td>
+                      <td>{{ equipment.purchase_date }}</td>
+                      <td>{{ equipment.status }}</td>
+                      <td>{{ equipment.location }}</td>
+                      <td>
+                        <div class="btn-group">
+                          <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'equipment_detail' equipment.pk %}">View Details</a>
+                            <a class="dropdown-item" href="{% url 'equipment_update' equipment.pk %}">Edit</a>
+                            <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#equipment-delete-modal-{{ equipment.pk }}">Delete</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <div class="modal fade" id="equipment-delete-modal-{{ equipment.pk }}" tabindex="-1" aria-labelledby="equipment-delete-modal-Label" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="equipment-delete-modal-Label">Confirm Delete Equipment</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to delete the equipment <strong>'{{ equipment.name }}'</strong>?
+                          </div>
+                          <div class="modal-footer d-flex align-items-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="{% url 'equipment_delete' equipment.pk %}" method="POST">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% empty %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}

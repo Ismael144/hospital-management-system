@@ -1,0 +1,99 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Sickbays {% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <!-- Main content -->
+      <section class="content">
+        <h1 class="mb-4">List of Sickbays</h1>
+        <a href="{% url 'sickbay_create' %}" class="btn btn-primary mb-3">Add New Sickbay</a>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Sickbays</h3>
+          </div>
+          <div class="card-body">
+            <table class="table border-no" id="data-table">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Sickbay Number</th>
+                  <th>Status</th>
+                  <th>Capacity</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for sickbay in sickbays %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ sickbay.sickbay_number }}</td>
+                    <td>{{ sickbay.get_status_display }}</td>
+                    <td>{{ sickbay.capacity }}</td>
+                    <td>{{ sickbay.description }}</td>
+                    <td>
+                        <div class="btn-group">
+                          <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'sickbay_detail' sickbay.pk %}">View Details</a>
+                            <a class="dropdown-item" href="{% url 'sickbay_update' sickbay.pk %}">Edit</a>
+                            <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#sickbay-delete-modal-{{ sickbay.id }}">Delete</a>
+                          </div>
+                        </div>
+                      </td>
+                      <!-- Delete sickbay Modal -->
+                      <div class="modal fade" id="sickbay-delete-modal-{{ sickbay.id }}" tabindex="-1" aria-labelledby="sickbay-delete-modal-Label" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="sickbay-delete-modal-Label">Confirm Delete Receptionist</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">Are you sure you want to delete {{ sickbay.user.get_full_name }}?</div>
+                            <div class="modal-footer d-flex align-items-center">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                              <form action="{% url 'sickbay_delete' sickbay.pk %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- End Delete sickbay Modal -->
+                </tr>
+                {% empty %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529"></a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+  </footer>
+  
+{% endblock %}

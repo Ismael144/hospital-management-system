@@ -1,0 +1,79 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+Staff On Duty
+{% endblock %}
+
+{% block content %}
+{% include 'includes/sidebar_content.html' %}
+
+<div class="content-wrapper rounded-0">
+    <div class="container-full">
+        <section class="content">
+            <h2>Staff On Duty</h2>
+            <a href="{% url 'staffonduty_create' %}" class="btn btn-primary mb-2">Add Staff On Duty</a>
+            <table class="table border-no" id="data-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Employee</th>
+                        <th>Date</th>
+                        <th>Shift Start</th>
+                        <th>Shift End</th>
+                        <th>Department</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for staff in staffonduty %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ staff.employee.get_full_name }}</td>
+                        <td>{{ staff.date }}</td>
+                        <td>{{ staff.shift_start }}</td>
+                        <td>{{ staff.shift_end }}</td>
+                        <td>{{ staff.department }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{% url 'staffonduty_detail' staff.pk %}">View Details</a>
+                                    <a class="dropdown-item" href="{% url 'staffonduty_update' staff.pk %}">Edit</a>
+                                    <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#staff-delete-modal-{{ staff.id }}">Delete</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <div class="modal fade" id="staff-delete-modal-{{ staff.id }}" tabindex="-1" aria-labelledby="staff-delete-modal-Label" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staff-delete-modal-Label">Confirm Delete Staff</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete the staff on duty for <strong>{{ staff.employee.get_full_name }}</strong> on <strong>{{ staff.date }}</strong>?
+                                </div>
+                                <div class="modal-footer d-flex align-items-center">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form action="{% url 'staffonduty_delete' staff.pk %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
+{% endblock %}

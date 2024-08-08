@@ -1,0 +1,127 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}Payments{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <div class="container-full">
+      <!-- Content Header (Page header) -->
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Payments</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Payments</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <section class="content">
+        <div class="controls d-flex align-items-center justify-content-end my-4">
+          <a href="{% url 'payment_create' %}" class="btn btn-success d-flex align-items-center gap-3">Create
+            <span><i class="fas fa-plus" style="font-size: 10px !important;"></i></span>
+          </a>
+        </div>
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Payment List</h3>
+          </div>
+          <div class="box-body">
+            <table class="table border-no" id="data-table">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Bill ID</th>
+                  <th>Patient Name</th>
+                  <th>Date Paid</th>
+                  <th>Amount</th>
+                  <th>Balance</th>
+                  <th>Payment Method</th>
+                  <th>Installment</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for payment in payments %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>#{{ payment.bill.id }}</td>
+                    <td><a href="{% url 'patient_detail' payment.bill.appointment.patient.pk %}">{{ payment.bill.appointment.patient.user.get_full_name }}</a></td>
+                    <td>{{ payment.date_paid|date:"D, d M Y H:i" }}</td>
+                    <td>UGX {{ payment.amount|intcomma }}</td>
+                    <td>UGX {{ payment.get_bill_balance|intcomma }}</td>
+                    <td>{{ payment.payment_method }}</td>
+                    <td>{{ payment.installment|yesno:"Yes,No" }}</td>
+                    <td>
+                      <div class="btn-group">
+                        <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                        <div class="dropdown-menu">
+                          <a class="dropdown-item" href="{% url 'payment_detail' payment.pk %}">View Details</a>
+                          <a class="dropdown-item" href="{% url 'payment_update' payment.pk %}">Edit</a>
+                          <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;"  data-bs-target="#payment-delete-modal-{{ payment.id }}">
+                              Delete
+                          </a>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <div class="modal fade" id="payment-delete-modal-{{ payment.id }}" tabindex="-1" aria-labelledby="payment-delete-modal-Label" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="payment-delete-modal-Label">Confirm Delete payment</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          Are you sure you want to delete <strong>{{ payment.user.get_full_name }}</strong>?
+                        </div>
+                        <div class="modal-footer d-flex align-items-center">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                          <form action="{% url 'payment_delete' payment.pk %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

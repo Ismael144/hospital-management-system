@@ -1,0 +1,91 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Payroll Detail
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper">
+    <div class="container-full">
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Payroll Detail</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Payroll Detail</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Payroll Details</h3>
+          </div>
+          <div class="box-body">
+            <p>Employee: {{ object.employee.get_full_name }}</p>
+            <p>Month: {{ object.month|date:"F Y" }}</p>
+            <p>Salary: {{ object.salary }}</p>
+            <p>Overtime Hours: {{ object.overtime_hours }}</p>
+            <p>Overtime Rate: {{ object.overtime_rate }}</p>
+            <p>Bonuses: {{ object.bonuses }}</p>
+            <p>Deductions: {{ object.deductions }}</p>
+            <p>Net Pay: {{ object.net_pay }}</p>
+            <p>Status: {{ object.status }}</p>
+            <a href="{% url 'payroll_update' object.pk %}" class="btn btn-primary">Edit</a>
+            <a href="{% url 'payroll_delete' object.pk %}" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#payroll-delete-modal-{{ object.id }}">Delete</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div class="control-sidebar-bg"></div>
+
+  <div class="modal fade" id="payroll-delete-modal-{{ object.id }}" tabindex="-1" aria-labelledby="payroll-delete-modal-Label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="payroll-delete-modal-Label">Confirm Delete Payroll</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this payroll for '{{ object.employee.get_full_name }}'?
+        </div>
+        <div class="modal-footer d-flex align-items-center">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <form action="{% url 'payroll_delete' object.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>&copy;<script>
+                  document.write(new Date().getFullYear())
+                </script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

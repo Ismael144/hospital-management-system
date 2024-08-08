@@ -1,0 +1,91 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Discharge Summary Detail
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <div class="container-full">
+      <!-- Content Header (Page header) -->
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Discharge Summary Detail</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item">
+                    <a href="{% url 'discharge_summary_list' %}">Discharge Summaries</a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">
+                    Detail
+                  </li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <section class="content">
+        <div class="box">
+          <div class="box-header with-border">
+            <h4 class="box-title">Discharge Summary for {{ discharge_summary.patient.user.get_full_name }}</h4>
+          </div>
+          <div class="box-body">
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Patient:</strong> {{ discharge_summary.patient.user.get_full_name }}</p>
+                <p><strong>Discharge Date:</strong> {{ discharge_summary.discharge_date }}</p>
+                <p><strong>Discharge Doctor:</strong> {{ discharge_summary.discharge_doctor }}</p>
+                <p><strong>Discharge Status:</strong> {{ discharge_summary.discharge_status }}</p>
+                <p><strong>Discharge Reason:</strong> {{ discharge_summary.discharge_reason }}</p>
+                <p><strong>Follow-up Appointments:</strong> {{ discharge_summary.follow_up_appointments }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Discharge Instructions:</strong> {{ discharge_summary.discharge_instructions }}</p>
+                <p><strong>Treatment Summary:</strong> {{ discharge_summary.treatment_summary }}</p>
+                <p><strong>Medication at Discharge:</strong> {{ discharge_summary.medication_at_discharge }}</p>
+                <p><strong>Condition at Discharge:</strong> {{ discharge_summary.condition_at_discharge }}</p>
+                <p><strong>Support Services Required:</strong> {{ discharge_summary.support_services_required }}</p>
+              </div>
+            </div>
+            <div class="box-footer d-flex align-items-center">
+              <a href="{% url 'discharge_summary_list' %}" class="btn btn-primary mx-2">Back</a>
+              <a href="{% url 'discharge_summary_update' discharge_summary.pk %}" class="btn btn-primary mx-2">Edit</a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <div class="control-sidebar-bg"></div>
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>&copy;<script>
+                  document.write(new Date().getFullYear())
+                </script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

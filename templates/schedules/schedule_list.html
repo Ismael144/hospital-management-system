@@ -1,0 +1,79 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+Schedule List
+{% endblock %}
+
+{% block content %}
+{% include 'includes/sidebar_content.html' %}
+
+<div class="content-wrapper rounded-0">
+    <div class="container-full">
+        <section class="content">
+            <h2>Schedules</h2>
+            <a href="{% url 'schedule_create' %}" class="btn btn-primary mb-2">Add Schedule</a>
+            <table class="table border-no" id="data-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Employee</th>
+                        <th>Shift Start</th>
+                        <th>Shift End</th>
+                        <th>Department</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for schedule in schedules %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ schedule.employee.get_full_name }}</td>
+                        <td>{{ schedule.shift_start }}</td>
+                        <td>{{ schedule.shift_end }}</td>
+                        <td>{{ schedule.department }}</td>
+                        <td>{{ schedule.notes }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{% url 'schedule_detail' schedule.pk %}">View Details</a>
+                                    <a class="dropdown-item" href="{% url 'schedule_update' schedule.pk %}">Edit</a>
+                                    <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#schedule-delete-modal-{{ schedule.id }}">Delete</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <div class="modal fade" id="schedule-delete-modal-{{ schedule.id }}" tabindex="-1" aria-labelledby="schedule-delete-modal-Label" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="schedule-delete-modal-Label">Confirm Delete Schedule</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete the schedule for <strong>{{ schedule.employee.get_full_name }}</strong>?
+                                </div>
+                                <div class="modal-footer d-flex align-items-center">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form action="{% url 'schedule_delete' schedule.pk %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
+{% endblock %}

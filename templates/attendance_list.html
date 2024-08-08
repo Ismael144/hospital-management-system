@@ -1,0 +1,67 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block title %}
+  Attendance List
+{% endblock %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Attendance List</h3>
+            <div class="card-tools">
+              <a href="{% url 'attendance_create' %}" class="btn btn-success text-white">Create Attendance</a>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="table border-no" id="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Date</th>
+                  <th>Time In</th>
+                  <th>Time Out</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for attendance in attendances %}
+                  <tr>
+                    <td>{{ attendance.id }}</td>
+                    <td>{{ attendance.user.get_full_name }}</td>
+                    <td>{{ attendance.get_role_display }}</td>
+                    <td>{{ attendance.date }}</td>
+                    <td>{{ attendance.time_in }}</td>
+                    <td>{{ attendance.time_out|default:'N/A' }}</td>
+                    <td>{{ attendance.get_status_display }}</td>
+                    <td>
+                        <div class="btn-group">
+                          <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'attendance_detail' attendance.pk %}">View Details</a>
+                            <a class="dropdown-item" href="{% url 'attendance_update' attendance.pk %}">Edit</a>
+                          </div>
+                        </div>
+                      </td>
+                  </tr>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,205 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Bill Detail
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <div class="container-full">
+      <!-- Content Header (Page header) -->
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Bill Detail</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Bill Detail</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <section class="content">
+        <!-- Bill Information -->
+        <div class="card mb-4">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h3 class="card-title">Bill Information</h3>
+            <a href="{% url 'bill_update' bill.pk %}" class="btn btn-primary">Edit Bill #{{ bill.id }}</a>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <dl class="row">
+                  <dt class="col-sm-5">Bill ID:</dt>
+                  <dd class="col-sm-7">#{{ bill.id }}</dd>
+
+                  <dt class="col-sm-5">Patient:</dt>
+                  <dd class="col-sm-7"><a href="{% url 'patient_detail' bill.appointment.patient.pk %}">{{ bill.appointment.patient.user.get_full_name }}</a></dd>
+
+                  <dt class="col-sm-5">Doctor / Nurse:</dt>
+                  <dd class="col-sm-7">
+                    {% if bill.treatment.doctor %}
+                    <a href="{% url 'doctor_detail' bill.appointment.doctor.pk %}"> Dr. {{ bill.appointment.doctor.user.get_full_name }} </a>
+                    {% else %}
+                     <a href="{% url 'nurse_detail' bill.appointment.nurse.pk %}"> Nr. {{ bill.appointment.nurse.user.get_full_name }} </a>
+                    {% endif %}
+                  </dd>
+
+                  <dt class="col-sm-5">Total Amount:</dt>
+                  <dd class="col-sm-7">UGX {{ bill.total_amount|intcomma }}</dd>
+
+                  <dt class="col-sm-5">Amount Paid:</dt>
+                  <dd class="col-sm-7">UGX {{ bill.amount_paid|intcomma }}</dd>
+
+                  <dt class="col-sm-5">Status:</dt>
+                  <dd class="col-sm-7">{{ bill.status }}</dd>
+                </dl>
+              </div>
+              <div class="col-md-6">
+                <dl class="row">
+                  <dt class="col-sm-5">Installment Plan:</dt>
+                  <dd class="col-sm-7">{{ bill.installment_plan|yesno:'Yes,No' }}</dd>
+
+                  <dt class="col-sm-5">Installments Remaining:</dt>
+                  <dd class="col-sm-7">UGX {{ bill.installments_remaining|intcomma }}</dd>
+
+                  <dt class="col-sm-5">Installment Amount:</dt>
+                  <dd class="col-sm-7">UGX {{ bill.installment_amount|intcomma }}</dd>
+
+                  <dt class="col-sm-5">Date Issued:</dt>
+                  <dd class="col-sm-7">{{ bill.date_issued }}</dd>
+
+                  <dt class="col-sm-5">Details:</dt>
+                  <dd class="col-sm-7">{{ bill.details }}</dd>
+                </dl>
+              </div>
+            </div>
+            <hr />
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="card-header p-2 mb-2">
+                      <h5 class="mb-3">Treatments</h5>
+                    </div>
+                    {% if bill.treatment.all %}
+                      <div class="table-responsive">
+                        <table class="table border mt-3" id="data-table">
+                          <thead>
+                            <tr>
+                              <th>S.No</th>
+                              <th>Doctor/Nurse</th>
+                              <th>Patient Name</th>
+                              <th>Treatment Name</th>
+                              <th>Treatment Description</th>
+                              <th>Cost</th>
+                              <th>Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for treatment in bill.treatment.all %}
+                              <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                  {% if treatment.appointment.doctor %}
+                                    Dr. {{ treatment.appointment.doctor.user.get_full_name }}
+                                  {% else %}
+                                    Nr. {{ treatment.appointment.nurse.user.get_full_name }}
+                                  {% endif %}
+                                </td>
+                                <td>{{ treatment.appointment.patient }}</td>
+                                <td>{{ treatment.name }}</td>
+                                <td>{{ treatment.description }}</td>
+                                <td>UGX {{ treatment.cost|intcomma }}</td>
+                                <td>{{ treatment.status }}</td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    {% else %}
+                      <p>No treatments recorded.</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payments -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Payments</h3>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive rounded card-table">
+              <table class="table border-no mt-3" id="data-table-1">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Date Paid</th>
+                    <th>Amount</th>
+                    <th>Payment Method</th>
+                    <th>Installment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% if bill.payment_set.all %}
+                    {% for payment in bill.payment_set.all %}
+                      <tr class="hover-primary">
+                        <td>#{{ forloop.counter }}</td>
+                        <td>{{ payment.date_paid }}</td>
+                        <td>UGX {{ payment.amount|intcomma }}</td>
+                        <td>{{ payment.payment_method }}</td>
+                        <td>{{ payment.installment|yesno:'Yes,No' }}</td>
+                      </tr>
+                    {% endfor %}
+                  {% else %}
+
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
+  <div class="control-sidebar-bg"></div>
+
+  <!-- /.wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>&copy;<script>
+                  document.write(new Date().getFullYear())
+                </script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

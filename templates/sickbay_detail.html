@@ -1,0 +1,63 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Sickbay Detail {% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <!-- Main content -->
+      <section class="content">
+        <h1 class="mb-4">Sickbay Detail</h1>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Sickbay Information</h3>
+          </div>
+          <div class="card-body">
+            <dl class="row">
+              <dt class="col-sm-3">Sickbay Name:</dt>
+              <dd class="col-sm-9">{{ sickbay.name }}</dd>
+
+              <dt class="col-sm-3">Location:</dt>
+              <dd class="col-sm-9">{{ sickbay.location }}</dd>
+
+              <dt class="col-sm-3">Capacity:</dt>
+              <dd class="col-sm-9">{{ sickbay.capacity }}</dd>
+
+              <dt class="col-sm-3">Status:</dt>
+              <dd class="col-sm-9">{{ sickbay.get_status_display }}</dd>
+
+              <dt class="col-sm-3">Description:</dt>
+              <dd class="col-sm-9">{{ sickbay.description }}</dd>
+            </dl>
+            {% comment %} <a href="{% url 'sickbay_update' sickbay.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'sickbay_delete' sickbay.pk %}" class="btn btn-danger">Delete</a>
+            <a href="{% url 'sickbay_list' %}" class="btn btn-secondary">Back to List</a> {% endcomment %}
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529"></a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+  </footer>
+  
+{% endblock %}

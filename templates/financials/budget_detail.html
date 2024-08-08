@@ -1,0 +1,109 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Budget Details
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper">
+    <div class="container-full">
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Budget Details</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item"><a href="{% url 'budget-list' %}">Budgets</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Budget Details</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Budget: {{ object.title }}</h3>
+          </div>
+          <div class="box-body">
+            <div class="row">
+              <div class="col-md-6">
+                <dl class="row">
+                  <dt class="col-sm-4">Title</dt>
+                  <dd class="col-sm-8">{{ object.title }}</dd>
+
+                  <dt class="col-sm-4">Description</dt>
+                  <dd class="col-sm-8">{{ object.description }}</dd>
+
+                  <dt class="col-sm-4">Amount</dt>
+                  <dd class="col-sm-8">{{ object.amount }}</dd>
+
+                  <dt class="col-sm-4">Status</dt>
+                  <dd class="col-sm-8">{{ object.status }}</dd>
+
+                  <dt class="col-sm-4">Date Created</dt>
+                  <dd class="col-sm-8">{{ object.date_created }}</dd>
+                </dl>
+              </div>
+              <div class="col-md-6">
+                <!-- Add any additional fields or information you want to display here -->
+              </div>
+            </div>
+            <div class="d-flex justify-content-end mt-4">
+              <a href="{% url 'budget_update' object.pk %}" class="btn btn-warning me-2">Edit</a>
+              <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#budget-delete-modal-{{ object.pk }}">Delete</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="modal fade" id="budget-delete-modal-{{ object.pk }}" tabindex="-1" aria-labelledby="budget-delete-modal-Label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="budget-delete-modal-Label">Confirm Delete Budget</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete the budget '{{ object.title }}'?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <form action="{% url 'budget_delete' object.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="control-sidebar-bg"></div>
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>&copy;<script>
+                  document.write(new Date().getFullYear())
+                </script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

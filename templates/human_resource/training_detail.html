@@ -1,0 +1,81 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Training Details
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper">
+    <div class="container-full">
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Training Details</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item">
+                    <a href="{% url 'training-list' %}">Trainings</a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Training Details</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Training: {{ training.title }}</h3>
+          </div>
+          <div class="box-body">
+            <dl class="row">
+              <dt class="col-sm-3">Title</dt>
+              <dd class="col-sm-9">{{ training.title }}</dd>
+              
+              <dt class="col-sm-3">Description</dt>
+              <dd class="col-sm-9">{{ training.description }}</dd>
+              
+              <dt class="col-sm-3">Start Date</dt>
+              <dd class="col-sm-9">{{ training.start_date|date:"F d, Y" }}</dd>
+              
+              <dt class="col-sm-3">End Date</dt>
+              <dd class="col-sm-9">{{ training.end_date|date:"F d, Y" }}</dd>
+              
+              <dt class="col-sm-3">Trainer</dt>
+              <dd class="col-sm-9">{{ training.trainer }}</dd>
+            </dl>
+            <a href="{% url 'training-update' training.pk %}" class="btn btn-primary">Edit Training</a>
+            <a href="{% url 'training-list' %}" class="btn btn-secondary">Back to List</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div class="control-sidebar-bg"></div>
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>&copy;<script>
+                  document.write(new Date().getFullYear())
+                </script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

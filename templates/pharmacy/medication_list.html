@@ -1,0 +1,95 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Medication List
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <div class="box">
+          <div class="box-header with-border d-flex align-items-center justify-content-between">
+            <h3 class="box-title">Medication List</h3>
+            <a href="{% url 'medication_create' %}" class="btn btn-primary">
+              Add Medication
+            </a>
+          </div>
+          <div class="box-body">
+            <div class="table-responsive">
+              <table class="table border-no" id="data-table">
+                <thead>
+                  <tr>
+                    <th>S.No</th>
+                    <th>Name</th>
+                    <th>Dosage</th>
+                    <th>Stock Quantity</th>
+                    <th>Price</th>
+                    <th>Manufacturer</th>
+                    <th>Batch Number</th>
+                    <th>Expiry Date</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for medication in medications %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>
+                        <a href="{% url 'medication_detail' medication.pk %}">{{ medication.name }}</a>
+                      </td>
+                      <td>{{ medication.dosage }}</td>
+                      <td>{{ medication.stock_quantity }}</td>
+                      <td>UGX {{ medication.price|intcomma }}</td>
+                      <td>{{ medication.manufacturer }}</td>
+                      <td>{{ medication.batch_number}}</td>
+                      <td>{{ medication.expiry_date }}</td>
+                      <td>
+                        <div class="btn-group">
+                          <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'medication_detail' medication.pk %}">View Details</a>
+                            <a class="dropdown-item" href="{% url 'medication_update' medication.pk %}">Edit</a>
+                            <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#medication-delete-modal-{{ medication.id }}">Delete</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <div class="modal fade" id="medication-delete-modal-{{ medication.id }}" tabindex="-1" aria-labelledby="medication-delete-modal-Label" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="medication-delete-modal-Label">Confirm Delete medication</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to delete medication of 'patient' made with <strong>'{{ medication.user.get_full_name }}'</strong>?
+                          </div>
+                          <div class="modal-footer d-flex align-items-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="{% url 'medication_delete' medication.pk %}" method="POST">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% empty %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}

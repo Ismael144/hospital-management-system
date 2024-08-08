@@ -1,0 +1,57 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  {% if object %}
+    Update Prescription
+  {% else %}
+    Create Prescription
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content py-5">
+        <h2>
+          {% if object %}
+            Update Prescription
+          {% else %}
+            Create Prescription
+          {% endif %}
+        </h2>
+        <form method="post" class="my-5">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="form-group">
+              <label class="form-label">{{ field.label }}: {% if field.required %}<span class="text-danger">*</span>{% endif %}</label>
+              {% comment %} {% if field.required %}<span class="text-danger">*</span>{% else %}No{% endif %} {% endcomment %}
+              {{ field }}
+              {% for err in field.errors %}
+                <span class="text-danger">{{ err }}</span>
+              {% endfor %}
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary">
+            {% if object %}
+              Update
+            {% else %}
+              Create
+            {% endif %}
+          </button>
+        </form>
+      </section>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+      $('.select2').select2()
+    })
+  </script>
+{% endblock %}

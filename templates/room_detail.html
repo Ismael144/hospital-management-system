@@ -1,0 +1,51 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Room Detail {% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Room Information</h3>
+          </div>
+          <div class="card-body">
+            <dl class="row">
+              <dt class="col-sm-3">Room Number:</dt>
+              <dd class="col-sm-9">{{ room.room_number }}</dd>
+
+              <dt class="col-sm-3">Status:</dt>
+              <dd class="col-sm-9">{{ room.get_status_display }}</dd>
+
+              <dt class="col-sm-3">Type:</dt>
+              <dd class="col-sm-9">{{ room.get_room_type_display }}</dd>
+
+              <dt class="col-sm-3">Capacity:</dt>
+              <dd class="col-sm-9">{{ room.capacity }}</dd>
+            </dl>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529"></a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

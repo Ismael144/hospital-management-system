@@ -1,0 +1,87 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+	
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper rounded-0">
+    <div class="container-full ">
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          {% if is_updating %}
+          <h3 class="my-2">Edit Bill</h3>
+          <p>Editing bill made by <strong> {{ patient.user.get_full_name }}(Patient)</strong> with <strong>  Dr.{{ doctor.user.get_full_name }} </strong>  </p>
+          {% else %}
+          <h3 class="my-2">Create New Bill</h3>
+          <p>Please fill in all fields correctly inorder to proceed</p>
+          {% endif %}
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger my-2">
+              Please correct the following errors to proceed 
+            </div>
+            {% endif %}
+            {% for field in form %}
+            <div class="form-group">
+              <label for="{{ field.id_for_label }}" class="{% if field.field.required %}required-field{% endif %}">
+                {{ field.label }}:
+            </label>
+              {% if field.label == "Installment plan" %}
+              <div class="form-check">
+                {{ field }}
+              </div>
+              {% else %}
+                {{ field|add_class:"form-control" }}
+              {% endif %}
+              {% if field.help_text %}
+                <p class="help-block">{{ field.help_text }}</p>
+              {% endif %}
+              {% if field.errors %}
+                <p class="text-danger mt-2">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </p>
+              {% endif %}
+            </div>
+          {% endfor %}
+            <button type="submit" class="btn btn-primary">{% if not is_updating %}Create Bill{% else %}Edit Bill{% endif %}</button>
+        </form>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <script>
+    $(document).ready(function () {
+      $('.select2').select2()
+    })
+  </script>
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529"></a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+  </footer>
+  
+</div>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Case List
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="form-group">
+                <label class="form-label">{{ field.label }}:</label>
+                {{ field|add_class:'form-control' }}
+                {% for err in field.errors %}
+                  <span class="text-danger">{{ err }}</span>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Save</button>
+          </form>
+      </section>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+	
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper rounded-0">
+    <div class="container-full ">
+      <!-- Main content -->
+      <section class="content">
+        <div class="container mt-4">
+          <h2>Activity Logs</h2>
+          <table class="table border-no" id="data-table">
+              <thead>
+                  <tr>
+                      <th>S.No</th>
+                      <th>Employee</th>
+                      <th>Role</th>
+                      <th>Description</th>
+                      <th>Timestamp</th>
+                      <th>Action</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for log in activity_logs %}
+                      <tr>
+                          <td>{{ forloop.counter }}</td>
+                          <td>By {{ log.user }}</td>
+                          <td>{{ log.user.role }}</td>
+                          <td>{{ log.description }}</td>
+                          <td>{{ log.timestamp }}</td>
+                          <td>{{ log.action }}</td>
+                      </tr>
+                  {% empty %}
+                  {% endfor %}
+              </tbody>
+          </table>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+  
+
+{% endblock %}

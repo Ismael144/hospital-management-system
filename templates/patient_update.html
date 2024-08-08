@@ -1,0 +1,148 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+	
+  {% include 'includes/sidebar_content.html' %}
+  <style>
+    .required-field::after {
+        content: " *";
+        color: red;
+    }
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+</style>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <h3 class="my-4">Edit Patient Information</h3>
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Error!</strong> Please correct the following errors:
+                    <ul>
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li>{{ field.label_tag }} - {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.first_name.label_tag }}<span class="text-danger">*</span>
+                        {{ form.first_name|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.last_name.label_tag }}<span class="text-danger">*</span>
+                        {{ form.last_name|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.email.label_tag }}<span class="text-danger">*</span>
+                        {{ form.email|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.phone_number.label_tag }}<span class="text-danger">*</span>
+                        {{ form.phone_number|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.address.label_tag }}<span class="text-danger">*</span>
+                        {{ form.address|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.date_of_birth.label_tag }}<span class="text-danger">*</span>
+                        {{ form.date_of_birth|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.profile_image.label_tag }}
+                        {{ form.profile_image|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.assigned_doctor.label_tag }}
+                        {{ form.assigned_doctor|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.assigned_room.label_tag }}
+                        {{ form.assigned_room|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.medical_history.label_tag }}<span class="text-danger">*</span>
+                        {{ form.medical_history|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.emergency_contact_name.label_tag }}
+                        {{ form.emergency_contact_name|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.emergency_contact_phone.label_tag }}
+                        {{ form.emergency_contact_phone|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.insurance_provider.label_tag }}
+                        {{ form.insurance_provider|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.insurance_policy_number.label_tag }}
+                        {{ form.insurance_policy_number|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.allergies.label_tag }}
+                        {{ form.allergies|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.current_medications.label_tag }}
+                        {{ form.current_medications|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.family_medical_history.label_tag }}
+                        {{ form.family_medical_history|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.health_habits.label_tag }}
+                        {{ form.health_habits|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.preferred_language.label_tag }}
+                        {{ form.preferred_language|add_class:"form-control" }}
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Patient</button>
+        </form>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529"></a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+  </footer>
+  
+</div>
+
+{% endblock %}

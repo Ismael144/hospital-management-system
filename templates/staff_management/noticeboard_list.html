@@ -1,0 +1,79 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+Notice Board
+{% endblock %}
+
+{% block content %}
+{% include 'includes/sidebar_content.html' %}
+
+<div class="content-wrapper rounded-0">
+    <div class="container-full">
+        <section class="content">
+            <h2>Notice Board</h2>
+            <a href="{% url 'noticeboard_create' %}" class="btn btn-primary mb-2">Add Notice</a>
+            <table class="table border-no" id="data-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Title</th>
+                        <th>Content</th>
+                        <th>Posted By</th>
+                        <th>Date Posted</th>
+                        <th>Expires On</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for notice in notices %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ notice.title }}</td>
+                        <td>{{ notice.content|truncatewords:20 }}</td>
+                        <td>{{ notice.posted_by.get_full_name }}</td>
+                        <td>{{ notice.date_posted }}</td>
+                        <td>{{ notice.expires_on }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{% url 'noticeboard_detail' notice.pk %}">View Details</a>
+                                    <a class="dropdown-item" href="{% url 'noticeboard_update' notice.pk %}">Edit</a>
+                                    <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#notice-delete-modal-{{ notice.id }}">Delete</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <div class="modal fade" id="notice-delete-modal-{{ notice.id }}" tabindex="-1" aria-labelledby="notice-delete-modal-Label" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="notice-delete-modal-Label">Confirm Delete Notice</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete the notice titled '<strong>{{ notice.title }}</strong>'?
+                                </div>
+                                <div class="modal-footer d-flex align-items-center">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form action="{% url 'noticeboard_delete' notice.pk %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
+{% endblock %}

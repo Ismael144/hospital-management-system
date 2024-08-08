@@ -1,0 +1,96 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}Send Message{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/42.0.2/ckeditor5.css">
+{% include 'includes/sidebar_content.html' %}
+<div class="content-wrapper">
+  <div class="container-full">
+    <section class="content">
+      <div class="row">
+        <div class="col-md-3">
+          <a href="{% url 'send_message' %}" class="btn btn-primary btn-block mb-3"><i class="fas fa-pen me-2"></i>Compose</a>
+          <div class="card mb-4 overflow-hidden">
+            <div class="card-header bg-light">
+              <h4 class="card-title mb-0">Folders</h4>
+            </div>
+            <div class="card-body p-0">
+              <ul class="nav nav-pills flex-column">
+                <li class="nav-item">
+                  <a href="{% url 'inbox' %}" class="nav-link d-flex align-items-center">
+                    <i class="fas fa-inbox me-2"></i> Inbox
+                    <span class="badge bg-light text-dark ms-auto">{{ inbox_count }}</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'sent_messages' %}" class="nav-link d-flex align-items-center">
+                    <i class="far fa-paper-plane me-2"></i> Sent
+                    <span class="badge bg-secondary ms-auto">{{ sent_count }}</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <div class="card">
+            <div class="card-header bg-light">
+              <h4 class="card-title">Compose New Message</h4>
+            </div>
+            <form method="post" action="{% url 'send_message' %}" class="form-horizontal p-3" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form.media }}
+              {% if form.errors %}
+              <div class="alert alert-danger my-2">
+                Please correct the following errors to proceed 
+              </div>
+              {% endif %}
+              {% for field in form %}
+              <div class="form-group my-3">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field|add_class:"form-control" }}
+                {% if field.help_text %}
+                  <p class="help-block">{{ field.help_text }}</p>
+                {% endif %}
+                {% if field.errors %}
+                  <p class="text-danger mt-2">
+                    {% for error in field.errors %}
+                    {{ error }}
+                    {% endfor %}
+                  </p>
+                {% endif %}
+                {% endfor %}
+                </div>
+                <input type="submit" class="btn btn-primary" value="Save" />
+                <a href="{% url 'inbox' %}" class="btn btn-default">Cancel</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+  function validateForm() {
+      var editor = document.querySelector('.django_ckeditor_5');
+      if (editor) {
+          var editorInstance = editor.ckeditorInstance;
+          if (editorInstance) {
+              var content = editorInstance.getData();
+              if (!content.trim()) {
+                  alert('Content is required');
+                  return false;
+              }
+          }
+      }
+      return true;
+  }
+  </script>
+{% endblock %}

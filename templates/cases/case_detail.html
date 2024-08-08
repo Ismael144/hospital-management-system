@@ -1,0 +1,40 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Case List
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <h1>Case Details</h1>
+        <p>
+          <strong>Case Number:</strong> {{ case.case_number }}
+        </p>
+        <p>
+          <strong>Patient:</strong> {{ case.patient }}
+        </p>
+        <p>
+          <strong>Case Manager:</strong> {{ case.case_manager }}
+        </p>
+        <p>
+          <strong>Status:</strong> {{ case.status }}
+        </p>
+        <p>
+          <strong>Notes:</strong> {{ case.notes }}
+        </p>
+        <a href="{% url 'case_update' case.pk %}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'case_delete' case.pk %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'case_list' %}" class="btn btn-secondary">Back to List</a>
+      </section>
+    </div>
+  </div>
+{% endblock %}

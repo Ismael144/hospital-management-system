@@ -1,0 +1,133 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from medical-admin-template.multipurposethemes.com/main/auth_login.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 15 Jul 2024 09:41:50 GMT -->
+<head>
+  <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="https://medical-admin-template.multipurposethemes.com/images/favicon.ico">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <title>Hospital | {% block title %}{% endblock %}</title>
+  
+	<!-- Vendors Style-->
+	<link rel="stylesheet" href="{% static 'assets/css/vendors_css.css' %}">
+  
+	<!-- Style-->  
+	<link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+	<link rel="stylesheet" href="{% static 'assets/css/skin_color.css' %}">	
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/7.4.47/css/materialdesignicons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  
+</head>
+<style>
+  #toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+        }
+        
+        .toast {
+          display: flex;
+          align-items: center;
+            padding: 15px 20px;
+            /* border-radius: 5px; */
+            font-size: 16px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+          }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          
+          #toast-container {
+            position: fixed; 
+            top: 40px; 
+            right: 20px;
+            padding: 0 10px; 
+            z-index: 1000;
+          }
+        </style>
+    <style>
+        .required-field::after {
+          content: ' *';
+          color: red;
+        }
+        .form-control.is-invalid {
+          border-color: #dc3545;
+        }
+    </style>
+  <body {% block body_attr %} {% endblock %}>
+    <div class="wrapper" style="overflow: auto;">
+      <div id="loader"></div>
+      <!-- Page Content overlay -->
+      
+    <div id="toast-container"></div>
+    {% block content %}
+    {% endblock %}
+    
+    <script>
+      $(document).ready(function () {
+        $('select').select2({
+          width: 'resolve'
+        })
+      })
+    </script>   
+  </div>
+  <script>
+    function showToast(message, type, timeout) {
+      const toastContainer = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+            toast.classList.add('toast', type);
+            toast.textContent = message;
+            
+            // Append toast to container
+            toastContainer.appendChild(toast);
+        
+            // Show the toast
+            setTimeout(() => {
+              toast.classList.add('show');
+            }, 100);
+            
+            // Hide and remove the toast after the timeout
+            setTimeout(() => {
+              toast.classList.remove('show');
+                setTimeout(() => {
+                    toastContainer.removeChild(toast);
+                  }, 300);
+                }, timeout);
+              }
+        
+        {% for message in messages %}
+          showToast('{{ message }}', 'strip-{{message.tags }}', 3000)
+        {% endfor %}
+      </script>
+      <!-- Vendor JS -->
+    <script src="{% static 'assets/js/vendors.min.js' %}"></script>
+    <script src="{% static 'assets/js/pages/chat-popup.js' %}"></script>
+    <script src="{% static 'assets/icons/feather-icons/feather.min.js' %}"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{% static 'assets/vendor_components/apexcharts-bundle/dist/apexcharts.js' %}"></script>
+    <script src="{% static 'rawgit.com/nnnick/Chart.js/v1.0.2/Chart.min.js' %}"></script>
+    <script src="{% static 'assets/vendor_components/datatable/datatables.min.js' %}"></script>
+    <!-- Doclinic App -->
+    <script src="{% static 'assets/js/template.js' %}"></script>
+    <script src="{% static 'assets/js/pages/data-table-init.js' %}"></script>
+  </body>
+</html>

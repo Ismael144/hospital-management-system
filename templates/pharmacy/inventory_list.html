@@ -1,0 +1,80 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Inventory List
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <h3>Pharmacy Inventory</h3>
+        <a href="{% url 'inventory_create' %}" class="btn btn-primary mb-2">Add Inventory</a>
+        <table class="table border-no" id="data-table">
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Medication</th>
+              <th>Quantity in Stock</th>
+              <th>Reorder Threshold</th>
+              <th>Last Restocked</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for inventory in inventories %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                  <a href="{% url 'inventory_detail' inventory.pk %}">{{ inventory.medication.name }}</a>
+                </td>
+                <td>{{ inventory.quantity_in_stock }}</td>
+                <td>{{ inventory.reorder_threshold }}</td>
+                <td>{{ inventory.last_restocked }}</td>
+                <td>
+                  <div class="btn-group">
+                    <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="{% url 'inventory_detail' inventory.pk %}">View Details</a>
+                      <a class="dropdown-item" href="{% url 'inventory_update' inventory.pk %}">Edit</a>
+                      <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#inventory-delete-modal-{{ inventory.id }}">Delete</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <div class="modal fade" id="inventory-delete-modal-{{ inventory.id }}" tabindex="-1" aria-labelledby="inventory-delete-modal-Label" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="inventory-delete-modal-Label">Confirm Delete Inventory</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Are you sure you want to delete inventory for <strong>'{{ inventory.medication.name }}'</strong>?
+                    </div>
+                    <div class="modal-footer d-flex align-items-center">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <form action="{% url 'inventory_delete' inventory.pk %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+{% endblock %}

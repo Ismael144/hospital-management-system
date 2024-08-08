@@ -1,0 +1,115 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+	
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .card {
+                margin: 20px 0;
+            }
+            .profile-image {
+                width: 150px;
+                height: 150px;
+                object-fit: cover;
+                border-radius: 50%;
+                margin: 0 auto;
+            }
+            .info-block {
+                margin: 10px 0;
+            }
+            .info-label {
+                font-weight: bold;
+            }
+        </style>
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <h3 class="my-3">View Receptionist</h3>
+          <p>View details of a receptionist</p>
+          <div class="container">
+            <div class="receptionist-card">
+                <div class="receptionist-card-content">
+                    <div class="row my-4">
+                        <div class="col-md-4 text-center">
+                            <div class="inner-div card py-4">
+                                <img src="{% if receptionist.user.profile_image %}{{ receptionist.user.profile_image.url }}{% else %}{% static 'images/no-user-image.jpg' %}{% endif %}" alt="Receptionist Profile Image" class="profile-image img-thumbnail">
+                                <h3>{{ receptionist.user.get_full_name }}</h3>
+                                <p>Receptionist</p>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="info-block">
+                                  <div class="info-label">Full Name:</div>
+                                  <div>{{ receptionist.user.get_full_name }}</div>
+                                </div>
+                                <div class="info-block">
+                                  <div class="info-label">Email:</div>
+                                  <div>{{ receptionist.user.email }}</div>
+                                </div>
+                                <div class="info-block">
+                                  <div class="info-label">Phone Number:</div>
+                                  <div>{{ receptionist.phone_number }}</div>
+                                </div>
+                                <div class="info-block">
+                                  <div class="info-label">Address:</div>
+                                  <div>{{ receptionist.address }}</div>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="info-block">
+                                  <div class="info-label">Shift Start Time:</div>
+                                  <div>{{ receptionist.shift_start_time }}</div>
+                                </div>
+                                <div class="info-block">
+                                  <div class="info-label">Shift End Time:</div>
+                                  <div>{{ receptionist.shift_end_time }}</div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'receptionist_list' %}" class="btn btn-primary">Back to Receptionist List</a>
+                </div>
+            </div>
+        </div>
+    
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529"></a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+  </footer>
+  
+</div>
+
+{% endblock %}

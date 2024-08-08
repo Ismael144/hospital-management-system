@@ -1,0 +1,50 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Medication Detail
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <h2>{{ medication.name }}</h2>
+        <p>
+          <strong>Description:</strong> {{ medication.description }}
+        </p>
+        <p>
+          <strong>Dosage:</strong> {{ medication.dosage }}
+        </p>
+        <p>
+          <strong>Manufacturer:</strong> {{ medication.manufacturer }}
+        </p>
+        <p>
+          <strong>Price:</strong> UGX {{ medication.price|intcomma }}
+        </p>
+        <p>
+          <strong>Stock Quantity:</strong> {{ medication.stock_quantity }}
+        </p>
+        <p>
+          <strong>Batch Number:</strong> {{ medication.batch_number }}
+        </p>
+        <p>
+          <strong>Expiry Date:</strong> {{ medication.expiry_date }}
+        </p>
+        <a href="{% url 'medication_update' medication.pk %}" class="btn btn-warning">Edit</a>
+        <form method="post" action="{% url 'medication_delete' medication.pk %}" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+        <a href="{% url 'medication_list' %}" class="btn btn-secondary">Back to List</a>
+      </section>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Allocation List {% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <h1 class="mb-4">Allocations</h1>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">All Allocations</h3>
+            <a href="{% url 'allocation_create' %}" class="btn btn-success">Add Allocation</a>
+          </div>
+          <div class="card-body">
+            <table class="table border-no" id="data-table">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Patient</th>
+                  <th>Allocation Type</th>
+                  <th>Room</th>
+                  <th>Sickbay</th>
+                  <th>Date Allocated</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for allocation in allocations %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ allocation.patient.user.get_full_name }}</td>
+                    <td>{{ allocation.get_allocation_type_display }}</td>
+                    <td>{% if allocation.room %}<a href="{% url 'room_detail' allocation.room.pk %}">{{ allocation.room.room_number }}</a>{% else %}N/A{% endif %}</td>
+                    <td>{% if allocation.sickbay %}{{ allocation.sickbay.name }}{% else %}N/A{% endif %}</td>
+                    <td>{{ allocation.date_allocated }}</td>
+                    <td>
+                        <div class="btn-group">
+                          <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'allocation_detail' allocation.pk %}">View Details</a>
+                            <a class="dropdown-item" href="{% url 'allocation_update' allocation.pk %}">Edit</a>
+                            <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#allocation-delete-modal-{{ allocation.id }}">Delete</a>
+                          </div>
+                        </div>
+                      </td>
+                      <!-- Delete allocation Modal -->
+                      <div class="modal fade" id="allocation-delete-modal-{{ allocation.id }}" tabindex="-1" aria-labelledby="allocation-delete-modal-Label" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="allocation-delete-modal-Label">Confirm Delete Receptionist</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">Are you sure you want to delete {{ allocation.user.get_full_name }}?</div>
+                            <div class="modal-footer d-flex align-items-center">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                              <form action="{% url 'allocation_delete' allocation.pk %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- End Delete allocation Modal -->
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}

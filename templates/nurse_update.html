@@ -1,0 +1,198 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+	
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper rounded-0">
+    <div class="container-full ">
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <h2 class="my-4">Create New Nurse</h2>
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Error!</strong> Please correct the following errors:
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label_tag }} - {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.first_name.label_tag }} <span class="text-danger">*</span>
+                    {{ form.first_name|add_class:"form-control" }}
+                    {% for error in form.first_name.errors %}
+                        <small class="text-danger">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form.last_name.label_tag }} <span class="text-danger">*</span>
+                    {{ form.last_name|add_class:"form-control" }}
+                    {% for error in form.last_name.errors %}
+                        <small class="text-danger">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label_tag }} <span class="text-danger">*</span>
+                    {{ form.email|add_class:"form-control" }}
+                    {% for error in form.email.errors %}
+                        <small class="text-danger">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                    <div class="form-group">
+                        {{ form.department.label_tag }} <span class="text-danger">*</span>
+                        {{ form.department|add_class:"form-control" }}
+                        {% for error in form.department.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.qualifications.label_tag }} <span class="text-danger">*</span>
+                        {{ form.qualifications|add_class:"form-control" }}
+                        {% for error in form.qualifications.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.years_of_experience.label_tag }} <span class="text-danger">*</span>
+                        {{ form.years_of_experience|add_class:"form-control" }}
+                        {% for error in form.years_of_experience.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.phone_number.label_tag }} <span class="text-danger">*</span>
+                        {{ form.phone_number|add_class:"form-control" }}
+                        {% for error in form.phone_number.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.address.label_tag }} <span class="text-danger">*</span>
+                        {{ form.address|add_class:"form-control" }}
+                        {% for error in form.address.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.gender.label_tag }} <span class="text-danger">*</span>
+                        {{ form.gender|add_class:"form-control" }}
+                        {% for error in form.gender.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.date_of_birth.label_tag }} <span class="text-danger">*</span>
+                        {{ form.date_of_birth|add_class:"form-control" }}
+                        {% for error in form.date_of_birth.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.license_number.label_tag }} <span class="text-danger">*</span>
+                        {{ form.license_number|add_class:"form-control" }}
+                        {% for error in form.license_number.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.shift_start_time.label_tag }} <span class="text-danger">*</span>
+                        {{ form.shift_start_time|add_class:"form-control" }}
+                        {% for error in form.shift_start_time.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.shift_end_time.label_tag }} <span class="text-danger">*</span>
+                        {{ form.shift_end_time|add_class:"form-control" }}
+                        {% for error in form.shift_end_time.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.current_patient_load.label_tag }}
+                        {{ form.current_patient_load|add_class:"form-control" }}
+                        {% for error in form.current_patient_load.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.recent_trainings.label_tag }}
+                        {{ form.recent_trainings|add_class:"form-control" }}
+                        {% for error in form.recent_trainings.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.performance_reviews.label_tag }}
+                        {{ form.performance_reviews|add_class:"form-control" }}
+                        {% for error in form.performance_reviews.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.profile_image.label_tag }}
+                        {{ form.profile_image|add_class:"form-control-file" }}
+                        {% for error in form.profile_image.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Nurse</button>
+        </form>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529"></a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+  </footer>
+  
+</div>
+
+<!-- Vendor JS -->
+<script src="{% static 'assets/js/notifications.js' %}"></script>
+<script src="{% static 'assets/js/vendors.min.js' %}"></script>
+<script src="{% static 'assets/js/pages/chat-popup.js' %}"></script>
+<script src="{% static 'assets/icons/feather-icons/feather.min.js' %}"></script>
+
+<script src="{% static 'assets/vendor_components/apexcharts-bundle/dist/apexcharts.js' %}"></script>
+<script src="../../rawgit.com/nnnick/Chart.js/v1.0.2/Chart.min.js"></script>
+<script src="{% static 'assets/vendor_components/raphael/raphael.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/morris.js/morris.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/fullcalendar/lib/moment.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/fullcalendar/fullcalendar.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup-init.js' %}"></script>
+
+{% endblock %}

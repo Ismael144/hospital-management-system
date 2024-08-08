@@ -1,0 +1,110 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}Case Manager Details{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper">
+    <div class="container-full">
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Case Manager Details</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Case Manager Details</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Case Manager Details</h3>
+          </div>
+          <div class="box-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="full_name">Full Name:</label>
+                  <p id="full_name">{{ case_manager.employee.user.get_full_name }}</p>
+                </div>
+                <div class="form-group">
+                  <label for="email">Email:</label>
+                  <p id="email">{{ case_manager.employee.user.email }}</p>
+                </div>
+                <div class="form-group">
+                  <label for="phone_number">Phone Number:</label>
+                  <p id="phone_number">{{ case_manager.employee.phone_number }}</p>
+                </div>
+                <div class="form-group">
+                  <label for="date_of_birth">Date of Birth:</label>
+                  <p id="date_of_birth">{{ case_manager.employee.date_of_birth|date:"D, d M Y" }}</p>
+                </div>
+                <div class="form-group">
+                  <label for="hire_date">Hire Date:</label>
+                  <p id="hire_date">{{ case_manager.employee.hire_date|date:"D, d M Y" }}</p>
+                </div>
+                <div class="form-group">
+                  <label for="case_load">Case Load:</label>
+                  <p id="case_load">{{ case_manager.case_load }}</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="address">Address:</label>
+                  <p id="address">{{ case_manager.employee.address }}</p>
+                </div>
+                <div class="form-group">
+                  <label for="gender">Gender:</label>
+                  <p id="gender">{{ case_manager.employee.gender }}</p>
+                </div>
+                <div class="form-group">
+                  <label for="profile_image">Profile Image:</label>
+                  {% if case_manager.employee.profile_image %}
+                    <img src="{{ case_manager.employee.profile_image.url }}" alt="Profile Image" class="img-thumbnail" style="width: 150px; height: 150px;">
+                  {% else %}
+                    <p>No image available</p>
+                  {% endif %}
+                </div>
+                <div class="form-group">
+                  <label for="certificate">Certificate:</label>
+                  {% if case_manager.employee.certificate %}
+                    <a href="{{ case_manager.employee.certificate.url }}" target="_blank">Download Certificate</a>
+                  {% else %}
+                    <p>No certificate available</p>
+                  {% endif %}
+                </div>
+                <div class="form-group">
+                  <label for="department">Department:</label>
+                  <p id="department">{{ case_manager.department }}</p>
+                </div>
+                <div class="form-group">
+                  <label for="shift">Shift:</label>
+                  <p id="shift">{{ case_manager.shift }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <a href="{% url 'case_manager_update' case_manager.pk %}" class="btn btn-primary">Edit</a>
+              <a href="{% url 'case_manager_list' %}" class="btn btn-secondary">Back to List</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Prescription List
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <h2>Prescriptions</h2>
+        <a href="{% url 'prescription_create' %}" class="btn btn-primary mb-2">Add Prescription</a>
+        <table class="table border-no" id="data-table">
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Patient</th>
+              <th>Doctor</th>
+              <th>Issue Date</th>
+              <th>Status</th>
+              <th>Instructions</th>
+              <th>Medications</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for prescription in prescriptions %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                  <a href="{% url 'prescription_detail' prescription.pk %}">{{ prescription.patient }}</a>
+                </td>
+                <td>{{ prescription.doctor.get_full_name }}</td>
+                <td>{{ prescription.issue_date }}</td>
+                <td>{{ prescription.status }}</td>
+                <td>{{ prescription.instructions }}</td>
+                <td>
+                  <ul>
+                    {% for med in prescription.medication.all %}
+                      <li>{{ med.name }} - {{ med.dosage }}</li>
+                    {% endfor %}
+                  </ul>
+                </td>
+                <td>
+                  <div class="btn-group">
+                    <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="{% url 'prescription_detail' prescription.pk %}">View Details</a>
+                      <a class="dropdown-item" href="{% url 'prescription_update' prescription.pk %}">Edit</a>
+                      <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#prescription-delete-modal-{{ prescription.id }}">Delete</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <div class="modal fade" id="prescription-delete-modal-{{ prescription.id }}" tabindex="-1" aria-labelledby="prescription-delete-modal-Label" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="prescription-delete-modal-Label">Confirm Delete Prescription</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Are you sure you want to delete the prescription for '{{ prescription.patient }}' made by Dr. '{{ prescription.doctor.get_full_name }}'?
+                    </div>
+                    <div class="modal-footer d-flex align-items-center">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <form action="{% url 'prescription_delete' prescription.pk %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+{% endblock %}

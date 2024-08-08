@@ -1,0 +1,167 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Dashboard {% endblock %}
+{% block content %}
+	
+{% include 'includes/sidebar_content.html' %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper rounded-0">
+	  <div class="container-full ">
+		<!-- Main content -->
+		<section class="content">
+			<div class="row">
+                <h1 class="my-4">Update Doctor Information</h1>
+                <form method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <!-- Display form errors if any -->
+                  {% if form.errors %}
+                      <div class="alert alert-danger">
+                          <strong>Error!</strong> Please correct the following errors:
+                          <ul>
+                              {% for field, errors in form.errors.items %}
+                                  {% for error in errors %}
+                                      <li>{{ error }}</li>
+                                  {% endfor %}
+                              {% endfor %}
+                          </ul>
+                      </div>
+                  {% endif %}
+                  <!-- Render form fields -->
+                  <div class="row">
+                      <div class="form-group">
+                          {{ form.first_name.label_tag }}
+                          {{ form.first_name|add_class:"form-control" }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.last_name.label_tag }}
+                            {{ form.last_name|add_class:"form-control" }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.email.label_tag }}
+                            {{ form.email|add_class:"form-control" }}
+                        </div>
+                          <div class="form-group">
+                              {{ form.specialization.label_tag }}
+                              {{ form.specialization|add_class:"form-control" }}
+                          </div>
+                          <div class="form-group">
+                              {{ form.years_of_experience.label_tag }}
+                              {{ form.years_of_experience|add_class:"form-control" }}
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              {{ form.department.label_tag }}
+                              {{ form.department|add_class:"form-control" }}
+                          </div>
+                          <div class="form-group">
+                              {{ form.phone_number.label_tag }}
+                              {{ form.phone_number|add_class:"form-control" }}
+                          </div>
+                          <div class="form-group">
+                              {{ form.address.label_tag }}
+                              {{ form.address|add_class:"form-control" }}
+                          </div>
+                          <div class="form-group">
+                              {{ form.gender.label_tag }}
+                              {{ form.gender|add_class:"form-control" }}
+                          </div>
+                          <div class="form-group">
+                              {{ form.date_of_birth.label_tag }}
+                              {{ form.date_of_birth|add_class:"form-control" }}
+                          </div>
+                          <div class="form-group">
+                              {{ form.medical_license_number.label_tag }}
+                              {{ form.medical_license_number|add_class:"form-control" }}
+                          </div>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      {{ form.board_certifications.label_tag }}
+                      {{ form.board_certifications|add_class:"form-control" }}
+                  </div>
+                  <div class="form-group">
+                      {{ form.shift_start_time.label_tag }}
+                      {{ form.shift_start_time|add_class:"form-control" }}
+                  </div>
+                  <div class="form-group">
+                      {{ form.shift_end_time.label_tag }}
+                      {{ form.shift_end_time|add_class:"form-control" }}
+                  </div>
+                  <div class="form-group">
+                      {{ form.current_patient_load.label_tag }}
+                      {{ form.current_patient_load|add_class:"form-control" }}
+                  </div>
+                  <div class="form-group">
+                      {{ form.appointment_schedule.label_tag }}
+                      {{ form.appointment_schedule|add_class:"form-control" }}
+                  </div>
+                  <div class="form-group">
+                      {{ form.recent_treatments.label_tag }}
+                      {{ form.recent_treatments|add_class:"form-control" }}
+                  </div>
+                  <div class="form-group">
+                      {{ form.recent_training.label_tag }}
+                      {{ form.recent_training|add_class:"form-control" }}
+                  </div>
+                  <div class="form-group">
+                      {{ form.performance_reviews.label_tag }}
+                      {{ form.performance_reviews|add_class:"form-control" }}
+                  </div>
+                  <div class="form-group">
+                      {{ form.profile_image.label_tag }}
+                      {{ form.profile_image|add_class:"form-control-file" }}
+                  </div>
+                  <button type="submit" class="btn btn-primary">Update Doctor</button>
+              </form>
+          </div>
+			</div>				
+		</section>
+		<!-- /.content -->
+	  </div>
+    </div>
+    <!-- /.content-wrapper -->
+
+    <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+        <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+		  <li class="nav-item">
+			<a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+		  </li>
+		</ul>
+    </div>
+	  &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+  
+</div>
+
+	<!-- Vendor JS -->
+	<script src="{% static 'assets/js/notifications.js' %}"></script>
+	<script src="{% static 'assets/js/vendors.min.js' %}"></script>
+	<script src="{% static 'assets/js/pages/chat-popup.js' %}"></script>
+    <script src="{% static 'assets/icons/feather-icons/feather.min.js' %}"></script>
+	
+	<script src="{% static 'assets/vendor_components/apexcharts-bundle/dist/apexcharts.js' %}"></script>
+	<script src="../../rawgit.com/nnnick/Chart.js/v1.0.2/Chart.min.js"></script>
+	<script src="{% static 'assets/vendor_components/raphael/raphael.min.js' %}"></script>
+	<script src="{% static 'assets/vendor_components/morris.js/morris.min.js' %}"></script>
+	<script src="{% static 'assets/vendor_components/fullcalendar/lib/moment.min.js' %}"></script>
+	<script src="{% static 'assets/vendor_components/fullcalendar/fullcalendar.min.js' %}"></script>
+	<script src="{% static 'assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup-init.js' %}"></script>
+{% comment %} 
+
+	
+	<!-- Doclinic App -->
+	<script src="{% static 'assets/js/template.js' %}"></script>
+	<script src="{% static 'assets/js/pages/dashboard6.js' %}"></script>
+	<script src="{% static 'assets/js/pages/calendar.js' %}"></script> {% endcomment %}
+	
+{% endblock %}

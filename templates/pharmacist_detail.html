@@ -1,0 +1,129 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Pharmacist Details
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .card {
+                margin: 20px 0;
+            }
+            .profile-image {
+                width: 150px;
+                height: 150px;
+                object-fit: cover;
+                border-radius: 50%;
+                margin: 0 auto;
+            }
+            .info-block {
+                margin: 10px 0;
+            }
+            .info-label {
+                font-weight: bold;
+            }
+        </style>
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <h3 class="my-4">View Pharmacist Info</h3>
+          <p>
+            View information about pharmacist 
+          </p>
+          <div class="container">
+            <div class="pharmacist-card">
+                <div class="pharmacist-card-content">
+                    <div class="row my-4">
+                        <div class="col-md-4 text-center">
+                            <div class="inner-div card py-4">
+                                <img src="{% if object.employee.profile_image %}{{ object.employee.profile_image.url }}{% else %}{% static 'images/no-user-image.jpg' %}{% endif %}" alt="Pharmacist Profile Image" class="profile-image img-thumbnail">
+                                <h3>{{ object.employee.user.get_full_name }}</h3>
+                                <p>{{ object.registration_number }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-block">
+                                        <div class="info-label">Full Name:</div>
+                                        <div>{{ object.employee.user.get_full_name }}</div>
+                                    </div>
+                                    <div class="info-block">
+                                        <div class="info-label">Email:</div>
+                                        <div>{{ object.employee.user.email }}</div>
+                                    </div>
+                                    <div class="info-block">
+                                        <div class="info-label">Qualifications:</div>
+                                        <div>{{ object.qualifications }}</div>
+                                    </div>
+                                    <div class="info-block">
+                                        <div class="info-label">Years of Experience:</div>
+                                        <div>{{ object.years_of_experience }}</div>
+                                    </div>
+                                    <div class="info-block">
+                                        <div class="info-label">Pharmacy License Number:</div>
+                                        <div>{{ object.pharmacy_license_number }}</div>
+                                    </div>
+                                    <div class="info-block">
+                                        <div class="info-label">Shift:</div>
+                                        <div>{{ object.shift }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-block">
+                                        <div class="info-label">Current Medication Load:</div>
+                                        <div>{{ object.current_medication_load }}</div>
+                                    </div>
+                                    <div class="info-block">
+                                        <div class="info-label">License Expiry Date:</div>
+                                        <div>{{ object.license_expiry_date|date:"Y-m-d" }}</div>
+                                    </div>
+                                    <div class="info-block">
+                                        <div class="info-label">Department:</div>
+                                        <div>{{ object.department }}</div>
+                                    </div>
+                                    <div class="info-block">
+                                        <div class="info-label">License Expired:</div>
+                                        <div>{% if object.is_license_expired %}Yes{% else %}No{% endif %}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'pharmacist-list' %}" class="btn btn-primary">Back to Pharmacist List</a>
+                </div>
+            </div>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529"></a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

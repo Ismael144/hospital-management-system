@@ -1,0 +1,237 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Sent Messages
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+  <div class="content-wrapper">
+    <div class="container-full">
+      <section class="content">
+        <div class="row">
+          <!-- Sidebar -->
+          <div class="col-md-3">
+            <a href="{% url 'send_message' %}" class="btn btn-primary btn-block mb-3"><i class="fas fa-pen me-2"></i>Compose</a>
+            <div class="card mb-4 overflow-hidden">
+              <div class="card-header bg-light">
+                <h4 class="card-title mb-0">Folders</h4>
+              </div>
+              <div class="card-body p-0">
+                <ul class="nav nav-pills flex-column">
+                  <li class="nav-item">
+                    <a href="{% url 'inbox' %}" class="nav-link d-flex align-items-center">
+                      <i class="fas fa-inbox me-2"></i> Inbox
+                      <span class="badge bg-primary ms-auto">{{ inbox_count }}</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'sent_messages' %}" class="nav-link active d-flex align-items-center">
+                      <i class="far fa-paper-plane me-2"></i> Sent
+                      <span class="badge bg-secondary ms-auto">{{ sent_count }}</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- Main Content -->
+          <div class="col-md-9">
+            <div class="card">
+              <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">Sent Messages</h4>
+                <form action="" class="input-group" style="width: 210px !important;">
+                  <input type="text" class="form-control" placeholder="Search messages..." id="message-search" style="width: 100px !important;" name="q" value="{{ query|default:'' }}" />
+                  <button class="btn btn-success"><i class="fas fa-search"></i></button>
+                </form>
+              </div>
+              <div class="card-body p-0">
+                <style>
+                  .list-group-item:hover {
+                    background: #e4e6ef;
+                  }
+                </style>
+                {% comment %} <div class="upper-nav py-1 border px-3">
+                  <a href="?read" class="btn-sm btn btn-primary ">Read</a>
+                </div> {% endcomment %}
+                <div class="list-group py-2" id="message-list">
+                  {% for message in messages %}
+                  <div class="msg-ctn">
+                    <a href="{% url 'message_detail' message.id %}" class="border-bottom p-2 px-3 W-100 d-block">
+                      <div class="d-flex justify-content-between align-items-center py-2" style="width: 100vh important">
+                        <div class="d-flex align-items-center gap-2">
+
+                          <div class="d-flex align-items-center gap-2">
+                            <div class="user-card">
+                              <img src="
+                              {% if message.receiver.profile_image %}
+                              {{ message.receiver.profile_image.url }}
+                              {% else %}
+                              {% static 'images/no-user-image.jpg' %}
+                              {% endif %}
+                              "
+                              class="img-thumbnail rounded-circle mx-auto"
+                              style="height: 63px; object-fit: cover; object-position: center;"
+                              width="60px" />
+                          </div>
+                        </div>
+                        <div class="details">
+                          <h5 class="mb-1 text-truncate text-capitalize">{{ message.subject }}</h5>
+                          <p class="mb-1 text-muted small">{{ message.content|truncatechars:70 }}</p>
+                          <div class="d-flex justify-content-between align-items-center">
+                            <small><strong>From:</strong> {{ message.sender.get_full_name }} ({{ message.sender.role }})</small>
+                          </div>
+                        </div>
+                        </div>
+                        <div>
+                          {% if message.has_attachments %}
+                            <span class="badge bg-info"><i class="fas fa-paperclip me-1"></i>Attachment</span>
+                          {% endif %}
+                          {% if not message.read %}
+                            <span class="badge bg-success ms-1">Unread</span>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </a>
+                    {% comment %} <div class="col-1 text-end">
+                      <button class="btn btn-sm btn-white text-danger delete-btn" data-bs-toggle="modal" data-bs-target="#message-delete-modal-{{ message.id }}"><i class="fas fa-trash-alt"></i></button>
+                    </div> {% endcomment %}
+                  </div>
+                  {% empty %}
+                    <div class="list-group-item text-center py-5 my-5">
+                      <i class="far fa-envelope-open fa-3x mb-3 text-muted"></i>
+                      <p class="mb-0 text-muted">
+                        No sent messages found{% if query %}
+                          for search term <strong>'{{ query }}'</strong>.<div class="d-flex align-items-center gap-2">
+                          </div>
+                        {% endif %}
+                      </p>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% if messages %}
+                {% if messages.paginator.num_pages > 1 %}
+                  <nav aria-label="Message navigation">
+                    <ul class="custom-pagination">
+                      {% if messages.has_previous %}
+                        <li class="custom-page-item">
+                          <a class="custom-page-link" href="?page=1" aria-label="First">&laquo;&laquo;</a>
+                        </li>
+                        <li class="custom-page-item">
+                          <a class="custom-page-link" href="?page={{ messages.previous_page_number }}" aria-label="Previous">&laquo;</a>
+                        </li>
+                      {% endif %}
+
+                      {% for num in messages.paginator.page_range %}
+                        {% if messages.number == num %}
+                          <li class="custom-page-item active">
+                            <span class="custom-page-link">{{ num }}</span>
+                          </li>
+                        {% elif num > messages.number|add:'-3' and num < messages.number|add:'3' %}
+                          <li class="custom-page-item">
+                            <a class="custom-page-link" href="?page={{ num }}">{{ num }}</a>
+                          </li>
+                        {% endif %}
+                      {% endfor %}
+
+                      {% if messages.has_next %}
+                        <li class="custom-page-item">
+                          <a class="custom-page-link" href="?page={{ messages.next_page_number }}" aria-label="Next">&raquo;</a>
+                        </li>
+                        <li class="custom-page-item">
+                          <a class="custom-page-link" href="?page={{ messages.paginator.num_pages }}" aria-label="Last">&raquo;&raquo;</a>
+                        </li>
+                      {% endif %}
+                    </ul>
+                  </nav>
+                {% endif %}
+              {% endif %}
+
+              <style>
+                .custom-pagination {
+                  display: flex;
+                  justify-content: center;
+                  list-style: none;
+                  padding: 0;
+                  margin: 1rem 0;
+                }
+                
+                .custom-page-item {
+                  margin: 0 0.25rem;
+                }
+                
+                .custom-page-link {
+                  display: block;
+                  padding: 0.5rem 0.75rem;
+                  border: 1px solid #dee2e6;
+                  border-radius: 0.25rem;
+                  background-color: #ffffff;
+                  color: #007bff;
+                  text-decoration: none;
+                  transition: background-color 0.3s, color 0.3s;
+                }
+                
+                .custom-page-item.active .custom-page-link {
+                  background-color: #007bff;
+                  border-color: #007bff;
+                  color: #ffffff;
+                }
+                
+                .custom-page-link:hover {
+                  background-color: #e9ecef;
+                  color: #0056b3;
+                }
+                
+                .custom-page-item:first-child .custom-page-link,
+                .custom-page-item:last-child .custom-page-link {
+                  border-radius: 0.25rem;
+                }
+              </style>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .content-wrapper {
+      background-color: #f8f9fa;
+    }
+    .card {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border: none;
+    }
+    .list-group-item {
+      border: none;
+      border-bottom: 1px solid #e9ecef;
+      transition: background-color 0.3s ease;
+    }
+    .list-group-item:last-child {
+      border-bottom: none;
+    }
+    .badge {
+      font-size: 0.75rem;
+    }
+    .list-group-item-action:hover {
+      background-color: #f1f3f5;
+    }
+    .nav-pills .nav-link {
+      color: #495057;
+      border-radius: 0;
+    }
+    .nav-pills .nav-link.active {
+      background-color: #007bff;
+      color: #ffffff;
+    }
+  </style>
+{% endblock %}

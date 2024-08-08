@@ -1,0 +1,229 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Dashboard
+{% endblock %}
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  {% comment %} <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <h2 class="my-3">Profile</h2>
+          <div class="container">
+            <div class="row">
+              <div class="text-center mb-4 col-4" style="position: sticky; top: 0 !important;">
+                <div class="inner text-center card d-flex justify-content-center flex-column py-4">
+                  <img src="{% if user.profile_image %}
+                      {{ user.profile_image.url }}
+                    {% else %}
+                      {% static 'images/no-user-image.jpg' %}
+                    {% endif %}"
+                    alt="Profile Image"
+                    class="img-thumbnail rounded-circle mx-auto"
+                    style="width: 150px; height: 150px; object-fit: cover; object-position: center;" />
+
+                  <h3 class="mt-3">{{ user.first_name }} {{ user.last_name }}</h3>
+                  <p class="text-muted">{{ user.role }}</p>
+                </div>
+                <div class="card text-start my-3">
+                  <div class="card-title p-2 mb-0">
+                    <h4 class="my-0 py-0">Messages</h4>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="content py-5">
+                      <b>No Messages Available</b>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile Info</button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="update-tab" data-bs-toggle="tab" data-bs-target="#update" type="button" role="tab" aria-controls="update" aria-selected="false">Update Form</button>
+                  </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                  <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="card mt-3">
+                      <h4 class="mb-4 card-header">Personal Information</h4>
+                      <div class="card-body p-4 rounded shadow-sm">
+                        <div class="row mb-3">
+                          <div class="col-md-3">
+                            <strong>First Name:</strong>
+                          </div>
+                          <div class="col-md-8">
+                            <span class="text-muted">{{ user.first_name }}</span>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-md-3">
+                            <strong>Last Name:</strong>
+                          </div>
+                          <div class="col-md-8">
+                            <span class="text-muted">{{ user.last_name }}</span>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-md-3">
+                            <strong>Email:</strong>
+                          </div>
+                          <div class="col-md-8">
+                            <span class="text-muted">{{ user.email }}</span>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-md-3">
+                            <strong>Role:</strong>
+                          </div>
+                          <div class="col-md-8">
+                            <span class="text-muted">{{ user.role }}</span>
+                          </div>
+                        </div>
+
+                        <!-- Additional Profile Fields -->
+                        <div class="row mb-3">
+                          <div class="col-md-3">
+                            <strong>Phone Number:</strong>
+                          </div>
+                          <div class="col-md-8">
+                            <span class="text-muted">{{ profile.phone_number }}</span>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-md-3">
+                            <strong>Address:</strong>
+                          </div>
+                          <div class="col-md-8">
+                            <span class="text-muted">{{ profile.address }}</span>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-md-3">
+                            <strong>Date of Birth:</strong>
+                          </div>
+                          <div class="col-md-8">
+                            <span class="text-muted">{{ profile.date_of_birth }}</span>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-md-3">
+                            <strong>Gender:</strong>
+                          </div>
+                          <div class="col-md-8">
+                            <span class="text-muted">{{ profile.gender }}</span>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-md-3">
+                            <strong>Specialization:</strong>
+                          </div>
+                          <div class="col-md-8">
+                            <span class="text-muted">{{ profile.specialization }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="update" role="tabpanel" aria-labelledby="update-tab">
+                    <form method="post" enctype="multipart/form-data">
+                      {{ profile_form.errors }}
+                      {{ user_form.errors }}
+
+                      {% csrf_token %}
+                      <div class="card mt-3">
+                        <div class="card-header">
+                          <h4>Update Personal Information</h4>
+                        </div>
+                        <div class="card-body">
+                          <div class="form-group">
+                            <label for="id_first_name">First Name:</label>
+                            {{ user_form.first_name|add_class:'form-control' }}
+                          </div>
+                          <div class="form-group">
+                            <label for="id_last_name">Last Name:</label>
+                            {{ user_form.last_name|add_class:'form-control' }}
+                          </div>
+                          <div class="form-group">
+                            <label for="id_email">Email:</label>
+                            {{ user_form.email|add_class:'form-control' }}
+                          </div>
+                          <div class="form-group">
+                            <label for="id_profile_image">Profile Image:</label>
+                            {{ user_form.profile_image|add_class:'form-control' }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="card mt-3">
+                        <div class="card-header">
+                          <h4>Other Information</h4>
+                        </div>
+                        <div class="card-body">
+                          {% for field in profile_form %}
+                            <div class="form-group">
+                              <label for="{{ field.label }}" class="form-label">{{ field.label }}:</label>
+                              {{ field|add_class:'form-control' }}
+                              {% for error in field.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                              {% endfor %}
+                            </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+
+                      <div class="form-group mt-3">
+                        <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div> {% endcomment %}
+  <div class="content-wrapper">
+    <h1>User Form</h1>
+    {{ user_form }}
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>&copy;<script>
+                  document.write(new Date().getFullYear())
+                </script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+
+  <!-- ./wrapper -->
+
+  <!-- ./side demo panel -->
+  <div class="sticky-toolbar">
+    <a href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529" data-bs-toggle="tooltip" data-bs-placement="left" title="Buy Now" class="waves-effect waves-light btn btn-success btn-flat mb-5 btn-sm" target="_blank"><span class="icon-Money"><span class="path1"></span><span class="path2"></span></span></a>
+    <a href="https://themeforest.net/user/multipurposethemes/portfolio" data-bs-toggle="tooltip" data-bs-placement="left" title="Portfolio" class="waves-effect waves-light btn btn-danger btn-flat mb-5 btn-sm" target="_blank"><span class="icon-Image"></span></a>
+    <a id="chat-popup" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Live Chat" class="waves-effect waves-light btn btn-warning btn-flat btn-sm"><span class="icon-Group-chat"><span class="path1"></span><span class="path2"></span></span></a>
+  </div>
+  <!-- Sidebar -->
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Prescription Detail
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <h2>Prescription for {{ prescription.patient.get_full_name }}</h2>
+        <p>Doctor: {{ prescription.doctor.get_full_name }}</p>
+        <p>Medication: {{ prescription.medication.all|join:", " }}</p>
+        <p>Instructions: {{ prescription.instructions }}</p>
+        <p>Status: {{ prescription.get_status_display }}</p>
+        <a href="{% url 'prescription_update' prescription.pk %}" class="btn btn-primary">Edit</a>
+        <a data-bs-toggle="modal" data-bs-target="#prescription-delete-modal-{{ prescription.id }}" class="btn btn-danger" style="cursor: pointer;">Delete</a>
+      </section>
+    </div>
+  </div>
+
+  <div class="modal fade" id="prescription-delete-modal-{{ prescription.id }}" tabindex="-1" aria-labelledby="prescription-delete-modal-Label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="prescription-delete-modal-Label">Confirm Delete Prescription</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete the prescription for <strong>{{ prescription.patient.get_full_name }}</strong>?
+        </div>
+        <div class="modal-footer d-flex align-items-center">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <form action="{% url 'prescription_delete' prescription.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

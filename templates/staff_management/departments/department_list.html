@@ -1,0 +1,129 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  All Departments
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <div class="container-full">
+      <!-- Content Header (Page header) -->
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Departments</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Departments</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <section class="content">
+        <div class="controls d-flex align-items-center justify-content-end my-4">
+          <a href="{% url 'create_department' %}" class="btn btn-success d-flex align-items-center gap-3">
+            Create
+            <span><i class="fas fa-plus" style="font-size: 10px !important;"></i></span>
+          </a>
+        </div>
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Department List</h3>
+          </div>
+          <div class="box-body">
+            <div class="table-responsive">
+              <table class="table border-no" id="data-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Head</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for department in departments %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ department.name }}</td>
+                      <td>{{ department.code }}</td>
+                      <td>{{ department.description|default:"N/A" }}</td>
+                      <td>{{ department.head.get_full_name|default:"N/A" }}</td>
+                      <td>
+                        <div class="btn-group">
+                          <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'update_department' department.pk %}">Edit</a>
+                            <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#department-delete-modal-{{ department.id }}">Delete</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <div class="modal fade" id="department-delete-modal-{{ department.id }}" tabindex="-1" aria-labelledby="department-delete-modal-Label" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="department-delete-modal-Label">Confirm Delete Department</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to delete the department <strong>'{{ department.name }}'</strong>?
+                          </div>
+                          <div class="modal-footer d-flex align-items-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="{% url 'delete_department' department.pk %}" method="POST">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% empty %}
+                    <tr>
+                      <td colspan="4">No departments found.</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <div class="control-sidebar-bg"></div>
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>&copy;<script>
+                  document.write(new Date().getFullYear())
+                </script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Laboratory Inventory List
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <div class="controls d-flex align-items-center justify-content-end my-4">
+          <a href="{% url 'labinventory_create' %}" class="btn btn-success d-flex align-items-center gap-3">
+            Create New Inventory Item
+            <span><i class="fas fa-plus" style="font-size: 10px !important;"></i></span>
+          </a>
+        </div>
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Laboratory Inventory List</h3>
+          </div>
+          <div class="box-body">
+            <div class="table-responsive">
+              <table class="table border-no" id="data-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Description</th>
+                    <th>Date Added</th>
+                    <th>Last Updated</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for inventory in inventory_items %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ inventory.name }}</td>
+                      <td>{{ inventory.quantity }}</td>
+                      <td>{{ inventory.description|default:"N/A" }}</td>
+                      <td>{{ inventory.date_added }}</td>
+                      <td>{{ inventory.last_updated }}</td>
+                      <td>
+                        <div class="btn-group">
+                          <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'labinventory_update' inventory.pk %}">Edit</a>
+                            <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#inventory-delete-modal-{{ inventory.id }}">Delete</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <div class="modal fade" id="inventory-delete-modal-{{ inventory.id }}" tabindex="-1" aria-labelledby="inventory-delete-modal-Label" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="inventory-delete-modal-Label">Confirm Delete Inventory Item</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to delete the inventory item <strong>'{{ inventory.name }}'</strong>?
+                          </div>
+                          <div class="modal-footer d-flex align-items-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="{% url 'labinventory_delete' inventory.pk %}" method="POST">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% empty %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}

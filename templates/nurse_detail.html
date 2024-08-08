@@ -1,0 +1,146 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+	
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper rounded-0">
+    <div class="container-full ">
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .card {
+                margin: 20px 0;
+            }
+            .profile-image {
+                width: 150px;
+                height: 150px;
+                object-fit: cover;
+                border-radius: 50%;
+                margin: 0 auto;
+            }
+            .info-block {
+                margin: 10px 0;
+            }
+            .info-label {
+                font-weight: bold;
+            }
+        </style>
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <h3 class="my-4">View Nurse Info</h3>
+          <p>
+            View information about nurse 
+          </p>
+          <div class="container">
+            <div class="nurse-card">
+                <div class="nurse-card-content">
+                    <div class="row my-4">
+                        <div class="col-md-4 text-center">
+                            <div class="inner-div card py-4">
+                                <img src="{% if nurse.user.profile_image %}{{ nurse.user.profile_image.url }}{% else %}{% static 'images/no-user-image.jpg' %}{% endif %}" alt="Nurse Profile Image" class="profile-image img-thumbnail">
+                                <h3>{{ nurse.user.get_full_name }}</h3>
+                                <p>{{ nurse.user.role }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                            <div class="col-md-5">
+                            <div class="info-block">
+                                <div class="info-label">Full Name:</div>
+                                <div>{{ nurse.user.get_full_name }}</div>
+                            </div>
+                            <div class="info-block">
+                                <div class="info-label">Email:</div>
+                                <div>{{ nurse.email }}</div>
+                            </div>
+                            <div class="info-block">
+                                <div class="info-label">Phone Number:</div>
+                                <div>{{ nurse.phone_number }}</div>
+                            </div>
+                            <div class="info-block">
+                                <div class="info-label">Address:</div>
+                                <div>{{ nurse.address }}</div>
+                            </div>
+                            <div class="info-block">
+                                <div class="info-label">Gender:</div>
+                                <div>{{ nurse.gender }}</div>
+                            </div>
+                            <div class="info-block">
+                                <div class="info-label">Date of Birth:</div>
+                                <div>{{ nurse.date_of_birth }}</div>
+                            </div>
+                            <div class="info-block">
+                                <div class="info-label">Department:</div>
+                                <div>{{ nurse.department }}</div>
+                            </div>
+                            <div class="info-block">
+                                <div class="info-label">Years of Experience:</div>
+                                <div>{{ nurse.years_of_experience }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="info-block">
+                                <div class="info-label">Medical License Number:</div>
+                                <div>{{ nurse.license_number }}</div>
+                            </div>
+                            <div class="info-block">
+                                <div class="info-label">Shift Timing:</div>
+                                <div>{{ nurse.shift_start_time }} - {{ nurse.shift_end_time }}</div>
+                            </div>
+                            <div class="info-block">
+                                <div class="info-label">Current Patient Load:</div>
+                                <div>{{ nurse.current_patient_load }}</div>
+                            </div>
+                            <div class="info-block">
+                                <div class="info-label">Recent Training:</div>
+                                {% if nurse.recent_training %}
+                                <div>{{ nurse.recent_training }}</div>
+                                {% else %}
+                                <div>-- No Info --</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'nurse_list' %}" class="btn btn-primary">Back to Nurse List</a>
+                </div>
+            </div>
+        </div>
+    
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529"></a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+  </footer>
+  
+</div>
+
+
+{% endblock %}

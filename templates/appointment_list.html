@@ -1,0 +1,183 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  All Appointments
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <div class="container-full">
+      <!-- Content Header (Page header) -->
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Appointments</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Appointments</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <section class="content">
+        <div class="controls d-flex align-items-center justify-content-end my-4">
+          <a href="{% url 'appointment_create' %}" class="btn btn-success d-flex align-items-center gap-3">
+            Create
+            <span><i class="fas fa-plus" style="font-size: 10px !important;"></i></span>
+          </a>
+        </div>
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Appointment List</h3>
+          </div>
+          <div class="box-body">
+            <div class="table-responsive">
+              <table class="table border-no" id="data-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Patient Name</th>
+                    <th>Nurse/Doctor</th>
+                    <th>Appointment Date</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for appointment in appointments %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>
+                        <a href="{% url 'patient_detail' appointment.patient.pk %}">{{ appointment.patient.user.get_full_name }}</a>
+                      </td>
+                      <td>
+                        {% if appointment.nurse %}
+                          <a href="{% url 'nurse_detail' appointment.nurse.pk %}">Nr. {{ appointment.nurse.employee.user.get_full_name }}</a>
+                        {% elif appointment.doctor %}
+                          <a href="{% url 'doctor_detail' appointment.doctor.pk %}">Dr. {{ appointment.doctor.employee.user.get_full_name }}</a>
+                        {% else %}
+                          N/A
+                        {% endif %}
+                      </td>
+                      <td>{{ appointment.appointment_date }}</td>
+                      <td>{{ appointment.reason }}</td>
+                      <td>
+                        {% if appointment.status == "Scheduled" %}
+                          <span class="badge bg-primary-light">{{ appointment.status }}</span>
+                          {% elif appointment.status == "Completed" %}
+                          <span class="badge bg-success-light">{{ appointment.status }}</span>
+                          {% else %}
+                          <span class="badge bg-danger-light">{{ appointment.status }}</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'appointment_detail' appointment.pk %}">View Details</a>
+                            <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#appointment-cancel-modal-{{ appointment.id }}">Cancel Appointment</a>
+                            <a class="dropdown-item" href="{% url 'appointment_update' appointment.pk %}">Edit</a>
+                            <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#appointment-delete-modal-{{ appointment.id }}">Delete</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <div class="modal fade" id="appointment-delete-modal-{{ appointment.id }}" tabindex="-1" aria-labelledby="appointment-delete-modal-Label" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="appointment-delete-modal-Label">Confirm Delete appointment</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to delete appointment of 'patient' made with <strong>'{{ appointment.user.get_full_name }}'</strong>?
+                          </div>
+                          <div class="modal-footer d-flex align-items-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="{% url 'appointment_delete' appointment.pk %}" method="POST">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="appointment-cancel-modal-{{ appointment.id }}" tabindex="-1" aria-labelledby="appointment-cancel-modal-Label" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="appointment-delete-modal-Label">
+                              Cancel Appointment
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <form action="" method="post">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                              <p>
+                                {% if appointment.nurse %}
+                                Cancel appointment Between Patient <b>'{{ appointment.patient.user.get_full_name }}'</b> and <b>Nr. {{ appointment.nurse.employee.user.get_full_name }}</b>
+                                {% elif appointment.doctor %}
+                                Cancel appointment Between Patient <b>'{{ appointment.patient.user.get_full_name }}'</b> and <b>Dr. {{ appointment.doctor.employee.user.get_full_name }}</b>
+                            {% endif %}
+                              </p>
+                              <span class="text-muted">Provide a meaningful reason for cancelling appointment</span><span class="text-dark">(Remember that once you cancel it, you can't reverse it, you have to create a new appointment)</span>
+                              <input type="hidden" name="appt_id" value="{{ appointment.pk }}" />
+                              <div class="form-group my-2">
+                                <label for="" class="form-label">Reason: <span class="text-danger">*</span></label>
+                                <textarea name="cancellation_reason" placeholder="Provide a meaningful reason..." class="form-control" rows="5" id="" required></textarea>
+                              </div>
+                            </div>
+                            <div class="modal-footer d-flex align-items-center">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                              <button class="btn btn-danger">Submit</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  {% empty %}
+
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <div class="control-sidebar-bg"></div>
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>&copy;<script>
+                  document.write(new Date().getFullYear())
+                </script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

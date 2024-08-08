@@ -1,0 +1,66 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Notifications {% endblock %}
+{% block content %}
+	
+{% include 'includes/sidebar_content.html' %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper rounded-0">
+    <div class="container-full">
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border d-flex align-items-center justify-content-between">
+                            <h4 class="box-title">Your Notifications</h4>
+                            <a href="" class="btn btn-danger btn-sm">Clear All</a>
+                        </div>
+                        <div class="box-body p-0">
+                            <div class="notifications-list">
+                                {% for notification in notifications %}
+                                <div class="notification-item d-flex align-items-center p-15 border-bottom">
+                                    <div class="me-15">
+                                        <span class="avatar avatar-lg rounded-circle bg-{{ notification.bg_color }}" style="opacity: .8; ">
+                                            <i class="fas {{ notification.icon }}"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-0">{{ notification.content }}</h5>
+                                        <small class="text-muted">{{ notification.timestamp|timesince }} ago</small>
+                                    </div>
+                                    <div>
+                                        {% if notification.link %}
+                                        <a href="{{ notification.link }}" class="btn btn-sm btn-outline-{{ notification.bg_color }}">{{ notification.link_name }}</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div style="height: 200px;" class="d-flex align-items-center justify-content-center">
+                                    <h5>No Notifications Available</h5>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>				
+        </section>
+        <!-- /.content -->
+    </div>
+</div>
+<!-- /.content-wrapper -->
+
+{% comment %} {% include 'includes/footer.html' %} {% endcomment %}
+
+</div>
+<!-- ./wrapper -->
+
+{% endblock %}

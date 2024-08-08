@@ -1,0 +1,76 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}Lab Technician Detail{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper">
+    <div class="container-full">
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Lab Technician Detail</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Lab Technician Detail</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Lab Technician Information</h3>
+          </div>
+          <div class="box-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h5><strong>Name:</strong> {{ lab_technician.employee.user.get_full_name }}</h5>
+                <h5><strong>Email:</strong> {{ lab_technician.employee.user.email }}</h5>
+                <h5><strong>Phone Number:</strong> {{ lab_technician.employee.phone_number }}</h5>
+                <h5><strong>Specialization:</strong> {{ lab_technician.get_lab_specialization_display }}</h5>
+                <h5><strong>Years of Experience:</strong> {{ lab_technician.years_of_experience }}</h5>
+              </div>
+              <div class="col-md-6">
+                <h5><strong>Department:</strong> {{ lab_technician.department.name }}</h5>
+                <h5><strong>Date of Birth:</strong> {{ lab_technician.employee.date_of_birth|date:"D, d M Y" }}</h5>
+                <h5><strong>Gender:</strong> {{ lab_technician.employee.get_gender_display }}</h5>
+                <h5><strong>Profile Image:</strong></h5>
+                <img src="{{ lab_technician.employee.profile_image.url }}" alt="Profile Image" class="img-fluid img-thumbnail" width="150">
+              </div>
+            </div>
+            <div class="controls d-flex align-items-center justify-content-end my-4">
+              <a href="{% url 'lab_technician_update' lab_technician.pk %}" class="btn btn-primary">Edit</a>
+              <a href="{% url 'lab_technician_list' %}" class="btn btn-secondary">Back to List</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Purchase Now</a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="#">Hospital System</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

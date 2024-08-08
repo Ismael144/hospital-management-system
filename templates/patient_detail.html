@@ -1,0 +1,262 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Dashboard
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <style>
+        body {
+          background-color: #f8f9fa;
+        }
+        .card {
+          margin: 20px 0;
+        }
+        .profile-image {
+          width: 150px;
+          height: 150px;
+          object-fit: cover;
+          border-radius: 50%;
+          margin: 0 auto;
+        }
+        .info-block {
+          margin: 10px 0;
+        }
+        .info-label {
+          font-weight: bold;
+        }
+      </style>
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <h3 class="my-2">View Patient</h3>
+          <p class="my-0 py-0">View single patient's information</p>
+          <div class="container">
+            <div class="patient-card-content">
+              <div class="row my-4">
+                <div class="col-md-4 text-center">
+                  <div class="inner-div card py-4">
+                    <img src="{% if patient.user.profile_image %}
+                        {{ patient.user.profile_image.url }}
+                      {% else %}
+                        {% static 'images/no-user-image.jpg' %}
+                      {% endif %}"
+                      alt="Patient Profile Image"
+                      class="profile-image img-thumbnail" />
+                    <h3>{{ patient.user.get_full_name }}</h3>
+                    <p>{{ patient.preferred_language|default_if_none:'N/A' }}</p>
+                  </div>
+                </div>
+                <div class="col-md-8">
+                  <div class="row">
+                    <div class="col-md-5">
+                      <div class="info-block">
+                        <div class="info-label">Full Name:</div>
+                        <div>{{ patient.user.get_full_name|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Email:</div>
+                        <div>{{ patient.user.email|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Phone Number:</div>
+                        <div>{{ patient.phone_number|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Address:</div>
+                        <div>{{ patient.address|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Date of Birth:</div>
+                        <div>{{ patient.date_of_birth|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Emergency Phone Contact:</div>
+                        <div>{{ patient.emergency_contact_phone|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Emergency Contact Name:</div>
+                        <div>{{ patient.emergency_contact_name|default_if_none:'N/A' }}</div>
+                      </div>
+                    </div>
+                    <div class="col-md-5">
+                      <div class="info-block">
+                        <div class="info-label">Insurance Provider:</div>
+                        <div>{{ patient.insurance_provider|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Insurance Policy Number:</div>
+                        <div>{{ patient.insurance_policy_number|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Allergies:</div>
+                        <div>{{ patient.allergies|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Current Medications:</div>
+                        <div>{{ patient.current_medications|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Family Medical History:</div>
+                        <div>{{ patient.family_medical_history|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Health Habits:</div>
+                        <div>{{ patient.health_habits|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Disease:</div>
+                        <div>{{ patient.disease|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Status:</div>
+                        <div>{{ patient.status|default_if_none:'N/A' }}</div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Assigned Doctor:</div>
+                        <div>
+                          {% if patient.assigned_doctor %}
+                            Dr. {{ patient.assigned_doctor.user.get_full_name }}
+                          {% else %}
+                            N/A
+                          {% endif %}
+                        </div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Assigned Room:</div>
+                        <div>
+                          {% if patient.assigned_room %}
+                            {{ patient.assigned_room.room_number }}
+                          {% else %}
+                            N/A
+                          {% endif %}
+                        </div>
+                      </div>
+                      <div class="info-block">
+                        <div class="info-label">Preferred Language:</div>
+                        <div>{{ patient.preferred_language|default_if_none:'N/A' }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- New Section for Bills -->
+              <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Bill List</h3>
+                </div>
+                <div class="box-body">
+                  <div class="table-responsive rounded card-table">
+                    <table class="table border-no mt-3" id="data-table">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Patient</th>
+                          <th>Doctor</th>
+                          <th>Total Amount</th>
+                          <th>Amount Paid</th>
+                          <th>Status</th>
+                          <th>Details</th>
+                          <th>Date Issued</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for bill in bills %}
+                        <tr class="hover-primary">
+                          <td>#{{ bill.id }}</td>
+                          <td><a href="{% url 'patient_detail' bill.appointment.patient.pk %}">{{ bill.appointment.patient.user.get_full_name }}</a></td>
+                          <td>
+                              {% if bill.appointment.doctor %}
+                                  <a href="{% url 'doctor_detail' bill.appointment.doctor.pk %}">Dr. {{ bill.appointment.doctor.user.get_full_name }}</a>
+                                  {% else %}
+                                  <a href="{% url 'nurse_detail' bill.appointment.nurse.pk %}">Dr. {{ bill.appointment.nurse.user.get_full_name }}</a>
+                              {% endif %}
+                          </td>
+                          <td>UGX {{ bill.total_amount|intcomma }}</td>
+                          <td>UGX {{ bill.amount_paid|intcomma }}</td>
+                          <td>{{ bill.status }}</td>
+                          <td>{{ bill.details }}</td>
+                          <td>{{ bill.date_issued }}</td>
+                          <td>
+                            <div class="btn-group">
+                              <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                              <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'bill_detail' bill.pk %}">View Details</a>
+                                <a class="dropdown-item" href="{% url 'bill_update' bill.pk %}">Edit</a>
+                                <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;"  data-bs-target="#bill-delete-modal-{{ bill.id }}">
+                                    Delete
+                                </a>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <!-- Delete bill Modal -->
+                        <div class="modal fade" id="bill-delete-modal-{{ bill.id }}" tabindex="-1" aria-labelledby="bill-delete-modal-Label" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="bill-delete-modal-Label">Confirm Delete Bill</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                Are you sure you want to delete this bill?
+                              </div>
+                              <div class="modal-footer d-flex align-items-center">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <form action="{% url 'bill_delete' bill.pk %}" method="POST">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- End Delete bill Modal -->
+                        {% empty %}
+                          
+                        {% endfor %}
+                      </tbody>
+                    </table>                   
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="card-footer text-center">
+              <a href="{% url 'patient_list' %}" class="btn btn-primary">Back to Patient List</a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529"></a>
+        </li>
+      </ul>
+    </div>&copy;<script>
+                  document.write(new Date().getFullYear())
+                </script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

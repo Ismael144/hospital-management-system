@@ -1,0 +1,44 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Inventory Details
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <h3>Inventory Details for {{ inventory.medication.name }}</h3>
+        <table class="table border-no">
+          <tbody>
+            <tr>
+              <th>Medication</th>
+              <td>{{ inventory.medication.name }}</td>
+            </tr>
+            <tr>
+              <th>Quantity in Stock</th>
+              <td>{{ inventory.quantity_in_stock }}</td>
+            </tr>
+            <tr>
+              <th>Reorder Threshold</th>
+              <td>{{ inventory.reorder_threshold }}</td>
+            </tr>
+            <tr>
+              <th>Last Restocked</th>
+              <td>{{ inventory.last_restocked }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <a href="{% url 'inventory_update' inventory.pk %}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'inventory_list' %}" class="btn btn-secondary">Back to List</a>
+      </section>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Pharmacists
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper">
+    <div class="container-full">
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Pharmacists</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Pharmacists</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="controls d-flex align-items-center justify-content-end my-4">
+          <a href="{% url 'pharmacist-create' %}" class="btn btn-success d-flex align-items-center gap-3">
+            Add Pharmacist
+            <span><i class="fas fa-plus" style="font-size: 10px !important;"></i></span>
+          </a>
+        </div>
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Pharmacists List</h3>
+          </div>
+          <div class="box-body">
+            <div class="table-responsive">
+              <table class="table border-no" id="data-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Employee</th>
+                    <th>Qualifications</th>
+                    <th>Experience</th>
+                    <th>License Number</th>
+                    <th>Current Medication Load</th>
+                    <th>Shift</th>
+                    <th>License Expiry</th>
+                    <th>Department</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for pharmacist in pharmacists %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ pharmacist.employee.user.get_full_name }}</td>
+                      <td>{{ pharmacist.qualifications|default:"N/A" }}</td>
+                      <td>{{ pharmacist.years_of_experience }}</td>
+                      <td>{{ pharmacist.pharmacy_license_number }}</td>
+                      <td>{{ pharmacist.current_medication_load }}</td>
+                      <td>{{ pharmacist.shift }}</td>
+                      <td>{{ pharmacist.license_expiry_date|date:"Y-m-d" }}</td>
+                      <td>{{ pharmacist.department }}</td>
+                      <td>
+                        <div class="btn-group">
+                          <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'pharmacist-detail' pharmacist.pk %}">View Details</a>
+                            <a class="dropdown-item" href="{% url 'pharmacist-update' pharmacist.pk %}">Edit</a>
+                            <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#pharmacist-delete-modal-{{ pharmacist.id }}">Delete</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <div class="modal fade" id="pharmacist-delete-modal-{{ pharmacist.id }}" tabindex="-1" aria-labelledby="pharmacist-delete-modal-Label" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="pharmacist-delete-modal-Label">Confirm Delete Pharmacist</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to delete this pharmacist '{{ pharmacist.employee.user.get_full_name }}'?
+                          </div>
+                          <div class="modal-footer d-flex align-items-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="{% url 'pharmacist-delete' pharmacist.pk %}" method="POST">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% empty %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}

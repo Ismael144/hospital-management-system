@@ -1,0 +1,85 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+	
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper rounded-0">
+    <div class="container-full ">
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <h3 class="my-4">Edit A Receptionist</h3>
+          <p>
+            Fill in all the fields correctly inorder to add a receptionist
+          </p>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger my-2">
+              Please correct the following errors to proceed 
+            </div>
+            {% endif %}
+            {% for field in form %}
+            <div class="form-group">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field|add_class:"form-control" }}
+              {% if field.help_text %}
+                <p class="help-block">{{ field.help_text }}</p>
+              {% endif %}
+              {% if field.errors %}
+                <p class="text-danger mt-2">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </p>
+              {% endif %}
+            </div>
+          {% endfor %}
+            <button type="submit" class="btn btn-primary">{% if not is_updating %}Create Appointment{% else %}Edit Appointment{% endif %}</button>
+        </form>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529"></a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+  </footer>
+  
+</div>
+
+<!-- Vendor JS -->
+<script src="{% static 'assets/js/notifications.js' %}"></script>
+<script src="{% static 'assets/js/vendors.min.js' %}"></script>
+<script src="{% static 'assets/js/pages/chat-popup.js' %}"></script>
+<script src="{% static 'assets/icons/feather-icons/feather.min.js' %}"></script>
+
+<script src="{% static 'assets/vendor_components/apexcharts-bundle/dist/apexcharts.js' %}"></script>
+<script src="../../rawgit.com/nnnick/Chart.js/v1.0.2/Chart.min.js"></script>
+<script src="{% static 'assets/vendor_components/raphael/raphael.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/morris.js/morris.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/fullcalendar/lib/moment.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/fullcalendar/fullcalendar.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup-init.js' %}"></script>
+
+{% endblock %}

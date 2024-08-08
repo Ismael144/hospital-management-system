@@ -1,0 +1,74 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  {% if form.instance.pk %} Update Schedule {% else %} Create Schedule {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <!-- Breadcrumbs -->
+      <nav aria-label="breadcrumb" class="my-3">
+        <ol class="breadcrumb bg-light p-2 rounded">
+          <li class="breadcrumb-item">
+            <a href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="{% url 'schedule_list' %}">Schedules</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            {% if form.instance.pk %} Update Schedule {% else %} Create Schedule {% endif %}
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Page Content -->
+      <section class="content">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="box">
+              <div class="box-header">
+                <h3 class="box-title">
+                  {% if form.instance.pk %} Update Schedule {% else %} Create Schedule {% endif %}
+                </h3>
+              </div>
+              <div class="box-body">
+                <form method="post">
+                  {% csrf_token %}
+                  {% for field in form %}
+                    <div class="form-group">
+                      <label for="{{ field.id_for_label }}" class="{% if field.field.required %}required-field{% endif %}">
+                        {{ field.label }}:
+                      </label>
+                      {{ field|add_class:"form-control" }}
+                      {% if field.help_text %}
+                        <p class="help-block">{{ field.help_text }}</p>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                  <button type="submit" class="btn btn-primary">
+                    {% if form.instance.pk %} Update Schedule {% else %} Create Schedule {% endif %}
+                  </button>
+                  <a href="{% url 'schedule_list' %}" class="btn btn-secondary">
+                    Cancel
+                  </a>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <!-- Add any additional scripts here -->
+{% endblock %}

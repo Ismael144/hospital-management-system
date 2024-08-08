@@ -1,0 +1,82 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  {% if object.pk %}
+    Update Job Posting
+  {% else %}
+    Add Job Posting
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper">
+    <div class="container-full">
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">{% if object.pk %}Update Job Posting{% else %}Add Job Posting{% endif %}</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item"><a href="{% url 'job-posting-list' %}">Job Postings</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">{% if object.pk %}Update Job Posting{% else %}Add Job Posting{% endif %}</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">{% if object.pk %}Update Job Posting{% else %}Add Job Posting{% endif %}</h3>
+          </div>
+          <div class="box-body">
+            <form method="post" action="{% url 'job-posting-create' %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              <form method="post">
+                {% csrf_token %}
+                {% if form.errors %}
+                <div class="alert alert-danger my-2">
+                  Please correct the following errors to proceed 
+                </div>
+                {% endif %}
+                {% for field in form %}
+                <div class="form-group my-2">
+                  <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                  {{ field|add_class:"form-control" }}
+                  {% if field.help_text %}
+                    <p class="help-block">{{ field.help_text }}</p>
+                  {% endif %}
+                  {% if field.errors %}
+                    <p class="text-danger mt-2">
+                      {% for error in field.errors %}
+                      {{ error }}
+                      {% endfor %}
+                    </p>
+                    {% endif %}
+                  </div>
+                  {% endfor %}
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="{% url 'job-posting-list' %}" class="btn btn-secondary">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}

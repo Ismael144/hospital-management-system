@@ -1,0 +1,63 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+	
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper rounded-0">
+    <div class="container-full ">
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <form method="post" class="box-shadow bg-light rounded p-4">
+            <h2>Confirm Delete Doctor</h2>
+            <p>Are you sure you want to delete <strong>{{ object.profile.user.get_full_name }}</strong>?</p>
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url 'doctor_list' %}" class="btn btn-secondary">Cancel</a>
+          </form>
+          </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>
+    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+  
+</div>
+
+<!-- Vendor JS -->
+<script src="{% static 'assets/js/notifications.js' %}"></script>
+<script src="{% static 'assets/js/vendors.min.js' %}"></script>
+<script src="{% static 'assets/js/pages/chat-popup.js' %}"></script>
+<script src="{% static 'assets/icons/feather-icons/feather.min.js' %}"></script>
+
+<script src="{% static 'assets/vendor_components/apexcharts-bundle/dist/apexcharts.js' %}"></script>
+<script src="../../rawgit.com/nnnick/Chart.js/v1.0.2/Chart.min.js"></script>
+<script src="{% static 'assets/vendor_components/raphael/raphael.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/morris.js/morris.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/fullcalendar/lib/moment.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/fullcalendar/fullcalendar.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup.min.js' %}"></script>
+<script src="{% static 'assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup-init.js' %}"></script>
+
+{% endblock %}
