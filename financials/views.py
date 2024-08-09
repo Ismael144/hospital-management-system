@@ -332,3 +332,39 @@ class PaymentDeleteView(DeleteView):
         self.object = self.get_object()
         log_activity(request.user, 'Delete', f'Deleted payment with ID {self.object.pk}')
         return super().delete(request, *args, **kwargs)
+
+
+def financial_reports(request):
+    # Dummy data for now
+    total_revenue = 100000
+    total_expenses = 80000
+    receivable_amount = 50000
+    payable_amount = 25000
+    budgets = [
+        {'year': 2021, 'allocated_amount': 80000, 'spent_amount': 60000},
+        {'year': 2022, 'allocated_amount': 90000, 'spent_amount': 75000},
+        {'year': 2023, 'allocated_amount': 100000, 'spent_amount': 85000},
+        {'year': 2024, 'allocated_amount': 110000, 'spent_amount': 95000},
+        {'year': 2025, 'allocated_amount': 120000, 'spent_amount': 105000},
+    ]
+    pending_payroll_count = 1
+    paid_payroll_count = 1
+
+    context = {
+        'total_revenue': total_revenue,
+        'total_expenses': total_expenses,
+        'receivable_amount': receivable_amount,
+        'payable_amount': payable_amount,
+        'budgets': budgets,
+        'pending_payroll_count': pending_payroll_count,
+        'paid_payroll_count': paid_payroll_count,
+        'accounts': [
+            {'name': 'Accounts Receivable', 'amount': 50000, 'status': 'Pending'},
+            {'name': 'Accounts Payable', 'amount': 25000, 'status': 'Pending'}
+        ],
+        'payrolls': [
+            {'employee': 'John Doe', 'month': 'June 2023', 'net_pay': 5000, 'status': 'Paid'},
+            {'employee': 'Jane Smith', 'month': 'June 2023', 'net_pay': 4500, 'status': 'Pending'}
+        ]
+    }
+    return render(request, 'reports_analysis.html', context)

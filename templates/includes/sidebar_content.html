@@ -456,14 +456,14 @@
       <li class="{% if request.resolver_match.url_name == 'labtest_list' %}active{% endif %}">
         <a href="{% url 'labtest_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Tests</a>
       </li>
-      <li class="{% if request.resolver_match.url_name == 'labtest_list' %}active{% endif %}">
+      <li class="{% if request.resolver_match.url_name == 'labresult_list' %}active{% endif %}">
         <a href="{% url 'labtest_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Results</a>
       </li>
-      <li class="{% if request.resolver_match.url_name == 'labtest_list' %}active{% endif %}">
-        <a href="{% url 'labtest_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Specimens</a>
+      <li class="{% if request.resolver_match.url_name == 'specimen_list' %}active{% endif %}">
+        <a href="{% url 'specimen_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Specimens</a>
       </li>
-      <li class="{% if request.resolver_match.url_name == 'labtest_list' %}active{% endif %}">
-        <a href="{% url 'labtest_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Equipments</a>
+      <li class="{% if request.resolver_match.url_name == 'equipment_list' %}active{% endif %}">
+        <a href="{% url 'equipment_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Equipments</a>
       </li>
     </ul>
   </li>

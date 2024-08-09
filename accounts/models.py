@@ -108,12 +108,11 @@ class Doctor(models.Model):
     recent_treatments = models.TextField(blank=True, null=True)
     recent_training = models.TextField(blank=True, null=True)
     performance_reviews = models.TextField(blank=True, null=True)
-    department = models.ForeignKey('human_resource.Department', null=True, on_delete=models.DO_NOTHING)
+    department = models.ForeignKey('human_resource.Department', null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return f"Doctor #{self.pk}"
-        # return self.employee.user.get_full_name()
-
+        return self.employee.user.get_full_name()
+        
 
 class DischargeSummary(models.Model):
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, related_name='discharge_summaries')

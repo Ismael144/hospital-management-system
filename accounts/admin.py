@@ -1,25 +1,25 @@
 from django.contrib import admin
-# from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin
 # from django.utils.translation import gettext_lazy as _
 from .models import CustomUser, Patient, Nurse, Doctor, CaseManager, Representative
 
-# @admin.register(CustomUser)
-# class CustomUserAdmin(UserAdmin):
-#     add_fieldsets = (
-#         (None, {
-#             'classes': ('wide',),
-#             'fields': ('email', 'first_name', 'last_name', 'password1', 'password2', 'role', 'profile_image'),
-#         }),
-#     )
-#     fieldsets = (
-#         (None, {'fields': ('email', 'password')}),
-#         ('Personal info', {'fields': ('first_name', 'last_name', 'profile_image')}),
-#         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-#         ('Role', {'fields': ('role',)}),
-#     )
-#     list_display = ('email', 'first_name', 'last_name', 'is_staff', 'role')
-#     search_fields = ('email', 'first_name', 'last_name')
-#     ordering = ('email',)
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'first_name', 'last_name', 'password1', 'password2', 'role', 'profile_image'),
+        }),
+    )
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'profile_image')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Role', {'fields': ('role',)}),
+    )
+    list_display = ('email', 'first_name', 'last_name', 'is_staff', 'role')
+    search_fields = ('email', 'first_name', 'last_name')
+    ordering = ('email',)
 
 # class PatientAdmin(admin.ModelAdmin):
 #     list_display = ('address', 'phone_number', 'date_of_birth', 'emergency_contact_name', 'insurance_provider', 'status', 'disease', 'assigned_room')
@@ -62,16 +62,16 @@ class NurseAdmin(admin.ModelAdmin):
     list_display = ('qualifications', 'years_of_experience')
     search_fields = ('profile__employee__user__email', 'profile__employee__user__first_name', 'profile__employee__user__last_name')
 
-# @admin.register(Doctor)
-# class DoctorAdmin(admin.ModelAdmin):
-#     list_display = ('specialization', 'years_of_experience', 'department')
-#     search_fields = ('profile__user__username', 'profile__user__first_name', 'profile__user__last_name', 'specialization', 'department')
-#     list_filter = ('specialization', 'department')
+@admin.register(Doctor)
+class DoctorAdmin(admin.ModelAdmin):
+    list_display = ('specialization', 'years_of_experience', 'department')
+    search_fields = ('profile__user__username', 'profile__user__first_name', 'profile__user__last_name', 'specialization', 'department')
+    list_filter = ('specialization', 'department')
 
-# class RepresentativeAdmin(admin.ModelAdmin):
-#     list_display = ('user', 'department', 'date_hired')
-#     search_fields = ('user__email', 'user__first_name', 'user__last_name', 'department')
-#     ordering = ('user__email',)
+class RepresentativeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'department', 'date_hired')
+    search_fields = ('user__email', 'user__first_name', 'user__last_name', 'department')
+    ordering = ('user__email',)
 
 # admin.site.register(CaseManager)
 # admin.site.register(Patient, PatientAdmin)

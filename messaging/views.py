@@ -73,7 +73,6 @@ class UserNotificationsMessagesView(SignInRequiredMixin, View):
 @login_required
 def notifications(request):
     notifications = Notification.objects.filter(user=request.user)
-    print(notifications)
     return render(request, 'messaging/notifications.html', {'notifications': notifications})
 
 @login_required

@@ -70,4 +70,6 @@ urlpatterns = [
     path('insurance-providers/new/', InsuranceProviderCreateView.as_view(), name='insurance-provider-create'),
     path('insurance-providers/<int:pk>/edit/', InsuranceProviderUpdateView.as_view(), name='insurance-provider-update'),
     path('insurance-providers/<int:pk>/delete/', InsuranceProviderDeleteView.as_view(), name='insurance-provider-delete'),
+
+    path('reports_analysis', financial_reports, name='insurance-provider-delete'),
 ]

@@ -1,0 +1,239 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %} Dashboard {% endblock %}
+{% block content %}
+	
+{% include 'includes/sidebar_content.html' %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper rounded-0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+	  <div class="container-full ">
+		<!-- Main content -->
+		<section class="content">
+			<div class="row">
+        <style>
+          .card-header {
+            background-color: #f8f9fa;
+          }
+          .filter-form {
+            margin-bottom: 20px;
+          }
+          .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+          }
+        </style>
+        
+          <div class="container-fluid">
+            <h1 class="text-center my-5">Financial Reports and Analysis</h1>
+        
+            <!-- Filter Form -->
+            <form class="filter-form">
+              <div class="row">
+                <div class="col-md-3">
+                  <input type="date" class="form-control" placeholder="Start Date">
+                </div>
+                <div class="col-md-3">
+                  <input type="date" class="form-control" placeholder="End Date">
+                </div>
+                <div class="col-md-3">
+                  <select class="form-control">
+                    <option value="">Select Department</option>
+                    <option value="1">Cardiology</option>
+                    <option value="2">Radiology</option>
+                    <!-- Add more departments as needed -->
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                </div>
+              </div>
+            </form>
+        
+            <div class="row text-center my-3">
+              <div class="col-md-3">
+                  <div class="card">
+                      <div class="card-body">
+                          <h5 class="card-title">Total Revenue</h5>
+                          <p class="card-text">$1200.00</p>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-md-3">
+                  <div class="card">
+                      <div class="card-body">
+                          <h5 class="card-title">Total Expenses</h5>
+                          <p class="card-text">${{ total_expenses }}</p>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-md-3">
+                  <div class="card">
+                      <div class="card-body">
+                          <h5 class="card-title">Net Profit</h5>
+                          <p class="card-text">$12300.00</p>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-md-3">
+                  <div class="card">
+                      <div class="card-body">
+                          <h5 class="card-title">Pending Invoices</h5>
+                          <p class="card-text">23</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="card mb-4">
+                  <div class="card-header">
+                    <h5>Revenue and Expenses</h5>
+                  </div>
+                  <div class="card-body">
+                    <div id="revenueExpensesChart" class="chart-container"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card mb-4">
+                  <div class="card-header">
+                    <h5>Accounts Summary</h5>
+                  </div>
+                  <div class="card-body">
+                    <div id="accountsChart" class="chart-container"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="item">
+                  <div class="card mb-4">
+                    <div class="card-header">
+                      <h5>Comparative Financial Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                      <div id="comparativeChart" class="chart-container"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div>
+                  <div class="card mb-4">
+                    <div class="card-header">
+                      <h5>Expense Breakdown</h5>
+                    </div>
+                    <div class="card-body">
+                      <div id="expenseBreakdownChart" class="chart-container"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+			</div>				
+		</section>
+		<!-- /.content -->
+	  </div>
+    </div>
+    <!-- /.content-wrapper -->
+
+    <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+        <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+		  <li class="nav-item">
+			<a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+		  </li>
+		</ul>
+    </div>
+	  &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+  
+</div>
+<!-- ./wrapper -->
+
+  <script>
+    // Revenue and Expenses Chart
+    var revenueExpensesChart = new ApexCharts(document.querySelector("#revenueExpensesChart"), {
+      chart: {
+        type: 'bar',
+        height: 350
+      },
+      series: [{
+        name: 'Revenue',
+        data: [{{ total_revenue }}]
+      }, {
+        name: 'Expenses',
+        data: [{{ total_expenses }}]
+      }],
+      xaxis: {
+        categories: ['Revenue', 'Expenses']
+      }
+    });
+    revenueExpensesChart.render();
+
+    // Accounts Chart
+    var accountsChart = new ApexCharts(document.querySelector("#accountsChart"), {
+      chart: {
+        type: 'donut',
+        height: 350
+      },
+      series: [{{ receivable_amount }}, {{ payable_amount }}],
+      labels: ['Receivable', 'Payable']
+    });
+    accountsChart.render();
+
+    // Comparative Financial Analysis Chart
+    var comparativeChart = new ApexCharts(document.querySelector("#comparativeChart"), {
+      chart: {
+        type: 'line',
+        height: 350
+      },
+      series: [{
+        name: 'Revenue',
+        data: [100000, 150000, 200000, 250000, 300000] // Example data
+      }, {
+        name: 'Expenses',
+        data: [80000, 120000, 180000, 220000, 260000] // Example data
+      }],
+      xaxis: {
+        categories: ['2019', '2020', '2021', '2022', '2023']
+      }
+    });
+    comparativeChart.render();
+
+    // Expense Breakdown Chart
+    var expenseBreakdownChart = new ApexCharts(document.querySelector("#expenseBreakdownChart"), {
+      chart: {
+        type: 'pie',
+        height: 350
+      },
+      series: [30000, 50000, 20000, 15000], // Example data
+      labels: ['Salaries', 'Equipment', 'Utilities', 'Other']
+    });
+    expenseBreakdownChart.render();
+  </script>
+	
+	<!-- Vendor JS -->
+	<script src="{% static 'assets/js/notifications.js' %}"></script>
+	<script src="{% static 'assets/js/vendors.min.js' %}"></script>
+	<script src="{% static 'assets/js/pages/chat-popup.js' %}"></script>
+  <script src="{% static 'assets/icons/feather-icons/feather.min.js' %}"></script>
+
+	
+{% endblock %}
+
