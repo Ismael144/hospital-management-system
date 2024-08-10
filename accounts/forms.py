@@ -80,9 +80,14 @@ class DoctorForm(forms.ModelForm):
         }
         
     def clean_email(self): 
-        email = self.cleaned_data.get('email')
-        if CustomUser.objects.filter(email=email): 
-            raise ValidationError('Sorry, this email address is not available, please use another')
+        if self.instance.pk: 
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists(): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
+        else:
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.filter(email=email): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
         
         return email
 
@@ -101,9 +106,14 @@ class DoctorForm(forms.ModelForm):
             self.fields['profile_image'].initial = self.instance.employee.profile_image
 
     def clean_email(self): 
-        email = self.cleaned_data.get('email')
-        if CustomUser.objects.filter(email=email): 
-            raise ValidationError('Sorry, this email address is not available, please use another')
+        if self.instance: 
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists(): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
+        else:
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.filter(email=email): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
         
         return email
 
@@ -173,9 +183,14 @@ class NurseForm(forms.ModelForm):
         }
         
     def clean_email(self): 
-        email = self.cleaned_data.get('email')
-        if CustomUser.objects.filter(email=email): 
-            raise ValidationError('Sorry, this email address is not available, please use another')
+        if self.instance: 
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists(): 
+                raise ValidationError('Sorry, this email aaaddress is not available, please use another')
+        else:
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.filter(email=email): 
+                raise ValidationError('Sorry, this email address (Hello world) is not available, please use another')
         
         return email
 
@@ -260,9 +275,14 @@ class ReceptionistForm(forms.ModelForm):
         }
          
     def clean_email(self): 
-        email = self.cleaned_data.get('email')
-        if CustomUser.objects.filter(email=email): 
-            raise ValidationError('Sorry, this email address is not available, please use another')
+        if self.instance: 
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists(): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
+        else:
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.filter(email=email): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
         
         return email
 
@@ -331,7 +351,7 @@ class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
         fields = [
-            'email', 'first_name', 'last_name', 'address', 'phone_number', 
+            'first_name', 'last_name', 'email', 'address', 'phone_number', 
             'date_of_birth', 'medical_history', 'emergency_contact_name',
             'emergency_contact_phone', 'insurance_provider', 'insurance_policy_number',
             'allergies', 'current_medications', 'family_medical_history',
@@ -343,9 +363,14 @@ class PatientForm(forms.ModelForm):
         }
         
     def clean_email(self): 
-        email = self.cleaned_data.get('email')
-        if CustomUser.objects.filter(email=email): 
-            raise ValidationError('Sorry, this email address is not available, please use another')
+        if self.instance: 
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists(): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
+        else:
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.filter(email=email): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
         
         return email
 
@@ -418,10 +443,16 @@ class PharmacistForm(forms.ModelForm):
             self.fields['hire_date'].initial = self.instance.employee.hire_date
             self.fields['profile_image'].initial = self.instance.employee.profile_image
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if self.instance.pk is None and CustomUser.objects.filter(email=email).exists():
-            raise ValidationError('Sorry, this email address is not available, please use another.')
+    def clean_email(self): 
+        if self.instance: 
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists(): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
+        else:
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.filter(email=email): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
+        
         return email
 
     def save(self, commit=True):
@@ -489,9 +520,14 @@ class CaseManagerForm(forms.ModelForm):
         ]
 
     def clean_email(self): 
-        email = self.cleaned_data.get('email')
-        if CustomUser.objects.filter(email=email): 
-            raise ValidationError('Sorry, this email address is not available, please use another')
+        if self.instance: 
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists(): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
+        else:
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.filter(email=email): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
         
         return email
 
@@ -580,9 +616,14 @@ class AccountantForm(forms.ModelForm):
             self.fields['profile_image'].initial = self.instance.employee.profile_image
 
     def clean_email(self): 
-        email = self.cleaned_data.get('email')
-        if CustomUser.objects.filter(email=email): 
-            raise ValidationError('Sorry, this email address is not available, please use another')
+        if self.instance: 
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists(): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
+        else:
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.filter(email=email): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
         
         return email
 
@@ -657,9 +698,14 @@ class RepresentativeForm(forms.ModelForm):
             self.fields['profile_image'].initial = self.instance.employee.profile_image
 
     def clean_email(self): 
-        email = self.cleaned_data.get('email')
-        if CustomUser.objects.filter(email=email): 
-            raise ValidationError('Sorry, this email address is not available, please use another')
+        if self.instance: 
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists(): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
+        else:
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.filter(email=email): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
         
         return email
 
@@ -765,10 +811,16 @@ class LabTechnicianForm(forms.ModelForm):
             self.fields['hire_date'].initial = self.instance.employee.hire_date
             self.fields['profile_image'].initial = self.instance.employee.profile_image
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if CustomUser.objects.filter(email=email).exists():
-            raise ValidationError('Sorry, this email address is not available, please use another')
+    def clean_email(self): 
+        if self.instance: 
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists(): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
+        else:
+            email = self.cleaned_data.get('email')
+            if CustomUser.objects.filter(email=email): 
+                raise ValidationError('Sorry, this email address is not available, please use another')
+        
         return email
 
     def save(self, commit=True):

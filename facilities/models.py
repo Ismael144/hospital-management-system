@@ -133,6 +133,7 @@ class Inventory(models.Model):
     quantity = models.PositiveIntegerField()
     description = models.TextField(blank=True, null=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, blank=True, null=True)
+    expiry_date = models.DateField(blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

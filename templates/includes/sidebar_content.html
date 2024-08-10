@@ -275,7 +275,10 @@
             <a href="#"><i data-feather="user-check"></i><span>Doctors</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
             <ul class="treeview-menu">
               <li class="{% if request.resolver_match.url_name == 'doctor_list' %}active{% endif %}">
-                <a href="{% url 'doctor_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>All Doctors</a>
+                <a href="{% url 'doctor_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>View All</a>
+              </li>
+              <li class="{% if request.resolver_match.url_name == 'doctor_create' %}active{% endif %}">
+                <a href="{% url 'doctor_create' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Doctor</a>
               </li>
               <!-- Add more doctor-related links here -->
             </ul>
@@ -286,7 +289,10 @@
             <a href="#"><i data-feather="user-plus"></i><span>Nurses</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
             <ul class="treeview-menu">
               <li class="{% if request.resolver_match.url_name == 'nurse_list' %}active{% endif %}">
-                <a href="{% url 'nurse_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>All Nurses</a>
+                <a href="{% url 'nurse_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>All</a>
+              </li>
+              <li class="{% if request.resolver_match.url_name == 'nurse_create' %}active{% endif %}">
+                <a href="{% url 'nurse_create' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Nurse</a>
               </li>
               <!-- Add more nurse-related links here -->
             </ul>
@@ -342,33 +348,65 @@
 
           <!-- Human Resources -->
           <li class="treeview">
-            <a href="#"><i data-feather="briefcase"></i><span>Human Resources</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
+            <a href="#"><i data-feather="briefcase"></i><span>Human Resource</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
             <ul class="treeview-menu">
-              <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>All Employees</a>
-              </li>
-              <li class="{% if request.resolver_match.url_name == 'leave_list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Leaves</a>
+              <li class="{% if request.resolver_match.url_name == 'leave-list' %}active{% endif %}">
+                <a href="{% url 'leave-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Leaves</a>
               </li>
               <li class="{% if request.resolver_match.url_name == 'shift_list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Shifts</a>
+                <a href="{% url 'shift_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Shifts</a>
               </li>
-              <li class="{% if request.resolver_match.url_name == 'job-posting' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Job Postings</a>
+              <li class="{% if request.resolver_match.url_name == 'job-posting-list' %}active{% endif %}">
+                <a href="{% url 'job-posting-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Job Postings</a>
               </li>
               <li class="{% if request.resolver_match.url_name == 'schedule_list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Schedules</a>
+                <a href="{% url 'schedule_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Schedules</a>
               </li>
               <li class="{% if request.resolver_match.url_name == 'department_list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Departments</a>
+                <a href="{% url 'department_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Departments</a>
               </li>
+              <li class="{% if request.resolver_match.url_name == 'noticeboard_list' %}active{% endif %}">
+                <a href="{% url 'noticeboard_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Notice Board</a>
+              </li>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'training-list' %}active{% endif %}">
+              <a href="{% url 'training-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Trainings</a>
+            </li>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'applicant-list' %}active{% endif %}">
+              <a href="{% url 'applicant-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Applicants</a>
+            </li>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'training-participant-list' %}active{% endif %}">
+              <a href="{% url 'training-participant-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Training Participants</a>
+            </li>
               <li class="{% if request.resolver_match.url_name == 'performance-review-list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Performance reviews</a>
-              </li>
-              <li class="{% if request.resolver_match.url_name == 'training-list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Trainings</a>
-              </li>
+                <a href="{% url 'performance-review-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Performance reviews</a>
               <!-- Add more HR-related links here -->
+            </ul>
+          </li>
+
+          <li class="treeview">
+            <a href="#"><i data-feather="user-check"></i><span>Employees</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
+            <ul class="treeview-menu">
+               <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
+                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Lab Technicians</a>
+              </li>
+               <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
+                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Pharmacists</a>
+              </li>
+               <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
+                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>HR Managers</a>
+              </li>
+               <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
+                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Receptionists</a>
+              </li>
+               <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
+                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Accountants</a>
+              </li>
+               <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
+                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Case Managers</a>
+              </li>
             </ul>
           </li>
 
@@ -377,7 +415,10 @@
             <a href="#"><i data-feather="archive"></i><span>Inventory Management</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
             <ul class="treeview-menu">
               <li class="{% if request.resolver_match.url_name == 'inventory_list' %}active{% endif %}">
-                <a href="{% url 'inventory_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Inventory List</a>
+                <a href="{% url 'inventory_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>View Inventory List</a>
+              </li>
+              <li class="{% if request.resolver_match.url_name == 'inventory_create' %}active{% endif %}">
+                <a href="{% url 'inventory_create' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Inventory Item</a>
               </li>
               <!-- Add more inventory management links here -->
             </ul>
@@ -388,7 +429,10 @@
             <a href="#"><i data-feather="bar-chart-2"></i><span>Reports & Analytics</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
             <ul class="treeview-menu">
               <li class="{% if request.resolver_match.url_name == 'reports_dashboard' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Dashboard</a>
+                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Financials Analysis</a>
+              </li>
+              <li class="{% if request.resolver_match.url_name == 'reports_dashboard' %}active{% endif %}">
+                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Attendance Analysis</a>
               </li>
               <!-- Add more reports-related links here -->
             </ul>
@@ -451,7 +495,7 @@
 
   <!-- Laboratory -->
   <li class="treeview">
-    <a href="#"><i data-feather="activity"></i><span>Laboratory</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
+    <a href="#"><i data-feather="sliders"></i><span>Laboratory</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
     <ul class="treeview-menu">
       <li class="{% if request.resolver_match.url_name == 'labtest_list' %}active{% endif %}">
         <a href="{% url 'labtest_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Tests</a>
@@ -474,7 +518,13 @@
     <a href="#"><i data-feather="package"></i><span>Pharmacy</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
     <ul class="treeview-menu">
       <li class="{% if request.resolver_match.url_name == 'medication_list' %}active{% endif %}">
-        <a href="{% url 'medication_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Pharmacy</a>
+        <a href="{% url 'medication_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Medications</a>
+      </li>
+      <li class="{% if request.resolver_match.url_name == 'dispensation_list' %}active{% endif %}">
+        <a href="{% url 'dispensation_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Dispensation</a>
+      </li>
+      <li class="{% if request.resolver_match.url_name == 'prescription_list' %}active{% endif %}">
+        <a href="{% url 'prescription_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Prescriptions</a>
       </li>
     </ul>
   </li>
@@ -528,13 +578,4 @@
       </div>
     </div>
   </section>
-{% comment %} 
-  <div class="sidebar-footer">
-    <!-- item -->
-    <a href="{% url 'discharge_summary_list' %}" class="link" data-bs-toggle="tooltip" title="Settings"><i class="ti-settings"></i></a>
-    <!-- item -->
-    <a href="{% url 'user_profile' %}" class="link" data-bs-toggle="tooltip" title="Profile"><i class="ti-user"></i></a>
-    <!-- item -->
-    <a href="{% url 'discharge_summary_list' %}" class="link" data-bs-toggle="tooltip" title="Logout"><i class="ti-power-off"></i></a>
-  </div> {% endcomment %}
 </aside>

@@ -67,7 +67,8 @@ class="hold-transition light-skin sidebar-mini theme-primary fixed"
                           <th>Disease</th>
                           <th>Status</th>
                           <th>Emergency Contact</th>
-                          <th>Room No.</th>
+                          <th>Discharge Summaries</th>
+                          <th>Room Assigned</th>
                           <th></th>
                         </tr>
                       </thead>
@@ -79,12 +80,12 @@ class="hold-transition light-skin sidebar-mini theme-primary fixed"
                           <td>{{ patient.address }}</td>
                           <td>
                             {% if patient.assigned_doctor %}
-                            {{ patient.assigned_doctor.user.get_full_name }}
+                             Dr. {{ patient.assigned_doctor.employee.user.get_full_name }}
                             {% else %}
                             N/A
                             {% endif %}
                           </td>
-                          <td>{{ patient.disease }}</td>
+                          <td>{{ patient.disease|default:"N/A" }}</td>
                           <td>
                             {% if patient.status == 'In Treatment' %}
                             <span class="badge badge-danger-light">In Treatment</span>
@@ -95,7 +96,8 @@ class="hold-transition light-skin sidebar-mini theme-primary fixed"
                             {% endif %}
                           </td>
                           <td>{% if patient.emergency_contact_phone %}{{ patient.emergency_contact_phone }}{% else %}N/A {% endif %}</td>
-                          <td>{{ patient.assigned_room.room_number }}</td>
+                          <td><a href="">View all</a></td>
+                          <td>{{ patient.assigned_room.room_number|default:"N/A" }}</td>
                           <td>
                             <div class="btn-group">
                               <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>

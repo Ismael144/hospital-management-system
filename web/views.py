@@ -28,18 +28,7 @@ def login_view(request):
         
         if user is not None:
             login(request, user)
-            if user.role == 'Admin':
-                return redirect(reverse('dashboard_page'))
-            elif user.role == 'Doctor':
-                return redirect(reverse('dashboard_page'))
-            elif user.role == 'Nurse':
-                return redirect(reverse('dashboard_page'))
-            elif user.role == 'Patient':
-                return redirect(reverse('dashboard_page'))
-            elif user.role == 'Receptionist':
-                return redirect(reverse('dashboard_page'))
-        else:
-            messages.error(request, 'Invalid username or password')
+            return redirect(reverse('dashboard_page'))
             
     return render(request, 'auth_login.html')
 

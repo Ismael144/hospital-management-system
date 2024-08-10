@@ -66,7 +66,7 @@
                       <td>{{ summary.patient.user.get_full_name }}</td>
                       <td>{{ summary.discharge_date }}</td>
                       <td>{{ summary.discharge_status }}</td>
-                      <td>{{ summary.discharge_doctor }}</td>
+                      <td>Dr. {{ summary.discharge_doctor|default:"N/A" }}</td>
                       <td>
                         <div class="btn-group">
                           <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>

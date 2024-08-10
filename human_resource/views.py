@@ -1,59 +1,80 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Leave, PerformanceReview, Training, TrainingParticipant, JobPosting, Applicant
-from activities.models import Activity
+from django.utils.decorators import method_decorator
 from django.utils import timezone
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.contrib import messages
-from .models import Schedule, StaffOnDuty, NoticeBoard, Department
-from .forms import ScheduleForm, StaffOnDutyForm, NoticeBoardForm
-from mixins import *
-from .forms import *
+from django.contrib.auth.decorators import login_required, permission_required
+from activities.models import Activity
 from messaging.models import Notification
+from .models import Department, Schedule, StaffOnDuty, NoticeBoard, Shift
+from .models import *
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import ScheduleForm, StaffOnDutyForm, NoticeBoardForm, ShiftForm, DepartmentForm
 
 def log_activity(user, action, description=''):
     Activity.objects.create(user=user, action=action, description=description, timestamp=timezone.now())
 
-
 # Department Views
-class DepartmentListView(LoginRequiredMixin, ListView):
+@method_decorator([login_required, permission_required('human_resource.view_department', raise_exception=True)], name='dispatch')
+class DepartmentListView(ListView):
     model = Department
-    template_name = 'financials/department_list.html'
-    context_object_name = 'staff_management/departments'
+    template_name = 'human_resource/departments/department_list.html'
+    context_object_name = 'departments'
 
-class DepartmentDetailView(LoginRequiredMixin, DetailView):
+@method_decorator([login_required, permission_required('human_resource.view_department', raise_exception=True)], name='dispatch')
+class DepartmentDetailView(DetailView):
     model = Department
-    template_name = 'financials/department_detail.html'
+    template_name = 'human_resource/departments/department_detail.html'
 
-class DepartmentCreateView(LoginRequiredMixin, CreateView):
+@method_decorator([login_required, permission_required('human_resource.add_department', raise_exception=True)], name='dispatch')
+class DepartmentCreateView(CreateView):
     model = Department
-    template_name = 'financials/department_form.html'
-    fields = ['name', 'code', 'description', 'head', 'is_active']
-    success_url = reverse_lazy('department-list')
+    form_class = DepartmentForm
+    template_name = 'human_resource/departments/department_form.html'
+    success_url = reverse_lazy('department_list')
 
-class DepartmentUpdateView(LoginRequiredMixin, UpdateView):
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        log_activity(self.request.user, 'Created Department', f'Department "{form.instance.name}" created successfully.')
+        return response
+
+@method_decorator([login_required, permission_required('human_resource.change_department', raise_exception=True)], name='dispatch')
+class DepartmentUpdateView(UpdateView):
     model = Department
-    template_name = 'financials/department_form.html'
-    fields = ['name', 'code', 'description', 'head', 'is_active']
-    success_url = reverse_lazy('department-list')
+    form_class = DepartmentForm
+    template_name = 'human_resource/departments/department_form.html'
+    success_url = reverse_lazy('department_list')
 
-class DepartmentDeleteView(LoginRequiredMixin, DeleteView):
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        log_activity(self.request.user, 'Updated Department', f'Department "{form.instance.name}" updated successfully.')
+        return response
+
+@method_decorator([login_required, permission_required('human_resource.delete_department', raise_exception=True)], name='dispatch')
+class DepartmentDeleteView(DeleteView):
     model = Department
-    template_name = 'financials/department_confirm_delete.html'
-    success_url = reverse_lazy('department-list')
+    template_name = 'human_resource/departments/department_confirm_delete.html'
+    success_url = reverse_lazy('department_list')
 
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        log_activity(self.request.user, 'Deleted Department', f'Department "{self.object.name}" deleted successfully.')
+        return response
 
+# Schedule Views
+@method_decorator([login_required, permission_required('schedules.view_schedule', raise_exception=True)], name='dispatch')
 class ScheduleListView(ListView):
     model = Schedule
     template_name = 'schedules/schedule_list.html'
     context_object_name = 'schedules'
 
+@method_decorator([login_required, permission_required('schedules.view_schedule', raise_exception=True)], name='dispatch')
 class ScheduleDetailView(DetailView):
     model = Schedule
     template_name = 'schedules/schedule_detail.html'
     context_object_name = 'schedule'
 
-class ScheduleCreateView(LoginRequiredMixin, CreateView):
+@method_decorator([login_required, permission_required('schedules.add_schedule', raise_exception=True)], name='dispatch')
+class ScheduleCreateView(CreateView):
     model = Schedule
     form_class = ScheduleForm
     template_name = 'schedules/schedule_form.html'
@@ -67,9 +88,11 @@ class ScheduleCreateView(LoginRequiredMixin, CreateView):
             link=self.get_success_url(),
             icon='fa fa-calendar-plus'
         )
+        log_activity(self.request.user, 'Created Schedule', f'Schedule "{form.instance.title}" created successfully.')
         return response
 
-class ScheduleUpdateView(LoginRequiredMixin, UpdateView):
+@method_decorator([login_required, permission_required('schedules.change_schedule', raise_exception=True)], name='dispatch')
+class ScheduleUpdateView(UpdateView):
     model = Schedule
     form_class = ScheduleForm
     template_name = 'schedules/schedule_form.html'
@@ -83,9 +106,11 @@ class ScheduleUpdateView(LoginRequiredMixin, UpdateView):
             link=self.get_success_url(),
             icon='fa fa-calendar-edit'
         )
+        log_activity(self.request.user, 'Updated Schedule', f'Schedule "{form.instance.title}" updated successfully.')
         return response
 
-class ScheduleDeleteView(LoginRequiredMixin, DeleteView):
+@method_decorator([login_required, permission_required('schedules.delete_schedule', raise_exception=True)], name='dispatch')
+class ScheduleDeleteView(DeleteView):
     model = Schedule
     template_name = 'schedules/schedule_confirm_delete.html'
     success_url = reverse_lazy('schedule_list')
@@ -98,23 +123,27 @@ class ScheduleDeleteView(LoginRequiredMixin, DeleteView):
             link=self.success_url,
             icon='fa fa-calendar-times'
         )
+        log_activity(self.request.user, 'Deleted Schedule', f'Schedule "{self.object.title}" deleted successfully.')
         return response
 
-
+# NoticeBoard Views
+@method_decorator([login_required, permission_required('notices.view_noticeboard', raise_exception=True)], name='dispatch')
 class NoticeBoardListView(ListView):
     model = NoticeBoard
     template_name = 'notices/notice_list.html'
     context_object_name = 'notices'
 
+@method_decorator([login_required, permission_required('notices.view_noticeboard', raise_exception=True)], name='dispatch')
 class NoticeBoardDetailView(DetailView):
     model = NoticeBoard
     template_name = 'notices/notice_detail.html'
     context_object_name = 'notice'
 
-class NoticeBoardCreateView(LoginRequiredMixin, CreateView):
+@method_decorator([login_required, permission_required('notices.add_noticeboard', raise_exception=True)], name='dispatch')
+class NoticeBoardCreateView(CreateView):
     model = NoticeBoard
     form_class = NoticeBoardForm
-    template_name = 'staff_management/noticeboard_form.html'
+    template_name = 'human_resource/noticeboard_form.html'
     success_url = reverse_lazy('notice_list')
 
     def form_valid(self, form):
@@ -125,9 +154,11 @@ class NoticeBoardCreateView(LoginRequiredMixin, CreateView):
             link=self.get_success_url(),
             icon='fa fa-bullhorn'
         )
+        log_activity(self.request.user, 'Created NoticeBoard', f'Notice "{form.instance.title}" created successfully.')
         return response
 
-class NoticeBoardUpdateView(LoginRequiredMixin, UpdateView):
+@method_decorator([login_required, permission_required('notices.change_noticeboard', raise_exception=True)], name='dispatch')
+class NoticeBoardUpdateView(UpdateView):
     model = NoticeBoard
     form_class = NoticeBoardForm
     template_name = 'notices/notice_form.html'
@@ -141,9 +172,11 @@ class NoticeBoardUpdateView(LoginRequiredMixin, UpdateView):
             link=self.get_success_url(),
             icon='fa fa-edit'
         )
+        log_activity(self.request.user, 'Updated NoticeBoard', f'Notice "{form.instance.title}" updated successfully.')
         return response
 
-class NoticeBoardDeleteView(LoginRequiredMixin, DeleteView):
+@method_decorator([login_required, permission_required('notices.delete_noticeboard', raise_exception=True)], name='dispatch')
+class NoticeBoardDeleteView(DeleteView):
     model = NoticeBoard
     template_name = 'notices/notice_confirm_delete.html'
     success_url = reverse_lazy('notice_list')
@@ -156,21 +189,24 @@ class NoticeBoardDeleteView(LoginRequiredMixin, DeleteView):
             link=self.success_url,
             icon='fa fa-trash'
         )
+        log_activity(self.request.user, 'Deleted NoticeBoard', f'Notice "{self.object.title}" deleted successfully.')
         return response
 
-
-
+# StaffOnDuty Views
+@method_decorator([login_required, permission_required('human_resource.view_staffonduty', raise_exception=True)], name='dispatch')
 class StaffOnDutyListView(ListView):
     model = StaffOnDuty
     template_name = 'staff/staff_list.html'
     context_object_name = 'staff_on_duty'
 
+@method_decorator([login_required, permission_required('human_resource.view_staffonduty', raise_exception=True)], name='dispatch')
 class StaffOnDutyDetailView(DetailView):
     model = StaffOnDuty
     template_name = 'staff/staff_detail.html'
     context_object_name = 'staff'
 
-class StaffOnDutyCreateView(LoginRequiredMixin, CreateView):
+@method_decorator([login_required, permission_required('human_resource.add_staffonduty', raise_exception=True)], name='dispatch')
+class StaffOnDutyCreateView(CreateView):
     model = StaffOnDuty
     form_class = StaffOnDutyForm
     template_name = 'staff/staff_form.html'
@@ -185,9 +221,11 @@ class StaffOnDutyCreateView(LoginRequiredMixin, CreateView):
             bg_color="success",
             icon='fa fa-user-plus'
         )
+        log_activity(self.request.user, 'Created StaffOnDuty', f'Staff "{form.instance.name}" is on duty.')
         return response
 
-class StaffOnDutyUpdateView(LoginRequiredMixin, UpdateView):
+@method_decorator([login_required, permission_required('human_resource.change_staffonduty', raise_exception=True)], name='dispatch')
+class StaffOnDutyUpdateView(UpdateView):
     model = StaffOnDuty
     form_class = StaffOnDutyForm
     template_name = 'staff/staff_form.html'
@@ -201,9 +239,11 @@ class StaffOnDutyUpdateView(LoginRequiredMixin, UpdateView):
             link=self.get_success_url(),
             icon='fa fa-user-edit'
         )
+        log_activity(self.request.user, 'Updated StaffOnDuty', f'Staff "{form.instance.name}" updated successfully.')
         return response
 
-class StaffOnDutyDeleteView(LoginRequiredMixin, DeleteView):
+@method_decorator([login_required, permission_required('human_resource.delete_staffonduty', raise_exception=True)], name='dispatch')
+class StaffOnDutyDeleteView(DeleteView):
     model = StaffOnDuty
     template_name = 'staff/staff_confirm_delete.html'
     success_url = reverse_lazy('staff_list')
@@ -216,48 +256,53 @@ class StaffOnDutyDeleteView(LoginRequiredMixin, DeleteView):
             link=self.success_url,
             icon='fa fa-user-times'
         )
+        log_activity(self.request.user, 'Deleted StaffOnDuty', f'Staff "{self.object.name}" removed from duty.')
         return response
 
-
-class ShiftListView(LoginRequiredMixin, ListView):
+# Shift Views
+@method_decorator([login_required, permission_required('human_resource.view_shift', raise_exception=True)], name='dispatch')
+class ShiftListView(ListView):
     model = Shift
-    template_name = 'staff_management/shifts/shift_list.html'
+    template_name = 'human_resource/shifts/shift_list.html'
     context_object_name = 'shifts'
 
-class ShiftCreateView(LoginRequiredMixin, CreateView):
+@method_decorator([login_required, permission_required('human_resource.add_shift', raise_exception=True)], name='dispatch')
+class ShiftCreateView(CreateView):
     model = Shift
     form_class = ShiftForm
-    template_name = 'staff_management/shifts/shift_form.html'
+    template_name = 'human_resource/shifts/shift_form.html'
     success_url = reverse_lazy('shift_list')
 
-class ShiftUpdateView(LoginRequiredMixin, UpdateView):
+@method_decorator([login_required, permission_required('human_resource.change_shift', raise_exception=True)], name='dispatch')
+class ShiftUpdateView(UpdateView):
     model = Shift
     form_class = ShiftForm
-    template_name = 'staff_management/shifts/shift_form.html'
+    template_name = 'human_resource/shifts/shift_form.html'
     success_url = reverse_lazy('shift_list')
 
+@method_decorator([login_required, permission_required('human_resource.delete_shift', raise_exception=True)], name='dispatch')
 class ShiftDeleteView(DeleteView):
     model = Shift
-    template_name = 'shift_confirm_delete.html'
+    template_name = 'human_resource/shifts/shift_confirm_delete.html'
     success_url = reverse_lazy('shift_list')
 
-# Department Views
 
+# Department Views
 class DepartmentListView(LoginRequiredMixin, ListView):
     model = Department
-    template_name = 'staff_management/departments/department_list.html'
+    template_name = 'human_resource/departments/department_list.html'
     context_object_name = 'departments'
 
 class DepartmentCreateView(LoginRequiredMixin, CreateView):
     model = Department
     form_class = DepartmentForm
-    template_name = 'staff_management/departments/department_form.html'
+    template_name = 'human_resource/departments/department_form.html'
     success_url = reverse_lazy('department_list')
 
 class DepartmentUpdateView(LoginRequiredMixin, UpdateView):
     model = Department
     form_class = DepartmentForm
-    template_name = 'staff_management/departments/department_form.html'
+    template_name = 'human_resource/departments/department_form.html'
     success_url = reverse_lazy('department_list')
 
 

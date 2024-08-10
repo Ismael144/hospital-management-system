@@ -8,6 +8,7 @@ from activities.models import Activity
 from .forms import PatientForm, DoctorForm, NurseForm, CustomUserForm, ReceptionistForm, DischargeSummaryForm, PharmacistForm, LabTechnicianForm, CaseManagerForm, AccountantForm
 from messaging.models import Notification 
 from django.utils import timezone
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 class SignInRequiredMixin(LoginRequiredMixin):
     login_url = reverse_lazy('signin_page')
@@ -264,34 +265,6 @@ class UserProfileView(View):
         activities = Activity.objects.filter(user=user).order_by('-timestamp')
         return render(request, self.template_name, {'user_profile': user, 'activities': activities, 'user_form': CustomUserForm(instance=self.request.user)})
 
-class DischargeSummaryListView(ListView):
-    model = DischargeSummary
-    template_name = 'discharge_summary_list.html'
-    context_object_name = 'discharge_summaries'
-
-class DischargeSummaryCreateView(CreateView):
-    model = DischargeSummary
-    form_class = DischargeSummaryForm
-    template_name = 'discharge_summary_form.html'
-    success_url = reverse_lazy('discharge_summary_list')
-
-class DischargeSummaryUpdateView(UpdateView):
-    model = DischargeSummary
-    form_class = DischargeSummaryForm
-    template_name = 'discharge_summary_form.html'
-    success_url = reverse_lazy('discharge_summary_list')
-
-class DischargeSummaryDetailView(DetailView):
-    model = DischargeSummary
-    template_name = 'discharge_summary_detail.html'
-    context_object_name = 'discharge_summary'
-
-
-class DischargeSummaryDeleteView(DeleteView):
-    model = DischargeSummary
-    template_name = 'discharge_summary_confirm_delete.html'
-    success_url = reverse_lazy('discharge_summary_list')
-
 
 class PharmacistListView(ListView):
     model = Pharmacist
@@ -518,3 +491,51 @@ class AccountantDeleteView(LoginRequiredMixin, DeleteView):
             description=f"Deleted Accountant {self.object.employee.user.get_full_name()}",
         )
         return response
+    
+
+class DischargeSummaryListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = DischargeSummary
+    template_name = 'discharge_summary_list.html'
+    context_object_name = 'discharge_summaries'
+    permission_required = 'accounts.view_dischargesummary'
+
+class DischargeSummaryDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    model = DischargeSummary
+    template_name = 'discharge_summary_detail.html'
+    context_object_name = 'discharge_summary'
+    permission_required = 'accounts.view_dischargesummary'
+
+class DischargeSummaryCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = DischargeSummary
+    form_class = DischargeSummaryForm
+    template_name = 'discharge_summary_form.html'
+    success_url = reverse_lazy('discharge_summary_list')
+    permission_required = 'accounts.add_dischargesummary'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        log_activity(self.request.user, 'Create', f'Created discharge summary for patient ID {self.object.patient.pk}')
+        return response
+
+class DischargeSummaryUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    model = DischargeSummary
+    form_class = DischargeSummaryForm
+    template_name = 'discharge_summary_form.html'
+    success_url = reverse_lazy('discharge_summary_list')
+    permission_required = 'accounts.change_dischargesummary'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        log_activity(self.request.user, 'Update', f'Updated discharge summary for patient ID {self.object.patient.pk}')
+        return response
+
+class DischargeSummaryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = DischargeSummary
+    template_name = 'discharge_summary_confirm_delete.html'
+    success_url = reverse_lazy('discharge_summary_list')
+    permission_required = 'accounts.delete_dischargesummary'
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        log_activity(request.user, 'Delete', f'Deleted discharge summary for patient ID {self.object.patient.pk}')
+        return super().delete(request, *args, **kwargs)
