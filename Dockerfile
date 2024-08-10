@@ -14,4 +14,4 @@ RUN pip install -r requirements.txt
 
 COPY . /app
 
-ENTRYPOINT [ "waittress", "--listen=0.0.0.0:5000", "hms:wsgi.application"]
+ENTRYPOINT [ "waitress-serve", "--listen=0.0.0.0:5000", "hms:wsgi.application"]
