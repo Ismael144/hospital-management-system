@@ -1,2 +1,7 @@
 Django 
 django-ckeditor-5
+whitenoise==6.5.0
+asgiref
+sqlparse
+tzdata
+typing_extensions

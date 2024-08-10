@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 # Define the path to your Django project
 project_path="C:/Users/swale/Desktop/hms"
 

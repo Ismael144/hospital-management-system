@@ -100,11 +100,11 @@ class Allocation(models.Model):
         if self.allocation_type == 'room' and self.room:
             self.room.current_occupancy -= 1
             self.room.update_status()
-            self.room.save()
+            # self.room.save()
         elif self.allocation_type == 'sickbay' and self.sickbay:
             self.sickbay.current_occupancy -= 1
             self.sickbay.update_status()
-            self.sickbay.save()
+            # self.sickbay.save()
         self.date_released = timezone.now()
         self.save()
 
