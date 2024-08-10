@@ -3,5 +3,8 @@ django-ckeditor-5
 whitenoise==6.5.0
 asgiref
 sqlparse
+fcntl
 tzdata
 typing_extensions
+boto3
+ django-storages
