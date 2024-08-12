@@ -34,7 +34,7 @@ class UserNotificationsMessagesView(SignInRequiredMixin, View):
                 "link": notification.link,
                 "bg_color": notification.bg_color,
                 "link_name": notification.link_name,
-            }
+            } 
             for notification in notifications
         ]
         

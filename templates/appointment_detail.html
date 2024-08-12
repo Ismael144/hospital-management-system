@@ -42,23 +42,29 @@
             <table class="table table-bordered">
               <tr>
                 <th>Patient</th>
-                <td>{{ appointment.patient.user.email }}</td>
+                <td>
+                  {{ appointment.patient.user.email }}
+                  {% if request.user == appointment.patient.user %}
+                    (You)
+                  {% endif %}
+                </td>
               </tr>
               <tr>
                 <th>Doctor</th>
-                <td>{{ appointment.doctor.user.email|default_if_none:"N/A" }}</td>
+                <td>
+                  Dr. {{ appointment.doctor.employee.user.get_full_name|default_if_none:"N/A" }}
+                  {% if request.user == appointment.doctor.employee.user %}
+                    (You)
+                  {% endif %}
+                </td>
               </tr>
               <tr>
                 <th>Nurse</th>
-                <td>{{ appointment.nurse.user.email|default_if_none:"N/A" }}</td>
+                <td>{{ appointment.nurse.employee.user.get_full_name|default:"N/A" }}</td>
               </tr>
               <tr>
                 <th>Appointment Date</th>
-                <td>{{ appointment.appointment_date|date:"D, d M Y" }}</td>
-              </tr>
-              <tr>
-                <th>Appointment Time</th>
-                <td>{{ appointment.appointment_time|time:"H:i" }}</td>
+                <td>{{ appointment.appointment_date|date:"D, d M Y - h:i a" }}</td>
               </tr>
               <tr>
                 <th>Reason</th>
@@ -67,10 +73,6 @@
               <tr>
                 <th>Status</th>
                 <td>{{ appointment.status }}</td>
-              </tr>
-              <tr>
-                <th>Held Date</th>
-                <td>{{ appointment.held_date|date:"D, d M Y H:i"|default_if_none:"N/A" }}</td>
               </tr>
             </table>
           </div>

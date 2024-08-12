@@ -44,6 +44,9 @@ class Appointment(models.Model):
     def complete(self):
         self.status = 'completed'
         self.save()
+        
+    def is_cancelled(self) -> bool: 
+        return self.status.lower() == 'cancelled'
 
 
 @receiver(post_save, sender=Appointment)

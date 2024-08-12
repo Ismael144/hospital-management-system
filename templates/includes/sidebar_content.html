@@ -115,121 +115,6 @@
           }
         </style>
 
-        <script>
-          document.addEventListener('DOMContentLoaded', function () {
-            const notificationsButton = document.getElementById('notifications-button')
-            const unreadCountSpan = document.getElementById('unread-notification-count')
-          
-            // Fetch notifications and messages on page load
-            fetchNotificationsAndMessages()
-          
-            // Fetch notifications and messages when the notifications button is clicked
-            notificationsButton.addEventListener('click', function (event) {
-              event.preventDefault()
-              markAllNotificationsAsRead()
-            })
-          
-            // Function to fetch notifications and messages
-            function fetchNotificationsAndMessages() {
-              fetch("{% url 'user_notifications_messages' %}")
-                .then((response) => response.json())
-                .then((data) => {
-                  const notificationsMessagesDiv = document.getElementById('notifications-messages')
-                  notificationsMessagesDiv.innerHTML = '' // Clear previous content
-          
-                  let unreadCount = 0
-          
-                  // Append notifications
-                  data.notifications.forEach((notification) => {
-                    const notificationElement = document.createElement('li')
-                    notificationElement.setAttribute('ntf-id', notification.id)
-          
-                    notificationElement.innerHTML = `
-                                <a href="${notification.link}" class="d-flex gap-2 align-items-center" title="${notification.link_name}"><i class="fa ${notification.icon} text-${notification.bg_color}"></i> ${notification.content}</a>
-                              `
-                    if (!notification.read) {
-                      unreadCount++
-                    }
-                    notificationsMessagesDiv.appendChild(notificationElement)
-                  })
-          
-                  // Append messages
-                  data.messages.forEach((message) => {
-                    const messageElement = document.createElement('li')
-                    messageElement.setAttribute('msg-id', message.id)
-                    messageElement.innerHTML = `
-                                <a href="#"><i class="fa fa-envelope text-info"></i> ${message.content}</a>
-                              `
-                    notificationsMessagesDiv.appendChild(messageElement)
-                  })
-          
-                  // Update unread notifications count
-                  if (unreadCount > 0) {
-                    unreadCountSpan.textContent = unreadCount
-                    unreadCountSpan.style.display = 'inline' // Show the badge
-                  } else {
-                    unreadCountSpan.style.display = 'none' // Hide the badge if no unread notifications
-                  }
-                })
-                .catch((error) => console.error('Error fetching notifications and messages:', error))
-            }
-          
-            // Function to clear all notifications and messages
-            document.getElementById('clear-all').addEventListener('click', function (event) {
-              event.preventDefault()
-              clearAllNotificationsAndMessages()
-            })
-          
-            function clearAllNotificationsAndMessages() {
-              fetch("{% url 'clear_notifications' %}", {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRFToken': getCookie('csrftoken') // Add CSRF token if using Django
-                },
-                body: JSON.stringify({
-                  notifications: Array.from(document.querySelectorAll('#notifications-messages li')).map((notification) => notification.getAttribute('ntf-id'))
-                })
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                  if (data.status === 'success') {
-                    fetchNotificationsAndMessages() // Refresh the notifications and messages
-                  } else {
-                    alert("No Status")
-                  }
-                })
-                .catch((error) => console.error('Error clearing notifications and messages:', error))
-            }
-          
-            // Function to mark all notifications as read
-            function markAllNotificationsAsRead() {
-              fetch("{% url 'clear_notifications' %}", {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRFToken': getCookie('csrftoken') // Add CSRF token if using Django
-                },
-                body: JSON.stringify({
-                  notifications: Array.from(document.querySelectorAll('#notifications-messages li')).map((notification) => notification.getAttribute('ntf-id'))
-                })
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                  if (data.status === 'success') {
-                    fetchNotificationsAndMessages() // Refresh the notifications and messages
-                  }
-                })
-                .catch((error) => console.error('Error marking notifications as read:', error))
-            }
-          
-            // Function to get CSRF token (Django specific)
-            function getCookie(name) {
-              const cookieValue = document.cookie.split(';').find((cookie) => cookie.trim().startsWith(name + '='))
-              return cookieValue ? decodeURIComponent(cookieValue.split('=')[1]) : null
-            }
-          })
-        </script>
       </ul>
     </div>
   </nav>
@@ -453,10 +338,14 @@
 
   <!-- Notifications -->
   <li class="treeview">
-    <a href="#"><i data-feather="bell"></i><span>Notifications</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
+    <a href="#"><i data-feather="bell"></i><span>Notificationsa
+      <span id="unread-notification-count" class="badge badge-primary"></span>
+    </span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
     <ul class="treeview-menu">
       <li class="{% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
-        <a href="{% url 'notifications' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Notifications</a>
+        <a href="{% url 'notifications' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>
+          Notificationsa
+        </a>
       </li>
     </ul>
   </li>
@@ -577,5 +466,123 @@
         </ul>
       </div>
     </div>
+
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const notificationsButton = document.getElementById('notifications-button')
+        const unreadCountSpan = document.getElementById('unread-notification-count')
+        console.log(unreadCountSpan)
+      
+        // Fetch notifications and messages on page load
+        fetchNotificationsAndMessages()
+      
+        // Fetch notifications and messages when the notifications button is clicked
+        notificationsButton.addEventListener('click', function (event) {
+          event.preventDefault()
+          markAllNotificationsAsRead()
+        })
+      
+        // Function to fetch notifications and messages
+        function fetchNotificationsAndMessages() {
+          fetch("{% url 'user_notifications_messages' %}")
+            .then((response) => response.json())
+            .then((data) => {
+              const notificationsMessagesDiv = document.getElementById('notifications-messages')
+              notificationsMessagesDiv.innerHTML = '' // Clear previous content
+      
+              let unreadCount = 0
+      
+              // Append notifications
+              data.notifications.forEach((notification) => {
+                const notificationElement = document.createElement('li')
+                notificationElement.setAttribute('ntf-id', notification.id)
+      
+                notificationElement.innerHTML = `
+                            <a href="${notification.link}" class="d-flex gap-2 align-items-center" title="${notification.link_name}"><i class="fa ${notification.icon} text-${notification.bg_color}"></i> ${notification.content}</a>
+                          `
+                if (!notification.read) {
+                  unreadCount++
+                }
+                notificationsMessagesDiv.appendChild(notificationElement)
+              })
+      
+              // Append messages
+              data.messages.forEach((message) => {
+                const messageElement = document.createElement('li')
+                messageElement.setAttribute('msg-id', message.id)
+                messageElement.innerHTML = `
+                            <a href="#"><i class="fa fa-envelope text-info"></i> ${message.content}</a>
+                          `
+                notificationsMessagesDiv.appendChild(messageElement)
+              })
+      
+              // Update unread notifications count
+              if (unreadCount > 0) {
+                unreadCountSpan.textContent = unreadCount
+                unreadCountSpan.style.display = 'inline' // Show the badge
+              } else {
+                unreadCountSpan.style.display = 'none' // Hide the badge if no unread notifications
+              }
+            })
+            .catch((error) => console.error('Error fetching notifications and messages:', error))
+        }
+      
+        // Function to clear all notifications and messages
+        document.getElementById('clear-all').addEventListener('click', function (event) {
+          event.preventDefault()
+          clearAllNotificationsAndMessages()
+        })
+      
+        function clearAllNotificationsAndMessages() {
+          fetch("{% url 'clear_notifications' %}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCookie('csrftoken') // Add CSRF token if using Django
+            },
+            body: JSON.stringify({
+              notifications: Array.from(document.querySelectorAll('#notifications-messages li')).map((notification) => notification.getAttribute('ntf-id'))
+            })
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.status === 'success') {
+                fetchNotificationsAndMessages() // Refresh the notifications and messages
+              } else {
+                alert("No Status")
+              }
+            })
+            .catch((error) => console.error('Error clearing notifications and messages:', error))
+        }
+      
+        // Function to mark all notifications as read
+        function markAllNotificationsAsRead() {
+          fetch("{% url 'clear_notifications' %}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCookie('csrftoken') // Add CSRF token if using Django
+            },
+            body: JSON.stringify({
+              notifications: Array.from(document.querySelectorAll('#notifications-messages li')).map((notification) => notification.getAttribute('ntf-id'))
+            })
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.status === 'success') {
+                fetchNotificationsAndMessages() // Refresh the notifications and messages
+              }
+            })
+            .catch((error) => console.error('Error marking notifications as read:', error))
+        }
+      
+        // Function to get CSRF token (Django specific)
+        function getCookie(name) {
+          const cookieValue = document.cookie.split(';').find((cookie) => cookie.trim().startsWith(name + '='))
+          return cookieValue ? decodeURIComponent(cookieValue.split('=')[1]) : null
+        }
+      })
+    </script>
   </section>
 </aside>
