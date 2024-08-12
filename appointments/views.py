@@ -12,13 +12,15 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.db.models import Q
 from accounts.models import Patient, Doctor, Employee, Nurse
-
+from django.contrib.auth.decorators import login_required, permission_required
+from django.utils.decorators import method_decorator
 
 # Helper function to log activities
 def log_activity(user, action, description):
     Activity.objects.create(user=user, action=action, description=description)
 
 
+@method_decorator([login_required, permission_required('appointments.view_appointment', raise_exception=True)], name='dispatch')
 class AppointmentListView(ListView):
     model = Appointment
     template_name = 'appointment_list.html'
@@ -107,6 +109,7 @@ class AppointmentListView(ListView):
         return self.get(request, *args, **kwargs)
     
 
+@method_decorator([login_required, permission_required('appointments.view_appointment', raise_exception=True)], name='dispatch')
 class AppointmentDetailView(DetailViewMixin, DetailView):
     model = Appointment
     template_name = 'appointment_detail.html'
@@ -145,76 +148,9 @@ class AppointmentDetailView(DetailViewMixin, DetailView):
             raise Http404("You don't have permission to view this appointment.")
         return obj
     
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Add any additional context data if needed
-        return context
-    
-    def post(self, request, *args, **kwargs):
-        request_data = request.POST
-        appt_id = request_data.get('appt_id') 
-        cancellation_reason = str(request_data.get('cancellation_reason')).strip()
-
-        if appt_id is not None:
-            # Process the cancellation here
-            print(f"Appointment ID: {appt_id}, Cancellation Reason: {cancellation_reason}")
-            # Add your cancellation logic here
-            appointment = Appointment.objects.filter(pk=appt_id)[0]
-            print(appointment)
-            
-            # Do some form validations here 
-            if cancellation_reason == '': 
-                messages.error(request, "A cancellation reason is needed in order to cancel appointment")
-                return self.get(request, *args, **kwargs)
-
-            if len(cancellation_reason) < 10: 
-                messages.error(request, "The cancellation reason should be meaningful and long enough")
-                return self.get(request, *args, **kwargs)
-
-            # Checking whether eiher doctor or nurse is not None
-            med = appointment.doctor if appointment.doctor is not None else appointment.nurse
-
-            if appointment is None:
-                messages.info(request, "An error occured, please try again!")
-                return self.get(request, *args, **kwargs)
-            
-            if med.employee.user == request.user or appointment.patient.user == request.user: 
-                appointment.cancellation_reason = cancellation_reason
-                appointment.status = "Cancelled"
-                appointment.is_cancelled = True
-                appointment.save()
-                
-                title = "Nr." if isinstance(med, Nurse) else "Dr." 
-                
-                # Send Notifications to patient and (doctor or nurse)
-                send_notification(
-                    user=appointment.patient.user,
-                    content=f'Your appointment with {title} {med.employee.user.get_full_name()} has been updated',
-                    icon='fa-calendar-alt',
-                    link=reverse('appointment_detail', args=[appointment.pk]),
-                    link_name='View Updated Appointment',
-                    bg_color='danger'
-                )
-                
-                send_notification(
-                    user=med.employee.user,
-                    content=f'Your appointment with {appointment.patient.user.get_full_name()} has been updated',
-                    icon='fa-calendar-alt',
-                    link=reverse('appointment_detail', args=[appointment.pk]),
-                    link_name='View Updated Appointment',
-                    bg_color='danger'
-                )
-                
-            else: 
-                messages.error(request, "You have not rights of cancelling this appointment")
-                return self.get(request, *args, **kwargs)
-
-        return self.get(request, *args, **kwargs)
-    
-
 
 # Appointment views
+@method_decorator([login_required, permission_required('appointments.add_appointment', raise_exception=True)], name='dispatch')
 class AppointmentCreateView(CreateView):
     model = Appointment
     form_class = AppointmentForm
@@ -257,6 +193,7 @@ class AppointmentCreateView(CreateView):
         return response
     
     
+@method_decorator([login_required, permission_required('appointments.change_appointment', raise_exception=True)], name='dispatch')
 class AppointmentUpdateView(UpdateView):
     model = Appointment
     form_class = AppointmentUpdateForm

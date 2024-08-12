@@ -16,20 +16,20 @@ def log_activity(user, action, description):
     Activity.objects.create(user=user, action=action, description=description)
 
 # Invoice Views
-@method_decorator([login_required, permission_required('app.view_invoice', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_invoice', raise_exception=True)], name='dispatch')
 class InvoiceListView(ListView):
     model = Invoice
     template_name = 'invoices/invoice_list.html'
     context_object_name = 'invoices'
     paginate_by = 10  # Adjust pagination as needed
 
-@method_decorator([login_required, permission_required('app.view_invoice', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_invoice', raise_exception=True)], name='dispatch')
 class InvoiceDetailView(DetailView):
     model = Invoice
     template_name = 'invoices/invoice_detail.html'
     context_object_name = 'invoice'
 
-@method_decorator([login_required, permission_required('app.add_invoice', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.add_invoice', raise_exception=True)], name='dispatch')
 class InvoiceCreateView(CreateView):
     model = Invoice
     form_class = InvoiceForm
@@ -41,7 +41,7 @@ class InvoiceCreateView(CreateView):
         log_activity(self.request.user, 'Create', f'Created invoice with ID {self.object.pk}')
         return response
 
-@method_decorator([login_required, permission_required('app.change_invoice', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.change_invoice', raise_exception=True)], name='dispatch')
 class InvoiceUpdateView(UpdateView):
     model = Invoice
     form_class = InvoiceForm
@@ -54,18 +54,18 @@ class InvoiceUpdateView(UpdateView):
         return response
 
 # Expense Views
-@method_decorator([login_required, permission_required('app.view_expense', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_expense', raise_exception=True)], name='dispatch')
 class ExpenseListView(ListView):
     model = Expense
     template_name = 'financials/expense_list.html'
     context_object_name = 'expenses'
 
-@method_decorator([login_required, permission_required('app.view_expense', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_expense', raise_exception=True)], name='dispatch')
 class ExpenseDetailView(DetailView):
     model = Expense
     template_name = 'financials/expense_detail.html'
 
-@method_decorator([login_required, permission_required('app.add_expense', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.add_expense', raise_exception=True)], name='dispatch')
 class ExpenseCreateView(CreateView):
     model = Expense
     template_name = 'financials/expense_form.html'
@@ -77,7 +77,7 @@ class ExpenseCreateView(CreateView):
         log_activity(self.request.user, 'Create', f'Created expense with ID {self.object.pk}')
         return response
 
-@method_decorator([login_required, permission_required('app.change_expense', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.change_expense', raise_exception=True)], name='dispatch')
 class ExpenseUpdateView(UpdateView):
     model = Expense
     template_name = 'financials/expense_form.html'
@@ -89,7 +89,7 @@ class ExpenseUpdateView(UpdateView):
         log_activity(self.request.user, 'Update', f'Updated expense with ID {self.object.pk}')
         return response
 
-@method_decorator([login_required, permission_required('app.delete_expense', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.delete_expense', raise_exception=True)], name='dispatch')
 class ExpenseDeleteView(DeleteView):
     model = Expense
     template_name = 'financials/expense_confirm_delete.html'
@@ -101,18 +101,18 @@ class ExpenseDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 # Budget Views
-@method_decorator([login_required, permission_required('app.view_budget', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_budget', raise_exception=True)], name='dispatch')
 class BudgetListView(ListView):
     model = Budget
     template_name = 'financials/budget_list.html'
     context_object_name = 'budgets'
 
-@method_decorator([login_required, permission_required('app.view_budget', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_budget', raise_exception=True)], name='dispatch')
 class BudgetDetailView(DetailView):
     model = Budget
     template_name = 'financials/budget_detail.html'
 
-@method_decorator([login_required, permission_required('app.add_budget', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.add_budget', raise_exception=True)], name='dispatch')
 class BudgetCreateView(CreateView):
     model = Budget
     template_name = 'financials/budget_form.html'
@@ -124,7 +124,7 @@ class BudgetCreateView(CreateView):
         log_activity(self.request.user, 'Create', f'Created budget with ID {self.object.pk}')
         return response
 
-@method_decorator([login_required, permission_required('app.change_budget', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.change_budget', raise_exception=True)], name='dispatch')
 class BudgetUpdateView(UpdateView):
     model = Budget
     template_name = 'financials/budget_form.html'
@@ -136,7 +136,7 @@ class BudgetUpdateView(UpdateView):
         log_activity(self.request.user, 'Update', f'Updated budget with ID {self.object.pk}')
         return response
 
-@method_decorator([login_required, permission_required('app.delete_budget', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.delete_budget', raise_exception=True)], name='dispatch')
 class BudgetDeleteView(DeleteView):
     model = Budget
     template_name = 'financials/budget_confirm_delete.html'
@@ -148,19 +148,19 @@ class BudgetDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 # FinancialReport Views
-@method_decorator([login_required, permission_required('app.view_financialreport', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_financialreport', raise_exception=True)], name='dispatch')
 class FinancialReportListView(ListView):
     model = FinancialReport
     template_name = 'financials/financial_report_list.html'
     context_object_name = 'reports'
 
-@method_decorator([login_required, permission_required('app.view_financialreport', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_financialreport', raise_exception=True)], name='dispatch')
 class FinancialReportDetailView(DetailView):
     model = FinancialReport
     template_name = 'financials/financial_report_detail.html'
     context_object_name = 'report'
 
-@method_decorator([login_required, permission_required('app.add_financialreport', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.add_financialreport', raise_exception=True)], name='dispatch')
 class FinancialReportCreateView(CreateView):
     model = FinancialReport
     template_name = 'financials/financial_report_form.html'
@@ -172,7 +172,7 @@ class FinancialReportCreateView(CreateView):
         log_activity(self.request.user, 'Create', f'Created financial report with ID {self.object.pk}')
         return response
 
-@method_decorator([login_required, permission_required('app.change_financialreport', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.change_financialreport', raise_exception=True)], name='dispatch')
 class FinancialReportUpdateView(UpdateView):
     model = FinancialReport
     template_name = 'financials/financial_report_form.html'
@@ -184,7 +184,7 @@ class FinancialReportUpdateView(UpdateView):
         log_activity(self.request.user, 'Update', f'Updated financial report with ID {self.object.pk}')
         return response
 
-@method_decorator([login_required, permission_required('app.delete_financialreport', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.delete_financialreport', raise_exception=True)], name='dispatch')
 class FinancialReportDeleteView(DeleteView):
     model = FinancialReport
     template_name = 'financials/financial_report_confirm_delete.html'
@@ -200,21 +200,21 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required, permission_required
 
 
-@method_decorator([login_required, permission_required('app.view_insuranceprovider', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_insuranceprovider', raise_exception=True)], name='dispatch')
 class InsuranceProviderListView(ListView):
     model = InsuranceProvider
     template_name = 'financials/insurance_provider_list.html'
     context_object_name = 'insuranceproviders'
 
 
-@method_decorator([login_required, permission_required('app.view_insuranceprovider', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_insuranceprovider', raise_exception=True)], name='dispatch')
 class InsuranceProviderDetailView(DetailView):
     model = InsuranceProvider
     template_name = 'financials/insurance_provider_detail.html'
     context_object_name = 'insurance_provider'
 
 
-@method_decorator([login_required, permission_required('app.add_insuranceprovider', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.add_insuranceprovider', raise_exception=True)], name='dispatch')
 class InsuranceProviderCreateView(CreateView):
     model = InsuranceProvider
     template_name = 'financials/insurance_provider_form.html'
@@ -227,7 +227,7 @@ class InsuranceProviderCreateView(CreateView):
         return response
 
 
-@method_decorator([login_required, permission_required('app.change_insuranceprovider', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.change_insuranceprovider', raise_exception=True)], name='dispatch')
 class InsuranceProviderUpdateView(UpdateView):
     model = InsuranceProvider
     template_name = 'financials/insurance_provider_form.html'
@@ -240,7 +240,7 @@ class InsuranceProviderUpdateView(UpdateView):
         return response
 
 
-@method_decorator([login_required, permission_required('app.delete_insuranceprovider', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.delete_insuranceprovider', raise_exception=True)], name='dispatch')
 class InsuranceProviderDeleteView(DeleteView):
     model = InsuranceProvider
     template_name = 'financials/insurance_provider_confirm_delete.html'
@@ -252,19 +252,19 @@ class InsuranceProviderDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-@method_decorator([login_required, permission_required('app.view_payroll', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_payroll', raise_exception=True)], name='dispatch')
 class PayrollListView(ListView):
     model = Payroll
     template_name = 'payroll_list.html'
 
 
-@method_decorator([login_required, permission_required('app.view_payroll', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_payroll', raise_exception=True)], name='dispatch')
 class PayrollDetailView(DetailView):
     model = Payroll
     template_name = 'payroll_detail.html'
     
 
-@method_decorator([login_required, permission_required('app.add_payroll', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.add_payroll', raise_exception=True)], name='dispatch')
 class PayrollCreateView(CreateView):
     model = Payroll
     form_class = PayrollForm
@@ -277,7 +277,7 @@ class PayrollCreateView(CreateView):
         return response
 
 
-@method_decorator([login_required, permission_required('app.change_payroll', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.change_payroll', raise_exception=True)], name='dispatch')
 class PayrollUpdateView(UpdateView):
     model = Payroll
     form_class = PayrollForm
@@ -290,7 +290,7 @@ class PayrollUpdateView(UpdateView):
         return response
     
 
-@method_decorator([login_required, permission_required('app.delete_payroll', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.delete_payroll', raise_exception=True)], name='dispatch')
 class PayrollDeleteView(DeleteView):
     model = Payroll
     template_name = 'payroll_confirm_delete.html'
@@ -302,19 +302,19 @@ class PayrollDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-@method_decorator([login_required, permission_required('app.add_cashcollection', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.add_cashcollection', raise_exception=True)], name='dispatch')
 class AccountListView(ListView):
     model = Account
     template_name = 'account_list.html'
 
 
-@method_decorator([login_required, permission_required('app.add_cashcollection', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.add_cashcollection', raise_exception=True)], name='dispatch')
 class AccountDetailView(DetailView):
     model = Account
     template_name = 'account_detail.html'
 
 
-@method_decorator([login_required, permission_required('app.add_account', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.add_account', raise_exception=True)], name='dispatch')
 class AccountCreateView(CreateView):
     model = Account
     form_class = AccountForm
@@ -327,7 +327,7 @@ class AccountCreateView(CreateView):
         return response
 
 
-@method_decorator([login_required, permission_required('app.change_account', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.change_account', raise_exception=True)], name='dispatch')
 class AccountUpdateView(UpdateView):
     model = Account
     form_class = AccountForm
@@ -340,7 +340,7 @@ class AccountUpdateView(UpdateView):
         return response
     
 
-@method_decorator([login_required, permission_required('app.delete_account', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.delete_account', raise_exception=True)], name='dispatch')
 class AccountDeleteView(DeleteView):
     model = Account
     template_name = 'account_confirm_delete.html'
@@ -352,20 +352,20 @@ class AccountDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-@method_decorator([login_required, permission_required('app.view_cashcollection', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_cashcollection', raise_exception=True)], name='dispatch')
 class CashCollectionListView(ListView):
     model = CashCollection
     template_name = 'cashcollection_list.html'
     context_object_name = "cashcollections"
 
 
-@method_decorator([login_required, permission_required('app.view_cashcollection', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_cashcollection', raise_exception=True)], name='dispatch')
 class CashCollectionDetailView(DetailView):
     model = CashCollection
     template_name = 'cashcollection_detail.html'
 
 
-@method_decorator([login_required, permission_required('app.add_cashcollection', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.add_cashcollection', raise_exception=True)], name='dispatch')
 class CashCollectionCreateView(CreateView):
     model = CashCollection
     form_class = CashCollectionForm
@@ -384,7 +384,7 @@ class CashCollectionCreateView(CreateView):
         return response
 
 
-@method_decorator([login_required, permission_required('app.change_cashcollection', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.change_cashcollection', raise_exception=True)], name='dispatch')
 class CashCollectionUpdateView(UpdateView):
     model = CashCollection
     form_class = CashCollectionForm
@@ -403,7 +403,7 @@ class CashCollectionUpdateView(UpdateView):
         return response
 
 
-@method_decorator([login_required, permission_required('app.delete_cashcollection', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.delete_cashcollection', raise_exception=True)], name='dispatch')
 class CashCollectionDeleteView(DeleteView):
     model = CashCollection
     template_name = 'cashcollection_confirm_delete.html'
@@ -415,21 +415,21 @@ class CashCollectionDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-@method_decorator([login_required, permission_required('app.view_bill', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_bill', raise_exception=True)], name='dispatch')
 class BillListView(ListViewMixin, ListView):
     model = Bill
     template_name = 'bill_list.html'
     context_object_name = 'bills'
 
 
-@method_decorator([login_required, permission_required('app.view_bill', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_bill', raise_exception=True)], name='dispatch')
 class BillDetailView(DetailViewMixin, DetailView):
     model = Bill
     template_name = 'bill_detail.html'
     context_object_name = 'bill'
 
 
-@method_decorator([login_required, permission_required('app.add_bill', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.add_bill', raise_exception=True)], name='dispatch')
 class BillCreateView(CreateView):
     model = Bill
     form_class = BillForm
@@ -442,7 +442,7 @@ class BillCreateView(CreateView):
         return response
 
 
-@method_decorator([login_required, permission_required('app.change_bill', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.change_bill', raise_exception=True)], name='dispatch')
 class BillUpdateView(UpdateView):
     model = Bill
     form_class = BillForm
@@ -455,7 +455,7 @@ class BillUpdateView(UpdateView):
         return response
 
 
-@method_decorator([login_required, permission_required('app.delete_bill', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.delete_bill', raise_exception=True)], name='dispatch')
 class BillDeleteView(DeleteView):
     model = Bill
     template_name = 'bill_confirm_delete.html'
@@ -467,20 +467,20 @@ class BillDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-@method_decorator([login_required, permission_required('app.view_payment', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_payment', raise_exception=True)], name='dispatch')
 class PaymentListView(ListView):
     model = Payment
     template_name = 'payment_list.html'
     context_object_name = 'payments'
 
 
-@method_decorator([login_required, permission_required('app.view_payment', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.view_payment', raise_exception=True)], name='dispatch')
 class PaymentDetailView(DetailView):
     model = Payment
     template_name = 'payment_detail.html'
 
 
-@method_decorator([login_required, permission_required('app.add_payment', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.add_payment', raise_exception=True)], name='dispatch')
 class PaymentCreateView(CreateView):
     model = Payment
     form_class = PaymentForm
@@ -493,7 +493,7 @@ class PaymentCreateView(CreateView):
         return response
 
 
-@method_decorator([login_required, permission_required('app.change_payment', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.change_payment', raise_exception=True)], name='dispatch')
 class PaymentUpdateView(UpdateView):
     model = Payment
     form_class = PaymentForm
@@ -506,7 +506,7 @@ class PaymentUpdateView(UpdateView):
         return response
 
 
-@method_decorator([login_required, permission_required('app.delete_payment', raise_exception=True)], name='dispatch')
+@method_decorator([login_required, permission_required('financials.delete_payment', raise_exception=True)], name='dispatch')
 class PaymentDeleteView(DeleteView):
     model = Payment
     template_name = 'payment_confirm_delete.html'

@@ -66,23 +66,3 @@ class Dispensation(models.Model):
             raise ValueError("Cannot dispense expired medication.")
         medication.adjust_stock(-self.quantity_dispensed)
         super().save(*args, **kwargs)
-
-
-class PharmacyInventory(models.Model):
-    medication = models.OneToOneField(Medication, on_delete=models.CASCADE)
-    quantity_in_stock = models.PositiveIntegerField()
-    reorder_threshold = models.PositiveIntegerField(default=10)
-    last_restocked = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"Inventory for {self.medication.name}"
-
-    def needs_reorder(self):
-        """Check if the inventory level falls below the reorder threshold."""
-        return self.quantity_in_stock <= self.reorder_threshold
-
-    def restock(self, quantity):
-        """Restock the inventory and update the last restocked date."""
-        self.quantity_in_stock += quantity
-        self.last_restocked = models.DateTimeField(auto_now=True)
-        self.save()

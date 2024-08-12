@@ -134,6 +134,9 @@ class Inventory(models.Model):
     description = models.TextField(blank=True, null=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, blank=True, null=True)
     expiry_date = models.DateField(blank=True, null=True)
+    quantity_in_stock = models.PositiveIntegerField()
+    reorder_threshold = models.PositiveIntegerField(default=10)
+    last_restocked = models.DateTimeField(auto_now=True)
     date_added = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
