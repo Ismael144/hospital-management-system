@@ -3,11 +3,6 @@ from .views import (
     MedicationListView, MedicationDetailView, MedicationCreateView, MedicationUpdateView, MedicationDeleteView,
     PrescriptionListView, PrescriptionDetailView, PrescriptionCreateView, PrescriptionUpdateView, PrescriptionDeleteView,
     DispensationListView, DispensationDetailView, DispensationCreateView, DispensationUpdateView, DispensationDeleteView, 
-    InventoryListView,
-    InventoryDetailView,
-    InventoryCreateView,
-    InventoryUpdateView,
-    InventoryDeleteView
 )
 
 urlpatterns = [
@@ -28,10 +23,4 @@ urlpatterns = [
     path('dispensations/new/', DispensationCreateView.as_view(), name='dispensation_create'),
     path('dispensations/<int:pk>/edit/', DispensationUpdateView.as_view(), name='dispensation_update'),
     path('dispensations/<int:pk>/delete/', DispensationDeleteView.as_view(), name='dispensation_delete'),
-    
-    path('inventory/', InventoryListView.as_view(), name='inventory_list'),
-    path('inventory/<int:pk>/', InventoryDetailView.as_view(), name='inventory_detail'),
-    path('inventory/create/', InventoryCreateView.as_view(), name='inventory_create'),
-    path('inventory/<int:pk>/update/', InventoryUpdateView.as_view(), name='inventory_update'),
-    path('inventory/<int:pk>/delete/', InventoryDeleteView.as_view(), name='inventory_delete'),
 ]

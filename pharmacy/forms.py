@@ -1,6 +1,5 @@
 from django import forms
 from .models import Medication, Prescription, Dispensation
-from .models import PharmacyInventory
 
 class MedicationForm(forms.ModelForm):
     class Meta:
@@ -41,15 +40,3 @@ class DispensationForm(forms.ModelForm):
             'batch_number': forms.TextInput(attrs={'class': 'form-control'}),
             'expiry_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
-
-
-class PharmacyInventoryForm(forms.ModelForm):
-    class Meta:
-        model = PharmacyInventory
-        fields = ['medication', 'quantity_in_stock', 'reorder_threshold']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['medication'].widget.attrs.update({'class': 'form-control'})
-        self.fields['quantity_in_stock'].widget.attrs.update({'class': 'form-control'})
-        self.fields['reorder_threshold'].widget.attrs.update({'class': 'form-control'})

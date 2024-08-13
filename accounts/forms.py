@@ -3,6 +3,9 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import (CustomUser, Employee, Doctor, Patient, Nurse, Receptionist, 
                      Pharmacist, CaseManager, LabTechnician, Accountant, Representative, DischargeSummary)
 from django.core.exceptions import ValidationError
+from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
+from django.urls import reverse
+from django.contrib.admin import site as admin_site
 
 class CustomUserForm(UserCreationForm):
     class Meta:
@@ -360,6 +363,7 @@ class PatientForm(forms.ModelForm):
         ]
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+            'assigned_room': forms.Select(attrs={'class': 'form-control select2'}),
         }
         
     def clean_email(self): 
@@ -381,6 +385,14 @@ class PatientForm(forms.ModelForm):
             self.fields['email'].initial = self.instance.user.email
             self.fields['first_name'].initial = self.instance.user.first_name
             self.fields['last_name'].initial = self.instance.user.last_name
+            
+        self.fields['assigned_room'].widget = RelatedFieldWidgetWrapper(
+            self.fields['assigned_room'].widget,
+            Patient._meta.get_field('assigned_room').remote_field,
+            admin_site,
+            can_add_related=True,
+            can_change_related=True
+        )
 
     def save(self, commit=True):
         patient = super(PatientForm, self).save(commit=False)

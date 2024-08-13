@@ -9,6 +9,15 @@ from .forms import PatientForm, DoctorForm, NurseForm, CustomUserForm, Reception
 from messaging.models import Notification 
 from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.admin.views.decorators import staff_member_required
+from facilities.models import Room
+from django.http import HttpResponse
+# from django.urls.resolvers import escape
+from facilities.forms import RoomForm
+from django.utils.html import escape
+from django.utils.decorators import method_decorator
+from .models import Employee
+from .forms import EmployeeForm
 
 class SignInRequiredMixin(LoginRequiredMixin):
     login_url = reverse_lazy('signin_page')
@@ -101,6 +110,24 @@ class PatientCreateView(View):
             log_activity(request.user, 'Create', 'Created a new patient')
             return redirect('patient_list')
         return render(request, self.template_name, {'form': form})
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class RoomCreatePopupView(CreateView):
+    model = Room
+    form_class = RoomForm
+    template_name = 'facilities/room_form.html'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if '_popup' in self.request.POST:
+            return HttpResponse(
+                '<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>' % (
+                    escape(self.object.pk),
+                    escape(self.object)
+                )
+            )
+        return response
 
 
 class PatientUpdateView(View):
@@ -255,15 +282,18 @@ class NurseDeleteView(DeleteView):
 
 class UserProfileView(View):
     template_name = 'user_profile.html'
-
+    
     def get(self, request):
+
         user = self.request.user
         if request.user != user:
             messages.error(request, "You are not authorized to view this profile.")
             return redirect('home')
 
+        employee = Employee.objects.filter(user=self.request.user)
+
         activities = Activity.objects.filter(user=user).order_by('-timestamp')
-        return render(request, self.template_name, {'user_profile': user, 'activities': activities, 'user_form': CustomUserForm(instance=self.request.user)})
+        return render(request, self.template_name, {'user_profile': user, 'activities': activities, 'user_form': CustomUserForm(instance=self.request.user), 'employee_form': EmployeeForm(instance=employee)})
 
 
 class PharmacistListView(ListView):

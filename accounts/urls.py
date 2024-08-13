@@ -15,6 +15,7 @@ urlpatterns = [
     path('patients/discharge-summary/<int:pk>/update/', DischargeSummaryUpdateView.as_view(), name='discharge_summary_update'),
     path('patients/discharge-summary/<int:pk>/', DischargeSummaryDetailView.as_view(), name='discharge_summary_detail'),
     path('patients/discharge-summary/<int:pk>/delete/', DischargeSummaryDeleteView.as_view(), name='discharge_summary_delete'),
+    path('room/add/', RoomCreatePopupView.as_view(), name='room_add'),
     
     # Receptionist URLs
     path('receptionists/', ReceptionistListView.as_view(), name='receptionist_list'),

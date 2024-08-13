@@ -4,6 +4,7 @@ from .views import (
     SickbayListView, SickbayCreateView, SickbayUpdateView, SickbayDeleteView, SickbayDetailView,
     AllocationListView, AllocationCreateView, AllocationUpdateView, AllocationDetailView,  AllocationDeleteView
 )
+from .views import *
 
 urlpatterns = [
     # Room URLs
@@ -26,13 +27,15 @@ urlpatterns = [
     path('allocations/create/', AllocationCreateView.as_view(), name='allocation_create'),
     path('allocations/<int:pk>/update/', AllocationUpdateView.as_view(), name='allocation_update'),
     path('allocations/<int:pk>/delete/', AllocationDeleteView.as_view(), name='allocation_delete'),
+
+    # Inventory Views
+    path('inventory/', InventoryListView.as_view(), name='inventory_list'),
+    path('inventory/<int:pk>/', InventoryDetailView.as_view(), name='inventory_detail'),
+    path('inventory/create/', InventoryCreateView.as_view(), name='inventory_create'),
+    path('inventory/<int:pk>/update/', InventoryUpdateView.as_view(), name='inventory_update'),
+    path('inventory/<int:pk>/delete/', InventoryDeleteView.as_view(), name='inventory_delete'),
 ]
 
 # urlpatterns = [
     # Inventory
-    # path('inventory/', InventoryListView.as_view(), name='inventory_list'),
-    # path('inventory/<int:pk>/', InventoryDetailView.as_view(), name='inventory_detail'),
-    # path('inventory/create/', InventoryCreateView.as_view(), name='inventory_create'),
-    # path('inventory/<int:pk>/update/', InventoryUpdateView.as_view(), name='inventory_update'),
-    # path('inventory/<int:pk>/delete/', InventoryDeleteView.as_view(), name='inventory_delete'),
 # ]

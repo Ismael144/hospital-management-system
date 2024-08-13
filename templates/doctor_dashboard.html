@@ -1,0 +1,239 @@
+﻿{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Dashboard
+{% endblock %}
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Doctor's Dashboard
+        <br />
+        <small>Overview of recent activities and tasks</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#"><i class="fa fa-dashboard"></i> Home</a>
+        </li>
+        <li class="breadcrumb-item active">Dashboard</li>
+      </ol>
+    </section>
+
+    <style>
+      .rounded {
+        border-radius: 10px;
+      }
+    </style>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <!-- Appointments Summary -->
+        <div class="col-xl-4 col-md-6 col-12">
+          <div class="card">
+            <div class="card-body text-center bg-primary text-white rounded">
+              <a href="{% url 'appointment_list' %}" class="text-white text-decoration-none">
+                <i data-feather="briefcase" class="my-3"></i>
+                <h6 class="text-uppercase">Today's Appointments</h6>
+                <h3 class="mb-2">8</h3>
+              </a>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Patients Summary -->
+        <div class="col-xl-4 col-md-6 col-12">
+          <div class="card rounded">
+            <div class="card-body text-center bg-info text-white rounded">
+              <a href="{% url 'patient_list' %}" class="text-white text-decoration-none">
+                <i data-feather="users" class="my-3"></i>
+                <h6 class="text-uppercase">New Patients</h6>
+                <h3 class="mb-2">12</h3>
+              </a>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Messages Summary -->
+        <div class="col-xl-4 col-md-6 col-12">
+          <div class="card">
+            <div class="card-body text-center bg-danger text-white rounded">
+              <a href="{% url 'inbox' %}" class="text-white text-decoration-none">
+                <i data-feather="mail" class="my-3"></i>
+                <h6 class="text-uppercase">New Messages</h6>
+                <h3 class="mb-2">3</h3>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Feather icons initialization -->
+      <script>
+        feather.replace();
+      </script>
+      
+
+      <!-- Recent Activities -->
+      <div class="row">
+        <!-- /.box-header -->
+        <div class="card-body">
+          <div class="box">
+            <div class="box-header with-border">
+              <h3 class="box-title">Appointments</h3>
+            </div>
+            <div class="box-body">
+              <div class="table-responsive">
+                <table class="table border-no" id="data-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      {% if not appointment.patient.user.is_authenticated %}
+                        <th>Patient Name</th>
+                      {% endif %}
+                      {% if appointment.doctor.employee.user.is_authenticated or appointment.nurse.employee.user.is_authenticated %}
+                        <th>Nurse/Doctor</th>
+                      {% endif %}
+                      <th>Appointment Date</th>
+                      <th>Reason</th>
+                      <th>Status</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for appointment in appointments %}
+                      <tr>
+                        <td>{{ forloop.counter }}</td>
+                        {% if appointment.patient.user.is_authenticated %}
+                          <td>
+                            <a href="{% url 'patient_detail' appointment.patient.pk %}">{{ appointment.patient.user.get_full_name }}</a>
+                          </td>
+                        {% endif %}
+                        {% if not appointment.doctor.employee.user.is_authenticated %}
+                          <td>
+                            {% if appointment.nurse %}
+                              <a href="{% url 'nurse_detail' appointment.nurse.pk %}">Nr. {{ appointment.nurse.employee.user.get_full_name }}</a>
+                            {% elif appointment.doctor %}
+                              <a href="{% url 'doctor_detail' appointment.doctor.pk %}">Dr. {{ appointment.doctor.employee.user.get_full_name }}</a>
+                            {% else %}
+                              N/A
+                            {% endif %}
+                          </td>
+                        {% endif %}
+                        <td>{{ appointment.appointment_date }}</td>
+                        <td>{{ appointment.reason }}</td>
+                        <td>
+                          {% if appointment.status == 'Scheduled' %}
+                            <span class="badge bg-primary-light">{{ appointment.status }}</span>
+                          {% elif appointment.status == 'Completed' %}
+                            <span class="badge bg-success-light">{{ appointment.status }}</span>
+                          {% else %}
+                            <span class="badge bg-danger-light">{{ appointment.status }}</span>
+                          {% endif %}
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                            <div class="dropdown-menu">
+                              <a class="dropdown-item" href="{% url 'appointment_detail' appointment.pk %}">View Details</a>
+                              {% if not appointment.is_cancelled %}
+                                <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#appointment-cancel-modal-{{ appointment.id }}">Cancel Appointment</a>
+                              {% endif %}
+                              {% if not appointment.is_cancelled %}
+                                <a class="dropdown-item" href="{% url 'appointment_update' appointment.pk %}">Edit</a>
+                              {% endif %}
+                              {% comment %} <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#appointment-delete-modal-{{ appointment.id }}">Delete</a> {% endcomment %}
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      {% comment %} <div class="modal fade" id="appointment-delete-modal-{{ appointment.id }}" tabindex="-1" aria-labelledby="appointment-delete-modal-Label" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="appointment-delete-modal-Label">Confirm Delete appointment</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              Are you sure you want to delete appointment of 'patient' made with <strong>'{{ appointment.user.get_full_name }}'</strong>?
+                            </div>
+                            <div class="modal-footer d-flex align-items-center">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                              <form action="{% url 'appointment_delete' appointment.pk %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div> {% endcomment %}
+                      <div class="modal fade" id="appointment-cancel-modal-{{ appointment.id }}" tabindex="-1" aria-labelledby="appointment-cancel-modal-Label" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="appointment-delete-modal-Label">Cancel Appointment</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="" method="post">
+                              {% csrf_token %}
+                              <div class="modal-body">
+                                <p>
+                                  {% if appointment.nurse %}
+                                    Cancel appointment Between Patient <b>'{{ appointment.patient.user.get_full_name }}'</b> and <b>Nr. {{ appointment.nurse.employee.user.get_full_name }}</b>
+                                  {% elif appointment.doctor %}
+                                    Cancel appointment Between Patient <b>'{{ appointment.patient.user.get_full_name }}'</b> and <b>Dr. {{ appointment.doctor.employee.user.get_full_name }}</b>
+                                  {% endif %}
+                                </p>
+                                <span class="text-muted">Provide a meaningful reason for cancelling appointment</span><span class="text-dark">(Remember that once you cancel it, you can't reverse it, you have to create a new appointment)</span>
+                                <input type="hidden" name="appt_id" value="{{ appointment.pk }}" />
+                                <div class="form-group my-2">
+                                  <label for="" class="form-label">Reason: <span class="text-danger">*</span></label>
+                                  <textarea name="cancellation_reason" placeholder="Provide a meaningful reason..." class="form-control" rows="5" required></textarea>
+                                </div>
+                              </div>
+                              <div class="modal-footer d-flex align-items-center">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button class="btn btn-danger">Submit</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    {% empty %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- /.box-body -->
+          <!-- /.box -->
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>&copy;<script>
+                  document.write(new Date().getFullYear())
+                </script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+{% endblock %}

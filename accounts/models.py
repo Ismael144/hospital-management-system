@@ -281,4 +281,4 @@ class HRManager(models.Model):
     department = models.ForeignKey('human_resource.Department', null=True, on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return "HR Manager"
+        return self.employee.user.get_full_name()

@@ -1,0 +1,61 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Inventory Details
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <div class="row justify-content-center">
+          <div class="col-lg-8 col-md-10 col-sm-12">
+            <div class="card shadow-sm border-0">
+              <div class="card-header bg-primary text-white">
+                <h3 class="card-title">Inventory Details</h3>
+              </div>
+              <div class="card-body">
+                <h5 class="mb-4">{{ inventory.medication.name }}</h5>
+                <table class="table table-borderless">
+                  <tbody>
+                    <tr>
+                      <th scope="row">Medication</th>
+                      <td>{{ inventory.medication.name }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Quantity in Stock</th>
+                      <td>{{ inventory.quantity_in_stock }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Reorder Threshold</th>
+                      <td>{{ inventory.reorder_threshold }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Last Restocked</th>
+                      <td>{{ inventory.last_restocked }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="card-footer d-flex justify-content-between">
+                <a href="{% url 'inventory_update' inventory.pk %}" class="btn btn-primary">
+                  <i class="fas fa-edit"></i> Edit
+                </a>
+                <a href="{% url 'inventory_list' %}" class="btn btn-secondary">
+                  <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}

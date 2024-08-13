@@ -136,7 +136,7 @@ class NoticeBoardListView(ListView):
 @method_decorator([login_required, permission_required('notices.view_noticeboard', raise_exception=True)], name='dispatch')
 class NoticeBoardDetailView(DetailView):
     model = NoticeBoard
-    template_name = 'notices/notice_detail.html'
+    template_name = 'human_resource/noticeboard_detail.html'
     context_object_name = 'notice'
 
 @method_decorator([login_required, permission_required('notices.add_noticeboard', raise_exception=True)], name='dispatch')
@@ -144,7 +144,7 @@ class NoticeBoardCreateView(CreateView):
     model = NoticeBoard
     form_class = NoticeBoardForm
     template_name = 'human_resource/noticeboard_form.html'
-    success_url = reverse_lazy('notice_list')
+    success_url = reverse_lazy('noticeboard_list')
 
     def form_valid(self, form):
         response = super().form_valid(form)

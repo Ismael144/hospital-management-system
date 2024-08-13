@@ -74,7 +74,9 @@
                 {% endif %}
                 {% for field in form %}
                   <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    <label for="{{ field.id_for_label }}" class="{% if field.field.required %}required-field{% endif %}">
+                      {{ field.label }}:
+                    </label>
                     {{ field|add_class:'form-control' }}
                     {% if field.help_text %}
                       <p class="help-block">{{ field.help_text }}</p>

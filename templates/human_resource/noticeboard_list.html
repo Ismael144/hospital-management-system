@@ -15,25 +15,34 @@ Notice Board
 <div class="content-wrapper rounded-0">
     <div class="container-full">
         <section class="content">
-            <h2>Notice Board</h2>
-            <a href="{% url 'noticeboard_create' %}" class="btn btn-primary mb-2">Add Notice</a>
-            <table class="table border-no" id="data-table">
-                <thead>
-                    <tr>
-                        <th>S.No</th>
-                        <th>Title</th>
-                        <th>Content</th>
-                        <th>Posted By</th>
-                        <th>Date Posted</th>
-                        <th>Expires On</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for notice in notices %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ notice.title }}</td>
+            <div class="controls d-flex align-items-center justify-content-end my-4">
+                <a href="{% url 'noticeboard_create' %}" class="btn btn-success d-flex align-items-center gap-3">
+                  Add Notice
+                  <span><i class="fas fa-plus" style="font-size: 10px !important;"></i></span>
+                </a>
+              </div>
+              <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Notice Board</h3>
+                </div>
+                <div class="box-body table-responsive">
+                    <table class="table border-no" id="data-table">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Title</th>
+                                <th>Content</th>
+                                <th>Posted By</th>
+                                <th>Date Posted</th>
+                                <th>Expires On</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for notice in notices %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ notice.title }}</td>
                         <td>{{ notice.content|truncatewords:20 }}</td>
                         <td>{{ notice.posted_by.get_full_name }}</td>
                         <td>{{ notice.date_posted }}</td>
@@ -73,6 +82,7 @@ Notice Board
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
         </section>
     </div>
 </div>

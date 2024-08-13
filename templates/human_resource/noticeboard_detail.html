@@ -1,0 +1,108 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Notice Details
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <div class="container-full">
+      <!-- Content Header (Page header) -->
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Notice Details</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Notice Details</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <section class="content">
+        <!-- Notice Details Card -->
+        <div class="card shadow-sm border-light">
+          <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">{{ notice.title }}</h5>
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              <small class="text-muted">Posted by: {{ notice.posted_by }} on {{ notice.date_posted|date:'F j, Y, g:i a' }}</small>
+            </p>
+            
+            {% if notice.expires_on %}
+              <p class="card-text">
+                <strong>Expires on:</strong> {{ notice.expires_on|date:'F j, Y, g:i a' }}
+              </p>
+            {% endif %}
+            
+            <p class="card-text">{{ notice.content }}</p>
+            
+            <p class="card-text">
+              <strong>Tags:</strong> {{ notice.tags }}
+            </p>
+            <p class="card-text">
+              <strong>Views:</strong> {{ notice.views }}
+            </p>
+            
+            {% if notice.is_expired %}
+              <p class="card-text text-danger">
+                <em>This notice has expired.</em>
+              </p>
+            {% endif %}
+            
+            <a class="btn btn-primary" href="{% url 'noticeboard_list' %}">Back to Notice Board</a>
+          </div>
+        </div>
+
+        <!-- Additional Info or Actions -->
+        <div class="mt-4">
+          <h5>Related Notices</h5>
+          <!-- Here you can include related notices or additional details -->
+          <!-- For example: -->
+          <ul class="list-group">
+            <!-- Loop through related notices or any additional content -->
+            <!-- {% for related_notice in related_notices %} -->
+            <!--   <li class="list-group-item">
+            <!--     <a href="{% url 'notice-detail' related_notice.id %}">{{ related_notice.title }}</a>
+            <!--   </li> -->
+            <!-- {% endfor %} -->
+          </ul>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <div class="control-sidebar-bg"></div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+        <li class="nav-item">
+          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
+        </li>
+      </ul>
+    </div>
+    <div>&copy;<script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.</div>
+  </footer>
+{% endblock %}

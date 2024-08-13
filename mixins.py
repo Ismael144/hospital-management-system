@@ -7,7 +7,6 @@ from django.urls import reverse_lazy
 class LoginRequiredMixin(LoginRequiredMixin):
     login_url = reverse_lazy('signin_page')
 
-
 # mixins.py
 class ActivityLogMixin:
     def log_activity(self, user, action, model_name, object_id):
