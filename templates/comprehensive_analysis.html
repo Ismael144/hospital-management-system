@@ -1,0 +1,287 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h1 class="mb-4">Comprehensive Hospital Analysis</h1>
+    <p>Analysis period: {{ start_date }} to {{ end_date }}</p>
+
+    <div class="row">
+        <!-- Discharge Summary Analysis -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Discharge Summary Analysis</h5>
+                    <canvas id="dischargeStatusChart"></canvas>
+                    <h6 class="mt-3">Top 5 Discharge Reasons</h6>
+                    <ul class="list-group">
+                        {% for reason in discharge_reasons %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ reason.discharge_reason|default:"Not specified" }}
+                                <span class="badge bg-primary rounded-pill">{{ reason.count }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Analysis -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Patient Analysis</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <canvas id="patientStatusChart"></canvas>
+                        </div>
+                        <div class="col-md-6">
+                            <canvas id="ageGroupChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment and Bill Analysis -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Payment and Bill Analysis</h5>
+                    <canvas id="paymentMethodChart"></canvas>
+                    <h6 class="mt-3">Bill Status</h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Count</th>
+                                <th>Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for status in bill_status %}
+                                <tr>
+                                    <td>{{ status.status }}</td>
+                                    <td>{{ status.count }}</td>
+                                    <td>${{ status.total|floatformat:2 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prescription Analysis -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Prescription Analysis</h5>
+                    <h6>Top 10 Prescribed Medications</h6>
+                    <canvas id="topMedicationsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointment Analysis -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Appointment Analysis</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <canvas id="appointmentStatusChart"></canvas>
+                        </div>
+                        <div class="col-md-8">
+                            <canvas id="appointmentsByDayChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dischargeData = {{ discharge_status|json_script:"discharge_status" }};
+    const patientData = {{ patient_status|json_script:"patient_status" }};
+    const ageGroupData = {{ age_groups|json_script:"age_groups" }};
+    const paymentMethodData = {{ payment_methods|json_script:"payment_methods" }};
+    const medicationData = {{ top_medications|json_script:"top_medications" }};
+    const appointmentData = {{ appointment_status|json_script:"appointment_status" }};
+    const appointmentsByDayData = {{ appointments_by_day|json_script:"appointments_by_day" }};
+
+    // Debugging logs
+    console.log('Discharge Data:', dischargeData);
+    console.log('Patient Data:', patientData);
+    console.log('Age Group Data:', ageGroupData);
+    console.log('Payment Method Data:', paymentMethodData);
+    console.log('Medication Data:', medicationData);
+    console.log('Appointment Data:', appointmentData);
+    console.log('Appointments By Day Data:', appointmentsByDayData);
+
+    // Discharge Status Chart
+    new Chart(document.getElementById('dischargeStatusChart'), {
+        type: 'pie',
+        data: {
+            labels: dischargeData.map(item => item.discharge_status),
+            datasets: [{
+                data: dischargeData.map(item => item.count),
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Discharge Status' }
+            }
+        }
+    });
+
+    // Patient Status Chart
+    new Chart(document.getElementById('patientStatusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: patientData.map(item => item.status),
+            datasets: [{
+                data: patientData.map(item => item.count),
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Patient Status' }
+            }
+        }
+    });
+
+    // Age Group Chart
+    new Chart(document.getElementById('ageGroupChart'), {
+        type: 'bar',
+        data: {
+            labels: ageGroupData.map(item => item.age_group),
+            datasets: [{
+                label: 'Number of Patients',
+                data: ageGroupData.map(item => item.count),
+                backgroundColor: '#36A2EB',
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                title: { display: true, text: 'Patient Age Groups' }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Payment Method Chart
+    new Chart(document.getElementById('paymentMethodChart'), {
+        type: 'bar',
+        data: {
+            labels: paymentMethodData.map(item => item.payment_method),
+            datasets: [{
+                label: 'Number of Payments',
+                data: paymentMethodData.map(item => item.count),
+                backgroundColor: '#FF6384',
+            }, {
+                label: 'Total Amount',
+                data: paymentMethodData.map(item => item.total),
+                backgroundColor: '#36A2EB',
+                yAxisID: 'y1',
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Payment Methods' }
+            },
+            scales: {
+                y: { beginAtZero: true },
+                y1: {
+                    beginAtZero: true,
+                    position: 'right',
+                    grid: { drawOnChartArea: false },
+                }
+            }
+        }
+    });
+
+    // Top Medications Chart
+    new Chart(document.getElementById('topMedicationsChart'), {
+        type: 'bar',
+        data: {
+            labels: medicationData.map(item => item.medication__name),
+            datasets: [{
+                label: 'Number of Prescriptions',
+                data: medicationData.map(item => item.count),
+                backgroundColor: '#4BC0C0',
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Top 10 Prescribed Medications' }
+            },
+            scales: {
+                x: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Appointment Status Chart
+    new Chart(document.getElementById('appointmentStatusChart'), {
+        type: 'pie',
+        data: {
+            labels: appointmentData.map(item => item.status),
+            datasets: [{
+                data: appointmentData.map(item => item.count),
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Appointment Status' }
+            }
+        }
+    });
+
+    // Appointments by Day Chart
+    new Chart(document.getElementById('appointmentsByDayChart'), {
+        type: 'line',
+        data: {
+            labels: appointmentsByDayData.map(item => item.date),
+            datasets: [{
+                label: 'Number of Appointments',
+                data: appointmentsByDayData.map(item => item.count),
+                borderColor: '#36A2EB',
+                fill: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Appointments by Day' }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

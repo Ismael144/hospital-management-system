@@ -71,6 +71,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'appointments.tasks.send_appointment_reminders',
         'schedule': crontab(minute=0, hour='*/1'),  # Runs every hour
     },
+    'check-medication-expiry-every-day': {
+        'task': 'medications.tasks.check_medication_expiry',
+        'schedule': crontab(hour=0, minute=0),  # Run daily at midnight
+    },
 }
 
 MESSAGE_TAGS = {

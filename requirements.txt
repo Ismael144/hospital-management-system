@@ -8,3 +8,4 @@ typing_extensions
 boto3
 django-storages
 celery
+phonenumbers

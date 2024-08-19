@@ -1,23 +1,29 @@
+from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View, ListView, DetailView, DeleteView, CreateView, UpdateView
 from django.contrib import messages
-from .models import Receptionist, Patient, Doctor, Nurse, CustomUser, DischargeSummary, Pharmacist, LabTechnician, CaseManager, Accountant
+from .models import Receptionist, Patient, Doctor, Nurse, CustomUser, DischargeSummary, Pharmacist, LabTechnician, CaseManager, Accountant, MedicalReport
 from activities.models import Activity
 from .forms import PatientForm, DoctorForm, NurseForm, CustomUserForm, ReceptionistForm, DischargeSummaryForm, PharmacistForm, LabTechnicianForm, CaseManagerForm, AccountantForm
 from messaging.models import Notification 
 from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.admin.views.decorators import staff_member_required
-from facilities.models import Room
-from django.http import HttpResponse
-# from django.urls.resolvers import escape
-from facilities.forms import RoomForm
-from django.utils.html import escape
-from django.utils.decorators import method_decorator
 from .models import Employee
 from .forms import EmployeeForm
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Sum
+from django.utils import timezone
+from datetime import timedelta
+from .models import DischargeSummary, Patient
+from django.db.models import Case, When, Value, CharField, Count
+from financials.models import Payment, Bill
+from pharmacy.models import Prescription
+from appointments.models import Appointment
+from django.core.exceptions import ValidationError
+from .forms import MedicalReportForm
 
 class SignInRequiredMixin(LoginRequiredMixin):
     login_url = reverse_lazy('signin_page')
@@ -110,26 +116,66 @@ class PatientCreateView(View):
             log_activity(request.user, 'Create', 'Created a new patient')
             return redirect('patient_list')
         return render(request, self.template_name, {'form': form})
+    
 
+@login_required
+def comprehensive_analysis(request):
+    # Time range for analysis
+    end_date = timezone.now().date()
+    start_date = end_date - timedelta(days=30)  # Last 30 days
 
-@method_decorator(staff_member_required, name='dispatch')
-class RoomCreatePopupView(CreateView):
-    model = Room
-    form_class = RoomForm
-    template_name = 'facilities/room_form.html'
+    # Discharge Summary Analysis
+    discharge_summary = DischargeSummary.objects.filter(discharge_date__range=[start_date, end_date])
+    discharge_status = discharge_summary.values('discharge_status').annotate(count=Count('id'))
+    discharge_reasons = discharge_summary.values('discharge_reason').annotate(count=Count('id'))[:5]
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        if '_popup' in self.request.POST:
-            return HttpResponse(
-                '<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>' % (
-                    escape(self.object.pk),
-                    escape(self.object)
-                )
-            )
-        return response
+    # Patient Analysis
+    patients = Patient.objects.all()
+    patient_status = patients.values('status').annotate(count=Count('id'))
+    age_groups = patients.annotate(
+        age_group=Case(
+            When(date_of_birth__gte=timezone.now().date() - timedelta(days=365*18), then=Value('0-18')),
+            When(date_of_birth__gte=timezone.now().date() - timedelta(days=365*30), then=Value('19-30')),
+            When(date_of_birth__gte=timezone.now().date() - timedelta(days=365*50), then=Value('31-50')),
+            default=Value('51+'),
+            output_field=CharField(),
+        )
+    ).values('age_group').annotate(count=Count('id'))
 
+    # Payment and Bill Analysis
+    payments = Payment.objects.filter(date_paid__range=[start_date, end_date])
+    payment_methods = payments.values('payment_method').annotate(count=Count('id'), total=Sum('amount'))
+    bills = Bill.objects.filter(date_issued__range=[start_date, end_date])
+    bill_status = bills.values('status').annotate(count=Count('id'), total=Sum('total_amount'))
+    insurance_claims = bills.values('insurance_claim_status').annotate(count=Count('id'))
 
+    # Prescription Analysis
+    prescriptions = Prescription.objects.filter(issue_date__range=[start_date, end_date])
+    top_medications = prescriptions.values('medication__name').annotate(count=Count('id'))[:10]
+
+    # Appointment Analysis
+    appointments = Appointment.objects.filter(appointment_date__range=[start_date, end_date])
+    appointment_status = appointments.values('status').annotate(count=Count('id'))
+    appointments_by_day = appointments.values('appointment_date__date').annotate(count=Count('id')).order_by('appointment_date__date')
+
+    context = {
+        'discharge_status': list(discharge_status),
+        'discharge_reasons': list(discharge_reasons),
+        'patient_status': list(patient_status),
+        'age_groups': list(age_groups),
+        'payment_methods': list(payment_methods),
+        'bill_status': list(bill_status),
+        'insurance_claims': list(insurance_claims),
+        'top_medications': list(top_medications),
+        'appointment_status': list(appointment_status),
+        'appointments_by_day': list(appointments_by_day),
+        'start_date': start_date,
+        'end_date': end_date,
+    }
+
+    return render(request, 'comprehensive_analysis.html', context)
+
+    
 class PatientUpdateView(View):
     template_name = 'patient_update.html'
 
@@ -284,13 +330,10 @@ class UserProfileView(View):
     template_name = 'user_profile.html'
     
     def get(self, request):
-
         user = self.request.user
-        if request.user != user:
-            messages.error(request, "You are not authorized to view this profile.")
-            return redirect('home')
 
-        employee = Employee.objects.filter(user=self.request.user)
+        employee = Employee.objects.filter(user=user).first()
+        print("Employee: ", employee)
 
         activities = Activity.objects.filter(user=user).order_by('-timestamp')
         return render(request, self.template_name, {'user_profile': user, 'activities': activities, 'user_form': CustomUserForm(instance=self.request.user), 'employee_form': EmployeeForm(instance=employee)})
@@ -419,6 +462,7 @@ class CaseManagerListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return CaseManager.objects.all()
 
+
 class CaseManagerCreateView(LoginRequiredMixin, CreateView):
     model = CaseManager
     form_class = CaseManagerForm
@@ -437,6 +481,7 @@ class CaseManagerCreateView(LoginRequiredMixin, CreateView):
         messages.success(self.request, 'Case Manager created successfully!')
         return response
 
+
 class CaseManagerDetailView(LoginRequiredMixin, DetailView):
     model = CaseManager
     template_name = 'case_manager_detail.html'
@@ -444,6 +489,7 @@ class CaseManagerDetailView(LoginRequiredMixin, DetailView):
 
     def get_object(self):
         return CaseManager.objects.get(pk=self.kwargs.get('pk'))
+
 
 class CaseManagerUpdateView(LoginRequiredMixin, UpdateView):
     model = CaseManager
@@ -472,6 +518,7 @@ class AccountantListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Accountant.objects.all()
 
+
 class AccountantCreateView(LoginRequiredMixin, CreateView):
     model = Accountant
     form_class = AccountantForm
@@ -486,6 +533,7 @@ class AccountantCreateView(LoginRequiredMixin, CreateView):
             description=f"Created Accountant {self.object.employee.user.get_full_name()}",
         )
         return response
+
 
 class AccountantUpdateView(LoginRequiredMixin, UpdateView):
     model = Accountant
@@ -528,12 +576,48 @@ class DischargeSummaryListView(LoginRequiredMixin, PermissionRequiredMixin, List
     template_name = 'discharge_summary_list.html'
     context_object_name = 'discharge_summaries'
     permission_required = 'accounts.view_dischargesummary'
+    
+ 
 
+    def get_queryset(self):
+        discharge_summaries = super().get_queryset()
+        
+        patient_id = self.request.GET.get('patient')
+        
+        if patient_id:
+            try:
+                # Validate that patient_id is an integer
+                patient_id = int(patient_id)
+                # Fetch the patient object safely
+                patient = get_object_or_404(Patient, pk=patient_id)
+                discharge_summaries = discharge_summaries.filter(patient=patient)
+            except (ValueError, ValidationError):
+                # Handle the case where patient_id is not a valid integer
+                discharge_summaries = discharge_summaries.none()
+        
+        return discharge_summaries
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['patients'] = Patient.objects.all()
+        
+        patient_id = self.request.GET.get('patient')
+        if patient_id:
+            try:
+                patient_id = int(patient_id)
+                context['selected_patient'] = Patient.objects.filter(pk=patient_id).first()
+            except (ValueError, ValidationError):
+                context['selected_patient'] = None
+        
+        return context
+ 
+ 
 class DischargeSummaryDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = DischargeSummary
     template_name = 'discharge_summary_detail.html'
     context_object_name = 'discharge_summary'
     permission_required = 'accounts.view_dischargesummary'
+
 
 class DischargeSummaryCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = DischargeSummary
@@ -547,6 +631,7 @@ class DischargeSummaryCreateView(LoginRequiredMixin, PermissionRequiredMixin, Cr
         log_activity(self.request.user, 'Create', f'Created discharge summary for patient ID {self.object.patient.pk}')
         return response
 
+
 class DischargeSummaryUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = DischargeSummary
     form_class = DischargeSummaryForm
@@ -559,6 +644,7 @@ class DischargeSummaryUpdateView(LoginRequiredMixin, PermissionRequiredMixin, Up
         log_activity(self.request.user, 'Update', f'Updated discharge summary for patient ID {self.object.patient.pk}')
         return response
 
+
 class DischargeSummaryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = DischargeSummary
     template_name = 'discharge_summary_confirm_delete.html'
@@ -568,4 +654,68 @@ class DischargeSummaryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, De
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         log_activity(request.user, 'Delete', f'Deleted discharge summary for patient ID {self.object.patient.pk}')
+        return super().delete(request, *args, **kwargs)
+
+
+class MedicalReportListView(LoginRequiredMixin, ListView):
+    model = MedicalReport
+    template_name = 'medical_report_list.html'
+    context_object_name = 'medical_reports'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        patient_id = self.request.GET.get('patient')
+        
+        if patient_id:
+            patient = get_object_or_404(Patient, pk=patient_id)
+            queryset = queryset.filter(patient=patient)
+
+        return queryset
+
+    def get_context_data(self, **kwargs): 
+        context_data = super().get_context_data()
+        context_data['patients'] = Patient.objects.all()
+        patient_id = self.request.GET.get('patient')
+
+        if patient_id: 
+            patient = get_object_or_404(Patient, pk=patient_id)
+            context_data['selected_patient'] = patient
+
+        return context_data
+
+class MedicalReportDetailView(LoginRequiredMixin, DetailView):
+    model = MedicalReport
+    template_name = 'medical_report_detail.html'
+    context_object_name = 'medical_report'
+
+class MedicalReportCreateView(LoginRequiredMixin, CreateView):
+    model = MedicalReport
+    form_class = MedicalReportForm
+    template_name = 'medical_report_form.html'
+    success_url = reverse_lazy('medical_report_list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        log_activity(self.request.user, 'create', f"Created Medical Report for patient {self.object.patient} on {self.object.date_of_examination}")
+        return response
+
+class MedicalReportUpdateView(LoginRequiredMixin, UpdateView):
+    model = MedicalReport
+    form_class = MedicalReportForm
+    template_name = 'medical_report_form.html'
+    success_url = reverse_lazy('medical_report_list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        log_activity(self.request.user, 'update', f"Updated Medical Report for patient {self.object.patient} on {self.object.date_of_examination}")
+        return response
+
+class MedicalReportDeleteView(LoginRequiredMixin, DeleteView):
+    model = MedicalReport
+    template_name = 'medical_report_confirm_delete.html'
+    success_url = reverse_lazy('medical_report_list')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        log_activity(request.user, 'delete', f"Deleted Medical Report for patient {self.object.patient} on {self.object.date_of_examination}")
         return super().delete(request, *args, **kwargs)

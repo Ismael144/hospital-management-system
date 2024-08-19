@@ -5,7 +5,7 @@
   class="hold-transition light-skin sidebar-mini theme-primary fixed"
 {% endblock %}
 
-{% block title %}
+{% block title %} 
   Discharge Summaries
 {% endblock %}
 
@@ -26,6 +26,9 @@
                   <li class="breadcrumb-item">
                     <a href="#"><i class="mdi mdi-home-outline"></i></a>
                   </li>
+                  <li class="breadcrumb-item">
+                    <a href="{% url 'patient_list' %}">Patients</a>
+                  </li>
                   <li class="breadcrumb-item active" aria-current="page">Discharge Summaries</li>
                 </ol>
               </nav>
@@ -36,7 +39,22 @@
 
       <!-- Main content -->
       <section class="content">
-        <div class="controls d-flex align-items-center justify-content-end my-4">
+        <div class="controls d-flex align-items-center justify-content-end gap-2 my-4">
+          <form action="" method="GET" id="patient_select_form">
+            <select name="patient" onchange="submitPatientForm()" style="width: 170px;">
+              <option value="">Select patient</option>
+              {% for patient in patients %}
+              <option value="{{ patient.pk }}" {% if selected_patient == patient %} selected{% endif %}>{{ patient.user.get_full_name }}</option>
+              {% endfor %}
+            </select>
+          </form>
+          <script>
+            const patientForm = document.getElementById('patient_select_form')
+
+            function submitPatientForm() {
+              patientForm.submit()
+            }
+          </script>
           <a href="{% url 'discharge_summary_create' %}" class="btn btn-success d-flex align-items-center gap-3">
             Create
             <span><i class="fas fa-plus" style="font-size: 10px !important;"></i></span>
@@ -44,7 +62,14 @@
         </div>
         <div class="box">
           <div class="box-header with-border">
-            <h3 class="box-title">Discharge Summary List</h3>
+            <h3 class="box-title">Discharge Summary 
+              {% if not selected_patient %}
+              {{ patient }}
+                List
+              {% else %}
+                for '{{ selected_patient.user.get_full_name }}'
+              {% endif %}
+            </h3>
           </div>
           <div class="box-body">
             <div class="table-responsive">
@@ -65,7 +90,17 @@
                       <td>{{ forloop.counter }}</td>
                       <td>{{ summary.patient.user.get_full_name }}</td>
                       <td>{{ summary.discharge_date }}</td>
-                      <td>{{ summary.discharge_status }}</td>
+                      <td>
+                        {% if summary.discharge_status == 'Completed' %}
+                          <span class="badge badge-success-light">Completed</span>
+                        {% elif summary.discharge_status == 'Planned' %}
+                          <span class="badge badge-primary-light">Planned</span>
+                        {% elif summary.discharge_status == 'Pending' %}
+                          <span class="badge badge-info-light">Pending</span>
+                        {% else %}
+                          {{ summary.discharge_status }}
+                        {% endif %}
+                      </td>
                       <td>Dr. {{ summary.discharge_doctor|default:"N/A" }}</td>
                       <td>
                         <div class="btn-group">

@@ -191,7 +191,7 @@
                                     Cancel appointment Between Patient <b>'{{ appointment.patient.user.get_full_name }}'</b> and <b>Nr. {{ appointment.nurse.employee.user.get_full_name }}</b>
                                   {% elif appointment.doctor %}
                                     Cancel appointment Between Patient <b>'{{ appointment.patient.user.get_full_name }}'</b> and <b>Dr. {{ appointment.doctor.employee.user.get_full_name }}</b>
-                                  {% endif %}
+                                  {% endif %} 
                                 </p>
                                 <span class="text-muted">Provide a meaningful reason for cancelling appointment</span><span class="text-dark">(Remember that once you cancel it, you can't reverse it, you have to create a new appointment)</span>
                                 <input type="hidden" name="appt_id" value="{{ appointment.pk }}" />

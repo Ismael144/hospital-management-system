@@ -14,7 +14,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
-
+from django.http import JsonResponse
+from django.core.paginator import EmptyPage, InvalidPage
+from django.views.generic import ListView
+from humanize import naturaltime
 
 class SignInRequiredMixin(LoginRequiredMixin):
     login_url = reverse_lazy('signin_page')
@@ -35,13 +38,14 @@ class UserNotificationsMessagesView(SignInRequiredMixin, View):
                 "bg_color": notification.bg_color,
                 "link_name": notification.link_name,
             } 
-            for notification in notifications
+            for notification in notifications 
         ]
         
         messages_data = [
             {
                 "id": message.pk,
                 "content": message.content,
+                "subject": message.subject,
                 "timestamp": message.timestamp,
                 "read": message.read,
             }
@@ -143,6 +147,54 @@ def inbox(request):
     }
     return render(request, 'messaging/inbox.html', context)
 
+
+class FetchMessagesView(ListView):
+    model = Message
+    paginate_by = 1  # Number of messages per page
+
+    def get_queryset(self):
+        # Fetch messages for the current user, adjust this as necessary
+        return Message.objects.filter(receiver=self.request.user).order_by('-timestamp')
+
+    def get(self, request, *args, **kwargs):
+        page_number = self.request.GET.get('page', 1)  # Get the page number from the request
+        self.object_list = self.get_queryset()
+        paginator = self.get_paginator(self.object_list, self.paginate_by)
+        
+        try:
+            page = paginator.page(page_number)
+        except (EmptyPage, InvalidPage):
+            page = paginator.page(paginator.num_pages)
+
+        message_list = []
+        for message in page:
+            message_list.append({
+                'id': message.id,
+                'subject': message.subject,
+                'content': message.content,
+                'sender_name': message.sender.get_full_name(),
+                'sender_role': message.sender.role,
+                'profile_image': message.sender.profile_image.url if message.sender.profile_image else 'images/no-user-image.jpg',
+                'has_attachments': message.has_attachments,
+                'read': message.read,
+                'timestamp': naturaltime(message.timestamp),
+            })
+            
+            print(naturaltime(message.timestamp))
+
+        return JsonResponse({
+            'messages': message_list,
+            'has_next': page.has_next(),
+            'has_previous': page.has_previous(),
+            'current_page': page.number,
+            'total_pages': paginator.num_pages,
+        })
+
+
+@login_required
+def inbox_count_api(request): 
+    received_messages_count = Message.objects.filter(receiver=request.user, read=False).count()
+    return JsonResponse({'received_message_count': received_messages_count})
 
 
 @login_required

@@ -15,7 +15,7 @@ urlpatterns = [
     path('patients/discharge-summary/<int:pk>/update/', DischargeSummaryUpdateView.as_view(), name='discharge_summary_update'),
     path('patients/discharge-summary/<int:pk>/', DischargeSummaryDetailView.as_view(), name='discharge_summary_detail'),
     path('patients/discharge-summary/<int:pk>/delete/', DischargeSummaryDeleteView.as_view(), name='discharge_summary_delete'),
-    path('room/add/', RoomCreatePopupView.as_view(), name='room_add'),
+    path('patients/analysis', comprehensive_analysis, name='discharge_summary_delete'),
     
     # Receptionist URLs
     path('receptionists/', ReceptionistListView.as_view(), name='receptionist_list'),
@@ -64,4 +64,11 @@ urlpatterns = [
     path('accountants/<int:pk>/update/', AccountantUpdateView.as_view(), name='accountant_update'),
     path('accountants/<int:pk>/', AccountantDetailView.as_view(), name='accountant_detail'),
     path('accountants/<int:pk>/delete/', AccountantDeleteView.as_view(), name='accountant_delete'),
+
+    # Medical Report URLs 
+    path('patients/medical-reports/', MedicalReportListView.as_view(), name='medical_report_list'),
+    path('patients/medical-reports/<int:pk>/', MedicalReportDetailView.as_view(), name='medical_report_detail'),
+    path('patients/medical-reports/create/', MedicalReportCreateView.as_view(), name='medical_report_create'),
+    path('patients/medical-reports/<int:pk>/update/', MedicalReportUpdateView.as_view(), name='medical_report_update'),
+    path('patients/medical-reports/<int:pk>/delete/', MedicalReportDeleteView.as_view(), name='medical_report_delete'),
 ]

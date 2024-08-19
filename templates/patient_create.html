@@ -6,60 +6,83 @@
   class="hold-transition light-skin sidebar-mini theme-primary fixed"
 {% endblock %}
 
-{% block title %} Dashboard {% endblock %}
+{% block title %}
+  Dashboard
+{% endblock %}
 
 {% block content %}
-	
   {% include 'includes/sidebar_content.html' %}
   <style>
     .required-field::after {
-        content: " *";
-        color: red;
+      content: ' *';
+      color: red;
     }
     .form-control.is-invalid {
-        border-color: #dc3545;
+      border-color: #dc3545;
     }
-</style>
+  </style>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper rounded-0">
-    <div class="container-full ">
+    <div class="container-full">
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Patient Form</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                  </li>
+                  <li class="breadcrumb-item">
+                    <a href="{% url 'patient_list' %}">Patient</a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">
+                    Form
+                  </li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- Main content -->
       <section class="content">
-        <div class="row">
-          <h3 class="my-4">Add Patient</h3>
-          <p>Please fill in the field correctly inorder to proceed</p>
-          <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {% if form.errors %}
-                <div class="alert alert-danger">
-                    <strong>Error!</strong> Please correct the following errors:
-                </div>
-            {% endif %}
-            <div class="form-row">
-                {% for field in form %}
-                    <div class="form-group">
-                        <label for="{{ field.id_for_label }}" class="{% if field.field.required %}required-field{% endif %}">
-                            {{ field.label }}:
-                        </label>
-                        {{ field|add_class:"form-control" }}
-                        {% if field.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ field.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+        <div class="box">
+          <div class="row">
+            <div class="box-header">
+              <h3 class="box-title mx-3">Add Patient</h3>
             </div>
-            <button type="submit" class="btn btn-primary">Save</button>
-        </form>
+            <div class="box-body">
+              <form method="POST" class="mx-3" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if form.errors %}
+                  <div class="alert alert-danger">
+                    <strong>Error!</strong> Please correct the following errors:
+                  </div>
+                {% endif %}
+                <div class="form-row">
+                  {% for field in form %}
+                    <div class="form-group">
+                      <label for="{{ field.id_for_label }}" class="{% if field.field.required %}required-field{% endif %}">{{ field.label }}:</label>
+                      {{ field|add_class:'form-control' }}
+                      {% if field.errors %}
+                        <div class="invalid-feedback d-block">{{ field.errors }}</div>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+              </form>
+            </div>
+          </div>
         </div>
       </section>
       <!-- /.content -->
     </div>
-    
   </div>
   <!-- /.content-wrapper -->
-  
+
   <footer class="main-footer">
     <div class="pull-right d-none d-sm-inline-block">
       <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
@@ -67,10 +90,8 @@
           <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529"></a>
         </li>
       </ul>
-    </div>
-    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
+    </div>&copy;<script>
+                  document.write(new Date().getFullYear())
+                </script> <a href="https://www.multipurposethemes.com/">Hospital System</a>. All Rights Reserved.
   </footer>
-  
-</div>
-
 {% endblock %}

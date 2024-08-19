@@ -135,7 +135,10 @@
             <a href="{% url 'appointment_list' %}"><i data-feather="calendar"></i><span>Appointments</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
             <ul class="treeview-menu">
               <li class="{% if request.resolver_match.url_name == 'appointment_list' %}active{% endif %}">
-                <a href="{% url 'appointment_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>All Appointments</a>
+                <a href="{% url 'appointment_create' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Create Appointment</a>
+              </li>
+              <li class="{% if request.resolver_match.url_name == 'appointment_list' %}active{% endif %}">
+                <a href="{% url 'appointment_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Appointments List</a>
               </li>
               <!-- Add more appointment-related links here -->
             </ul>
@@ -149,7 +152,10 @@
                 <a href="{% url 'patient_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>All Patients</a>
               </li>
               <li class="{% if request.resolver_match.url_name == 'patient_discharge' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Patient Discharge</a>
+                <a href="{% url 'medical_report_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Medical Reports</a>
+              </li>
+              <li class="{% if request.resolver_match.url_name == 'patient_discharge' %}active{% endif %}">
+                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Discharge Summaries</a>
               </li>
               <!-- Add more patient-related links here -->
             </ul>
@@ -274,26 +280,27 @@
           <li class="treeview">
             <a href="#"><i data-feather="user-check"></i><span>Employees</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
             <ul class="treeview-menu">
-               <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Lab Technicians</a>
-              </li>
-               <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Pharmacists</a>
-              </li>
-               <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>HR Managers</a>
-              </li>
-               <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Receptionists</a>
-              </li>
-               <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Accountants</a>
-              </li>
-               <li class="{% if request.resolver_match.url_name == 'employee_list' %}active{% endif %}">
-                <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Case Managers</a>
-              </li>
+                <li class="{% if request.resolver_match.url_name == 'lab_technician_list' %}active{% endif %}">
+                    <a href="{% url 'lab_technician_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Lab Technicians</a>
+                </li>
+                <li class="{% if request.resolver_match.url_name == 'pharmacist-list' %}active{% endif %}">
+                    <a href="{% url 'pharmacist-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Pharmacists</a>
+                </li>
+                <li class="{% if request.resolver_match.url_name == 'hr_manager_list' %}active{% endif %}">
+                    <a href="#"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>HR Managers</a>
+                </li>
+                <li class="{% if request.resolver_match.url_name == 'receptionist_list' %}active{% endif %}">
+                    <a href="{% url 'receptionist_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Receptionists</a>
+                </li>
+                <li class="{% if request.resolver_match.url_name == 'accountant_list' %}active{% endif %}">
+                    <a href="{% url 'accountant_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Accountants</a>
+                </li>
+                <li class="{% if request.resolver_match.url_name == 'case_manager_list' %}active{% endif %}">
+                    <a href="{% url 'case_manager_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Case Managers</a>
+                </li>
             </ul>
-          </li>
+        </li>
+        
 
           <!-- Inventory Management -->
           <li class="treeview">
@@ -333,18 +340,24 @@
       <li class="{% if request.resolver_match.url_name == 'sent_messages' %}active{% endif %}">
         <a href="{% url 'sent_messages' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Outbox</a>
       </li>
+      <li class="{% if request.resolver_match.url_name == 'send_message' %}active{% endif %}">
+        <a href="{% url 'send_message' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Compose Message</a>
+      </li>
+      <li class="{% if request.resolver_match.url_name == 'send_message' %}active{% endif %}">
+        <a href="{% url 'send_message' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Send Email</a>
+      </li>
     </ul>
   </li>
 
   <!-- Notifications -->
   <li class="treeview">
-    <a href="#"><i data-feather="bell"></i><span>Notificationsa
+    <a href="#"><i data-feather="bell"></i><span>Notifications
       <span id="unread-notification-count" class="badge badge-primary"></span>
     </span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
     <ul class="treeview-menu">
       <li class="{% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
         <a href="{% url 'notifications' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>
-          Notificationsa
+          Notifications
         </a>
       </li>
     </ul>
@@ -361,7 +374,7 @@
         <a href="{% url 'inventory_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Allocations</a>
       </li>
       <li class="{% if request.resolver_match.url_name == 'allocation_list' %}active{% endif %}">
-        <a href="{% url 'inventory_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Suppliers</a>
+        <a href="{% url 'supplier_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Suppliers</a>
       </li>
       <li class="{% if request.resolver_match.url_name == 'allocation_list' %}active{% endif %}">
         <a href="{% url 'inventory_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Sickbays</a>
@@ -472,7 +485,6 @@
       document.addEventListener('DOMContentLoaded', function () {
         const notificationsButton = document.getElementById('notifications-button')
         const unreadCountSpan = document.getElementById('unread-notification-count')
-        console.log(unreadCountSpan)
       
         // Fetch notifications and messages on page load
         fetchNotificationsAndMessages()
@@ -512,7 +524,7 @@
                 const messageElement = document.createElement('li')
                 messageElement.setAttribute('msg-id', message.id)
                 messageElement.innerHTML = `
-                            <a href="#"><i class="fa fa-envelope text-info"></i> ${message.content}</a>
+                            <a href="messaging/message/${message.id}"><i class="fa fa-envelope text-info"></i> ${message.subject}</a>
                           `
                 notificationsMessagesDiv.appendChild(messageElement)
               })

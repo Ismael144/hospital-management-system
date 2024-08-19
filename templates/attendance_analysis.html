@@ -1,0 +1,186 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Dashboard
+{% endblock %}
+
+{% block content %}
+{% include 'includes/sidebar_content.html' %}
+<div class="content-wrapper">
+    {% comment %} <h1 class="mb-4">Attendance Analysis</h1> {% endcomment %}
+    <section class="content-header">
+        <h2>Attendance Analysis</h2>
+    </section>
+    <section class="content">
+        <div class="row mb-4">
+            <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Filters</h5>
+                    <form id="filter-form" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="start_date" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="start_date" value="{{ start_date }}" name="start_date">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="end_date" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="end_date" value="{{ end_date }}" name="end_date">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-select" id="role" name="role">
+                                <option value="">All Roles</option>
+                                {% for role_value, role_name in roles %}
+                                <option value="{{ role_value }}" {% if role == role_value %} selected {% endif %}>{{ role_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Attendance by Role</h5>
+                    <canvas id="roleChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Attendance Status</h5>
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Attendance Over Time</h5>
+                    <canvas id="dateChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+<script>
+    // Chart.js configuration
+    const roleData = {{ role_data|safe }};
+    const statusData = {{ status_data|safe }};
+    const dateData = {{ date_data|safe }};
+
+    // Role Chart
+    new Chart(document.getElementById('roleChart'), {
+        type: 'pie',
+        data: {
+            labels: roleData.map(item => item.role),
+            datasets: [{
+                data: roleData.map(item => item.count),
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Attendance by Role'
+                }
+            }
+        }
+    });
+
+    // Status Chart
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: statusData.map(item => item.status),
+            datasets: [{
+                data: statusData.map(item => item.count),
+                backgroundColor: ['#36A2EB', '#FF6384'],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Attendance Status'
+                }
+            }
+        }
+    });
+
+    // Date Chart
+    new Chart(document.getElementById('dateChart'), {
+        type: 'line',
+        data: {
+            labels: dateData.map(item => item.date),
+            datasets: [{
+                label: 'Attendance Count',
+                data: dateData.map(item => item.count),
+                borderColor: '#36A2EB',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Attendance Over Time'
+                }
+            },
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    }
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Filter form submission
+    document.getElementById('filter-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const searchParams = new URLSearchParams(formData);
+        window.location.search = searchParams.toString();
+    });
+</script>
+
+{% endblock %}

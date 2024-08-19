@@ -1,6 +1,6 @@
 #!/usr/bin/bash 
 
-VIRTUAL_ENV_NAME=$1 
+VIRTUAL_ENV_NAME="hms_venv"
 
 OS_TYPE=$(uname)
 
@@ -8,6 +8,7 @@ OS_TYPE=$(uname)
 echo "Creating Environment"
 
 if [ ${1,,} ]; then 
+    VIRTUAL_ENV_NAME=$1
     python -m venv $VIRTUAL_ENV_NAME
     VIRTUAL_ENV_NAME=$1 
 else 

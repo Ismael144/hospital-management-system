@@ -1,6 +1,7 @@
 from django import forms 
 from .models import Allocation, Room
 from .models import Inventory
+from .models import Supplier
 
 class AllocationForm(forms.ModelForm):
     class Meta:
@@ -51,3 +52,8 @@ class InventoryForm(forms.ModelForm):
         model = Inventory
         fields = ['item_name', 'description', 'quantity', 'unit_price', 'quantity_in_stock', 'reorder_threshold', 'supplier', 'expiry_date']
 
+
+class SupplierForm(forms.ModelForm):
+    class Meta:
+        model = Supplier
+        fields = ['name', 'description', 'location']

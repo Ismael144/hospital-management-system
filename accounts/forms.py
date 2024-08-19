@@ -1,11 +1,24 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import (CustomUser, Employee, Doctor, Patient, Nurse, Receptionist, 
-                     Pharmacist, CaseManager, LabTechnician, Accountant, Representative, DischargeSummary)
+                     Pharmacist, CaseManager, LabTechnician, Accountant, Representative, DischargeSummary, MedicalReport)
 from django.core.exceptions import ValidationError
-from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
-from django.urls import reverse
-from django.contrib.admin import site as admin_site
+import phonenumbers
+from phonenumbers import geocoder, is_valid_number, parse
+
+def validate_phone_number(phone_number):
+    try:
+        # Parse the phone number with Uganda's country code (+256)
+        parsed_number = parse(phone_number, "UG")
+        
+        # Validate if the number is valid for Uganda
+        if is_valid_number(parsed_number) and geocoder.country_name_for_number(parsed_number, "en") == "Uganda":
+            return True
+        else:
+            return False
+    except phonenumbers.NumberParseException:
+        return False
+    
 
 class CustomUserForm(UserCreationForm):
     class Meta:
@@ -81,18 +94,6 @@ class DoctorForm(forms.ModelForm):
         widgets = {
             'shift': forms.Select(),
         }
-        
-    def clean_email(self): 
-        if self.instance.pk: 
-            email = self.cleaned_data.get('email')
-            if CustomUser.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists(): 
-                raise ValidationError('Sorry, this email address is not available, please use another')
-        else:
-            email = self.cleaned_data.get('email')
-            if CustomUser.objects.filter(email=email): 
-                raise ValidationError('Sorry, this email address is not available, please use another')
-        
-        return email
 
     def __init__(self, *args, **kwargs):
         super(DoctorForm, self).__init__(*args, **kwargs)
@@ -107,6 +108,16 @@ class DoctorForm(forms.ModelForm):
             self.fields['gender'].initial = self.instance.employee.gender
             self.fields['hire_date'].initial = self.instance.employee.hire_date
             self.fields['profile_image'].initial = self.instance.employee.profile_image
+
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+
+        if not validate_phone_number(phone_number): 
+                raise ValidationError('You entered invalid phone number')
+            
+        return phone_number            
+
 
     def clean_email(self): 
         if self.instance: 
@@ -196,6 +207,15 @@ class NurseForm(forms.ModelForm):
                 raise ValidationError('Sorry, this email address (Hello world) is not available, please use another')
         
         return email
+
+
+        def clean_phone_number(self):
+            phone_number = self.cleaned_data.get('phone_number')
+
+            if not validate_phone_number(phone_number): 
+                    raise ValidationError('You entered invalid phone number')
+                
+            return phone_number 
 
 
     def __init__(self, *args, **kwargs):
@@ -288,6 +308,15 @@ class ReceptionistForm(forms.ModelForm):
                 raise ValidationError('Sorry, this email address is not available, please use another')
         
         return email
+    
+    
+        def clean_phone_number(self):
+            phone_number = self.cleaned_data.get('phone_number')
+
+            if not validate_phone_number(phone_number): 
+                    raise ValidationError('You entered invalid phone number')
+                
+            return phone_number 
 
     def __init__(self, *args, **kwargs):
         super(ReceptionistForm, self).__init__(*args, **kwargs)
@@ -377,6 +406,14 @@ class PatientForm(forms.ModelForm):
                 raise ValidationError('Sorry, this email address is not available, please use another')
         
         return email
+    
+        def clean_phone_number(self):
+            phone_number = self.cleaned_data.get('phone_number')
+
+            if not validate_phone_number(phone_number): 
+                    raise ValidationError('You entered invalid phone number')
+                
+            return phone_number 
 
 
     def __init__(self, *args, **kwargs):
@@ -386,13 +423,6 @@ class PatientForm(forms.ModelForm):
             self.fields['first_name'].initial = self.instance.user.first_name
             self.fields['last_name'].initial = self.instance.user.last_name
             
-        self.fields['assigned_room'].widget = RelatedFieldWidgetWrapper(
-            self.fields['assigned_room'].widget,
-            Patient._meta.get_field('assigned_room').remote_field,
-            admin_site,
-            can_add_related=True,
-            can_change_related=True
-        )
 
     def save(self, commit=True):
         patient = super(PatientForm, self).save(commit=False)
@@ -466,6 +496,14 @@ class PharmacistForm(forms.ModelForm):
                 raise ValidationError('Sorry, this email address is not available, please use another')
         
         return email
+    
+        def clean_phone_number(self):
+            phone_number = self.cleaned_data.get('phone_number')
+
+            if not validate_phone_number(phone_number): 
+                    raise ValidationError('You entered invalid phone number')
+                
+            return phone_number 
 
     def save(self, commit=True):
         pharmacist = super(PharmacistForm, self).save(commit=False)
@@ -542,6 +580,14 @@ class CaseManagerForm(forms.ModelForm):
                 raise ValidationError('Sorry, this email address is not available, please use another')
         
         return email
+
+        def clean_phone_number(self):
+            phone_number = self.cleaned_data.get('phone_number')
+
+            if not validate_phone_number(phone_number): 
+                    raise ValidationError('You entered invalid phone number')
+                
+            return phone_number 
 
     def __init__(self, *args, **kwargs):
         super(CaseManagerForm, self).__init__(*args, **kwargs)
@@ -638,6 +684,15 @@ class AccountantForm(forms.ModelForm):
                 raise ValidationError('Sorry, this email address is not available, please use another')
         
         return email
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+
+        if not validate_phone_number(phone_number): 
+                raise ValidationError('You entered invalid phone number')
+            
+        return phone_number 
+        
 
     def save(self, commit=True):
         accountant = super(AccountantForm, self).save(commit=False)
@@ -786,6 +841,33 @@ class DischargeSummaryForm(forms.ModelForm):
         }
         
 
+# forms.py
+
+
+class MedicalReportForm(forms.ModelForm):
+    class Meta:
+        model = MedicalReport
+        fields = [
+            'patient', 'doctor', 'date_of_examination', 'chief_complaint',
+            'history_of_present_illness', 'past_medical_history',
+            'family_history', 'social_history', 'physical_examination',
+            'diagnosis', 'treatment_plan', 'follow_up_instructions'
+        ]
+        widgets = {
+            'date_of_examination': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'chief_complaint': forms.Textarea(attrs={'rows': 3}),
+            'history_of_present_illness': forms.Textarea(attrs={'rows': 3}),
+            'past_medical_history': forms.Textarea(attrs={'rows': 3}),
+            'family_history': forms.Textarea(attrs={'rows': 3}),
+            'social_history': forms.Textarea(attrs={'rows': 3}),
+            'physical_examination': forms.Textarea(attrs={'rows': 3}),
+            'diagnosis': forms.Textarea(attrs={'rows': 3}),
+            'treatment_plan': forms.Textarea(attrs={'rows': 3}),
+            'follow_up_instructions': forms.Textarea(attrs={'rows': 3}),
+        }
+
+
+
 class LabTechnicianForm(forms.ModelForm):
     email = forms.EmailField(label="Email")
     first_name = forms.CharField(max_length=30, label="First Name")
@@ -878,3 +960,6 @@ class LabTechnicianForm(forms.ModelForm):
             # Update the many-to-many field `assigned_tests`
             self.save_m2m()
         return lab_technician
+
+
+# 

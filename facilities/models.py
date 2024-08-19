@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import timezone
 
-
 class Sickbay(models.Model):
     SICKBAY_STATUS = (
         ('occupied', 'Occupied'),
@@ -116,6 +115,7 @@ class Supplier(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     location = models.CharField(max_length=255)
+    date_created = models.DateField(auto_now=True)
     
     def __str__(self): 
         return self.name

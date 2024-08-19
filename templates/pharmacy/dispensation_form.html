@@ -6,9 +6,7 @@
   class="hold-transition light-skin sidebar-mini theme-primary fixed"
 {% endblock %}
 
-{% block title %}
-  {% if form.instance.pk %} Update Schedule {% else %} Create Schedule {% endif %}
-{% endblock %}
+{% block title %} {% if form.instance.pk %} Update Dispensation {% else %} Create Dispensation {% endif %} {% endblock %}
 
 {% block content %}
   {% include 'includes/sidebar_content.html' %}
@@ -17,7 +15,7 @@
       <div class="content-header">
         <div class="d-flex align-items-center">
           <div class="me-auto">
-            <h4 class="page-title">Medication</h4>
+            <h4 class="page-title">Dispensation Form</h4>
             <div class="d-inline-block align-items-center">
               <nav>
                 <ol class="breadcrumb">
@@ -25,27 +23,26 @@
                     <a href="#"><i class="mdi mdi-home-outline"></i></a>
                   </li>
                   <li class="breadcrumb-item">
-                    <a href="{% url 'medication_list' %}">Medication</a>
+                    <a href="{% url 'dispensation_list' %}">Dispensation</a>
                   </li>
-                  <li class="breadcrumb-item active" aria-current="page">Medication Form</li>
+                  <li class="breadcrumb-item active" aria-current="page">
+                    Form
+                  </li>
                 </ol>
               </nav>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Page Content -->
       <section class="content">
         <div class="row">
           <div class="col-md-12">
             <div class="box">
               <div class="box-header">
                 <h3 class="box-title">
-                  {% if form.instance.pk %} Edit Medication {% else %} Add Medication {% endif %}
+                  {% if form.instance.pk %} Update Dispensation {% else %} Create Dispensation {% endif %}
                 </h3>
               </div>
-              
               <div class="box-body">
                 <form method="post">
                   {% csrf_token %}
@@ -53,7 +50,7 @@
                     <div class="form-group">
                       <label for="{{ field.id_for_label }}" class="{% if field.field.required %}required-field{% endif %}">
                         {{ field.label }}:
-                      </label>
+                    </label>
                       {{ field|add_class:"form-control" }}
                       {% if field.help_text %}
                         <p class="help-block">{{ field.help_text }}</p>
@@ -61,11 +58,8 @@
                     </div>
                   {% endfor %}
                   <button type="submit" class="btn btn-primary">
-                    {% if form.instance.pk %} Update Medication {% else %} Create Medication {% endif %}
+                    {% if form.instance.pk %} Update Dispensation {% else %} Create Dispensation {% endif %}
                   </button>
-                  <a href="{% url 'schedule_list' %}" class="btn btn-secondary">
-                    Cancel
-                  </a>
                 </form>
               </div>
             </div>

@@ -2,9 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Room, Sickbay, Allocation, Inventory
+from .models import Room, Sickbay, Allocation, Inventory, Supplier
 from activities.models import Activity
-from .forms import InventoryForm, InventoryForm
+from .forms import InventoryForm, InventoryForm, SupplierForm
 from mixins import ListViewMixin, DetailViewMixin
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
@@ -208,3 +208,30 @@ class InventoryDeleteView(DeleteView):
         self.object = self.get_object()
         log_activity(request.user, 'Delete', f'Deleted inventory item with ID {self.object.pk}')
         return super().delete(request, *args, **kwargs)
+
+class SupplierListView(ListView):
+    model = Supplier
+    template_name = 'facilities/supplier_list.html'
+    context_object_name = 'suppliers'
+
+class SupplierDetailView(DetailView):
+    model = Supplier
+    template_name = 'facilities/supplier_detail.html'
+    context_object_name = 'supplier'
+
+class SupplierCreateView(CreateView):
+    model = Supplier
+    form_class = SupplierForm
+    template_name = 'facilities/supplier_form.html'
+    success_url = reverse_lazy('supplier_list')
+
+class SupplierUpdateView(UpdateView):
+    model = Supplier
+    form_class = SupplierForm
+    template_name = 'facilities/supplier_form.html'
+    success_url = reverse_lazy('supplier_list')
+
+class SupplierDeleteView(DeleteView):
+    model = Supplier
+    template_name = 'facilities/supplier_confirm_delete.html'
+    success_url = reverse_lazy('supplier_list')

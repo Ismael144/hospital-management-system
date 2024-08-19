@@ -1,5 +1,8 @@
 from django.db import models
 from django.conf import settings 
+from django.core.exceptions import ValidationError
+from datetime import date
+from accounts.models import Patient
 
 class Medication(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -10,19 +13,51 @@ class Medication(models.Model):
     stock_quantity = models.PositiveIntegerField()
     batch_number = models.CharField(max_length=100, unique=True)
     expiry_date = models.DateField()
-
+    reminder_sent = models.BooleanField(default=False)
+   
     def __str__(self):
         return self.name
 
     def is_expired(self):
         """Check if the medication is expired."""
-        from datetime import date
         return self.expiry_date < date.today()
 
     def adjust_stock(self, quantity):
         """Adjust stock quantity and ensure it does not fall below zero."""
         self.stock_quantity = max(self.stock_quantity + quantity, 0)
         self.save()
+
+    def clean(self):
+        """Custom validation for the model fields."""
+        # Ensure expiry date is not in the past when adding a new medication
+        if self.expiry_date < date.today():
+            raise ValidationError("Expiry date cannot be in the past.")
+
+        # Ensure price is not negative
+        if self.price < 0:
+            raise ValidationError("Price cannot be negative.")
+
+    def save(self, *args, **kwargs):
+        """Override save method to include validation checks."""
+        self.clean()  # Call the clean method to validate fields
+        super().save(*args, **kwargs)
+        
+
+class MedicationAssignment(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    medication = models.ManyToManyField(Medication)
+    dosage = models.CharField(max_length=100)
+    frequency = models.CharField(max_length=100)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    prescribing_doctor = models.ForeignKey('accounts.Doctor', null=True, on_delete=models.SET_NULL)
+    notes = models.TextField(blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.patient.username} - {self.medication.name}"
+
+    class Meta:
+        unique_together = ['patient', 'start_date']
         
 
 class Prescription(models.Model):

@@ -54,11 +54,11 @@
                 <thead>
                   <tr>
                     <th>#</th>
-                    {% if not appointment.patient.user.is_authenticated %}
+                    {% if appointment.patient.user == request.user %}
                       <th>Patient Name</th>
                     {% endif %}
-                    {% if appointment.doctor.employee.user.is_authenticated or appointment.nurse.employee.user.is_authenticated %}
-                      <th>Nurse/Doctor</th>
+                    {% if appointment.employee.user != request.user %}
+                      <th>Employee</th>
                     {% endif %}
                     <th>Appointment Date</th>
                     <th>Reason</th>
@@ -70,17 +70,15 @@
                   {% for appointment in appointments %}
                     <tr>
                       <td>{{ forloop.counter }}</td>
-                      {% if appointment.patient.user.is_authenticated %}
+                      {% if appointment.patient.user != request.user %}
                         <td>
                           <a href="{% url 'patient_detail' appointment.patient.pk %}">{{ appointment.patient.user.get_full_name }}</a>
                         </td>
                       {% endif %}
-                      {% if not appointment.doctor.employee.user.is_authenticated %}
+                      {% if appointment.employee.user != request.user %}
                         <td>
-                          {% if appointment.nurse %}
-                            <a href="{% url 'nurse_detail' appointment.nurse.pk %}">Nr. {{ appointment.nurse.employee.user.get_full_name }}</a>
-                          {% elif appointment.doctor %}
-                            <a href="{% url 'doctor_detail' appointment.doctor.pk %}">Dr. {{ appointment.doctor.employee.user.get_full_name }}</a>
+                          {% if appointment.employee %}
+                            Dr. {{ appointment.employee.user.get_full_name }}</a>
                           {% else %}
                             N/A
                           {% endif %}

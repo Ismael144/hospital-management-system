@@ -18,15 +18,18 @@ class Message(models.Model):
     read = models.BooleanField(default=False)
     content = CKEditor5Field('Content', config_name='extends')
     attachments = models.FileField(upload_to=get_message_attachments, null=True, blank=True)
-
+    has_attachments = True if attachments else False
+    
     class Meta:
         ordering = ['-timestamp']
 
     def __str__(self):
         return f"From {self.sender.get_full_name()} to {self.receiver.get_full_name()}"
 
-    def has_attachments(self): 
-        return self.attachments is not None 
+    def get_attachment_url(self):
+        if self.attachments:
+            return self.attachments.url
+        return None  # or return a default value
 
 @receiver(post_delete, sender=Message)
 def delete_attachments(sender, instance, **kwargs):

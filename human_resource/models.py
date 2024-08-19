@@ -136,7 +136,6 @@ class StaffOnDuty(models.Model):
     def __str__(self):
         return f"{self.employee.get_full_name()} - {self.date} ({self.shift_start} to {self.shift_end})"
 
-
     
 class Leave(models.Model):
     LEAVE_TYPES = [

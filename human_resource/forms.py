@@ -101,3 +101,18 @@ class DepartmentForm(forms.ModelForm):
     class Meta:
         model = Department
         fields = ['name', 'code', 'description', 'head', 'is_active']
+        
+        
+class LeaveForm(forms.ModelForm):
+    class Meta:
+        model = Leave
+        fields = ['employee', 'leave_type', 'start_date', 'end_date', 'reason', 'status', 'approved_by']
+        widgets = {
+            'employee': forms.Select(attrs={'class': 'form-control'}),
+            'leave_type': forms.Select(attrs={'class': 'form-control'}),
+            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'reason': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
+            'approved_by': forms.Select(attrs={'class': 'form-control'}),
+        }

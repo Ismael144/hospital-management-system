@@ -34,6 +34,13 @@ urlpatterns = [
     path('inventory/create/', InventoryCreateView.as_view(), name='inventory_create'),
     path('inventory/<int:pk>/update/', InventoryUpdateView.as_view(), name='inventory_update'),
     path('inventory/<int:pk>/delete/', InventoryDeleteView.as_view(), name='inventory_delete'),
+
+    # Supplier Views 
+    path('suppliers/', SupplierListView.as_view(), name='supplier_list'),
+    path('suppliers/<int:pk>/', SupplierDetailView.as_view(), name='supplier_detail'),
+    path('suppliers/new/', SupplierCreateView.as_view(), name='supplier_create'),
+    path('suppliers/<int:pk>/edit/', SupplierUpdateView.as_view(), name='supplier_update'),
+    path('suppliers/<int:pk>/delete/', SupplierDeleteView.as_view(), name='supplier_delete'),
 ]
 
 # urlpatterns = [

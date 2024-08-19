@@ -1,0 +1,120 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block body_attr %}
+  class="hold-transition light-skin sidebar-mini theme-primary fixed"
+{% endblock %}
+
+{% block title %}
+  Dispensation List
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/sidebar_content.html' %}
+  <div class="content-wrapper rounded-0">
+    <div class="container-full">
+      <section class="content">
+        <div class="content-header my-3">
+          <div class="d-flex align-items-center">
+            <div class="me-auto">
+              <h4 class="page-title">Dispensation</h4>
+              <div class="d-inline-block align-items-center">
+                <nav>
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                      <a href="#"><i class="mdi mdi-home-outline"></i></a>
+                    </li>
+                    <li class="breadcrumb-item">
+                      <a href="{% url 'dispensation_list' %}">Dispensation</a>
+                    </li>
+                  </ol>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box">
+          <div class="box-header with-border d-flex align-items-center justify-content-between">
+            <h3 class="box-title">Dispensation List</h3>
+            <a href="{% url 'dispensation_create' %}" class="btn btn-success d-flex align-items-center gap-2">
+              <span>
+                Add Dispensation
+              </span>
+              <small>
+                <i data-feather="plus"></i>
+              </small>
+            </a>
+          </div>
+          <div class="box-body">
+            <div class="table-responsive">
+              <table class="table border-no" id="data-table">
+                  <thead>
+                      <tr>
+                          <th>S.No</th>
+                          <th>Prescription</th>
+                          <th>Dispensation</th>
+                          <th>Quantity Dispensed</th>
+                          <th>Date Dispensed</th>
+                          <th>Dispensed By</th>
+                          <th>Batch Number</th>
+                          <th>Expiry Date</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for dispensation in dispensations %}
+                          <tr>
+                              <td>{{ forloop.counter }}</td>
+                              <td>{{ dispensation.prescription }}</td>
+                              <td>{{ dispensation.medication }}</td>
+                              <td>{{ dispensation.quantity_dispensed }}</td>
+                              <td>{{ dispensation.date_dispensed|date:"Y-m-d H:i" }}</td>
+                              <td>{{ dispensation.dispensed_by.get_full_name }}</td>
+                              <td>{{ dispensation.batch_number }}</td>
+                              <td>{{ dispensation.expiry_date }}</td>
+                              <td>
+                                  <div class="btn-group">
+                                      <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown">
+                                          <i class="fa fa-ellipsis-h"></i>
+                                      </a>
+                                      <div class="dropdown-menu">
+                                          <a class="dropdown-item" href="{% url 'dispensation_detail' dispensation.pk %}">View Details</a>
+                                          <a class="dropdown-item" href="{% url 'dispensation_update' dispensation.pk %}">Edit</a>
+                                          <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#dispensation-delete-modal-{{ dispensation.id }}">Delete</a>
+                                      </div>
+                                  </div>
+                              </td>
+                          </tr>
+                          <div class="modal fade" id="dispensation-delete-modal-{{ dispensation.id }}" tabindex="-1" aria-labelledby="dispensation-delete-modal-Label" aria-hidden="true">
+                              <div class="modal-dialog">
+                                  <div class="modal-content">
+                                      <div class="modal-header">
+                                          <h5 class="modal-title" id="dispensation-delete-modal-Label">Confirm Delete Dispensation</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                          Are you sure you want to delete this dispensation?
+                                      </div>
+                                      <div class="modal-footer d-flex align-items-center">
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                          <form action="{% url 'dispensation_delete' dispensation.pk %}" method="POST">
+                                              {% csrf_token %}
+                                              <button type="submit" class="btn btn-danger">Delete</button>
+                                          </form>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      {% empty %}
+                      {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+          
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}

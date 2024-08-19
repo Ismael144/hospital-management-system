@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.db.models import Q
-from accounts.models import Patient, Doctor, Employee, Nurse
+from accounts.models import Patient, Employee
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 
@@ -32,12 +32,13 @@ class AppointmentListView(ListView):
         if user.role == 'patient':
             # Show appointments for the logged-in patient
             return Appointment.objects.filter(patient__user=user)
-        elif user.role == 'doctor':
+        elif user.role in ['receptionist', 'doctor', 'nurse', 'pharmacist']:
+            employee = Employee.objects.filter(user=user).first()
             # Show appointments for the logged-in doctor
-            return Appointment.objects.filter(doctor__employee__user=user)
-        elif user.role == 'nurse':
-            # Show appointments for the logged-in nurse
-            return Appointment.objects.filter(nurse__employee__user=user)
+            print(employee, user)
+            print(Employee.objects.all().first().pk, user.pk)
+            print(Appointment.objects.filter(employee__pk=user.pk))
+            return Appointment.objects.filter(employee__user=user)
         else:
             # Default behavior: show all appointments (admin or other roles)
             return Appointment.objects.all()
@@ -68,25 +69,21 @@ class AppointmentListView(ListView):
                 messages.error(request, "The cancellation reason should be meaningful and long enough")
                 return self.get(request, *args, **kwargs)
 
-            # Checking whether eiher doctor or nurse is not None
-            med = appointment.doctor if appointment.doctor is not None else appointment.nurse
+            med = appointment.employee
 
             if appointment is None:
                 messages.info(request, "An error occured, please try again!")
                 return self.get(request, *args, **kwargs)
             
-            if med.employee.user == request.user or appointment.patient.user == request.user: 
+            if med.user == request.user or appointment.patient.user == request.user: 
                 appointment.cancellation_reason = cancellation_reason
                 appointment.status = "Cancelled"
                 appointment.is_cancelled = True
                 appointment.save()
                 
-                title = "Nr." if isinstance(med, Nurse) else "Dr." 
-                
-                # Send Notifications to patient and (doctor or nurse)
                 send_notification(
                     user=appointment.patient.user,
-                    content=f'Your appointment with {title} {med.employee.user.get_full_name()} has been updated',
+                    content=f'Your appointment with Employee. {med.user.get_full_name()} has been updated',
                     icon='fa-calendar-alt',
                     link=reverse('appointment_detail', args=[appointment.pk]),
                     link_name='View Updated Appointment',
@@ -94,7 +91,7 @@ class AppointmentListView(ListView):
                 )
                 
                 send_notification(
-                    user=med.employee.user,
+                    user=med.user,
                     content=f'Your appointment with {appointment.patient.user.get_full_name()} has been updated',
                     icon='fa-calendar-alt',
                     link=reverse('appointment_detail', args=[appointment.pk]),
@@ -131,13 +128,9 @@ class AppointmentDetailView(DetailViewMixin, DetailView):
             patient = get_object_or_404(Patient, user=user)
             return queryset.filter(patient=patient)
 
-        elif role in ['doctor', 'nurse']:
+        elif role == employee.user.role:
             employee = get_object_or_404(Employee, user=user)
-            if role == 'doctor':
-                doctor = get_object_or_404(Doctor, employee=employee)
-                return queryset.filter(doctor=doctor)
-            else:  # nurse
-                return queryset.filter(nurse=employee)
+            return queryset.filter(employee=employee)
 
         else:
             raise Http404("You don't have permission to view this appointment.")
@@ -169,12 +162,10 @@ class AppointmentCreateView(CreateView):
         # Send notifications
         appointment = self.object
         patient = appointment.patient
-        med = appointment.doctor if appointment.doctor is not None else appointment.nurse
-        title = "Nr." if isinstance(med, Nurse) else "Dr." 
 
         send_notification(
             user=patient.user,
-            content=f'You have a new appointment with {title} {med.employee.user.get_full_name()}',
+            content=f'You have a new appointment with Employee. {appointment.employee.user.get_full_name()}',
             icon='fa-calendar-alt',
             link=reverse('appointment_detail', args=[appointment.pk]),
             link_name='View Appointment',
@@ -182,7 +173,7 @@ class AppointmentCreateView(CreateView):
         )
         
         send_notification(
-            user=med.employee.user,
+            user=appointment.employee.user,
             content=f'You have a new appointment with {patient.user.get_full_name()}',
             icon='fa-calendar-alt',
             link=reverse('appointment_detail', args=[appointment.pk]),
@@ -207,13 +198,10 @@ class AppointmentUpdateView(UpdateView):
         # Send notifications
         appointment = self.object
         patient = appointment.patient
-        med = appointment.doctor if appointment.doctor is not None else appointment.nurse
-        title = "Nr." if isinstance(med, Nurse) else "Dr." 
-
 
         send_notification(
             user=patient.user,
-            content=f'Your appointment with {title} {med.employee.user.get_full_name()} has been updated',
+            content=f'Your appointment with Employee. {appointment.employee.user.get_full_name()} has been updated',
             icon='fa-calendar-alt',
             link=reverse('appointment_detail', args=[appointment.pk]),
             link_name='View Updated Appointment',
@@ -221,8 +209,8 @@ class AppointmentUpdateView(UpdateView):
         )
         
         send_notification(
-            user=med.employee.user,
-            content=f'Your appointment with {title} {patient.user.get_full_name()} has been updated',
+            user=appointment.employee.user,
+            content=f'Your appointment with Employee. {patient.user.get_full_name()} has been updated',
             icon='fa-calendar-alt',
             link=reverse('appointment_detail', args=[appointment.pk]),
             link_name='View Updated Appointment',

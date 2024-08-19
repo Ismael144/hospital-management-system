@@ -5,9 +5,8 @@ from messaging.models import Notification
 from django.utils import timezone
 
 class Appointment(models.Model):
-    patient = models.ForeignKey("accounts.Patient", on_delete=models.CASCADE)
-    doctor = models.ForeignKey("accounts.Doctor", on_delete=models.CASCADE, null=True, blank=True)
-    nurse = models.ForeignKey("accounts.Nurse", on_delete=models.CASCADE, null=True, blank=True)
+    patient = models.ForeignKey('accounts.Patient', on_delete=models.CASCADE)
+    employee = models.ForeignKey('accounts.Employee', on_delete=models.CASCADE) 
     appointment_date = models.DateTimeField()
     reason = models.TextField()
     status = models.CharField(max_length=50, choices=[('Scheduled', 'Scheduled'), ('Completed', 'Completed'), ('Cancelled', 'Cancelled')], default='Scheduled')
@@ -17,14 +16,13 @@ class Appointment(models.Model):
     reminder_sent = models.BooleanField(default=False)
 
     def __str__(self):
-        if self.doctor is None and self.nurse is None: 
+        if self.employee is None: 
             return "N/A"
         
-        doctor_or_nurse = f"Dr. {self.doctor.employee.user.get_full_name()}" if self.nurse is None else f"Nr. {self.nurse.employee.user.get_full_name()}" 
         local_appointment_date = timezone.localtime(self.appointment_date)
         formatted_date = local_appointment_date.strftime('%A, %B %d, %Y at %I:%M %p')
         
-        return f"Appt for {self.patient.user.first_name} {self.patient.user.last_name} with {doctor_or_nurse} On {formatted_date}"
+        return f"Appt for {self.patient.user.get_full_name()} with {self.employee.user.get_full_name()} On {formatted_date}"
 
     class Meta:
         verbose_name = "Appointment"
@@ -59,8 +57,7 @@ def appointment_created(sender, instance, created, **kwargs):
         )
         
         # Create a notification for the nurse if applicable
-        if instance.nurse:
-            Notification.objects.create(
-                user=instance.nurse.employee.user,
-                content=f'New appointment created by {instance.patient.user.get_full_name()}.'
-            )
+        Notification.objects.create(
+            user=instance.employee.user,
+            content=f'New appointment created by {instance.patient.user.get_full_name()}.'
+        )

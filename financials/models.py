@@ -50,17 +50,12 @@ class Bill(models.Model):
         ('Paid', 'Paid'), 
         ('Installments', 'Installments')
     ]
-
     appointment = models.ForeignKey('appointments.Appointment', on_delete=models.CASCADE)
-    medication = models.ManyToManyField('pharmacy.Medication')
     date_issued = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Pending')
     details = models.TextField()
-    installment_plan = models.BooleanField(default=False)
-    installments_remaining = models.IntegerField(default=0)
-    installment_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     insurance_provider = models.ForeignKey('InsuranceProvider', on_delete=models.SET_NULL, null=True, blank=True)
     insurance_claim_status = models.CharField(max_length=50, choices=[
         ('Not Applicable', 'Not Applicable'),
@@ -99,6 +94,16 @@ class Bill(models.Model):
         self.amount_paid += amount
         self.update_status()
         self.save()
+
+    def calculate_total_amount(self):
+        total = sum(medication.price for medication in self.medication.all())
+        self.total_amount = total
+        self.save()
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Only calculate total amount when the bill is first created
+            self.calculate_total_amount()
+        super().save(*args, **kwargs)
 
 
 class Payroll(models.Model):

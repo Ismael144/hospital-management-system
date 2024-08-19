@@ -112,7 +112,32 @@ class Doctor(models.Model):
 
     def __str__(self):
         return self.employee.user.get_full_name()
-        
+
+
+class Patient(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    address = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=15)
+    date_of_birth = models.DateField()
+    medical_history = models.TextField()
+    emergency_contact_name = models.CharField(max_length=100, blank=True, null=True)
+    emergency_contact_phone = models.CharField(max_length=20, blank=True, null=True)
+    insurance_provider = models.CharField(max_length=100, blank=True, null=True)
+    insurance_policy_number = models.CharField(max_length=50, blank=True, null=True)
+    allergies = models.TextField(blank=True, null=True)
+    current_medications = models.TextField(blank=True, null=True)
+    family_medical_history = models.TextField(blank=True, null=True)
+    health_habits = models.TextField(blank=True, null=True)
+    disease = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=70, choices=[('In Treatment', 'In Treatment'), ('New Patient', 'New Patient'), ('Recovered', 'Recovered'), ('discharged', 'Discharged')])
+    assigned_doctor = models.ForeignKey('Doctor', on_delete=models.SET_NULL, null=True, blank=True)
+    assigned_room = models.ForeignKey('facilities.Room', null=True, blank=True, on_delete=models.SET_NULL, related_name='patients')
+    document = models.FileField(upload_to='patients/documents', null=True, blank=True)
+    preferred_language = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return self.user.get_full_name()
+
 
 class DischargeSummary(models.Model):
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, related_name='discharge_summaries')
@@ -141,29 +166,24 @@ class DischargeSummary(models.Model):
         return f"Discharge Summary for {self.patient.user.get_full_name()}"
 
 
-class Patient(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    address = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=15)
-    date_of_birth = models.DateField()
-    medical_history = models.TextField()
-    emergency_contact_name = models.CharField(max_length=100, blank=True, null=True)
-    emergency_contact_phone = models.CharField(max_length=20, blank=True, null=True)
-    insurance_provider = models.CharField(max_length=100, blank=True, null=True)
-    insurance_policy_number = models.CharField(max_length=50, blank=True, null=True)
-    allergies = models.TextField(blank=True, null=True)
-    current_medications = models.TextField(blank=True, null=True)
-    family_medical_history = models.TextField(blank=True, null=True)
-    health_habits = models.TextField(blank=True, null=True)
-    disease = models.TextField(blank=True, null=True)
-    status = models.CharField(max_length=70, choices=[('In Treatment', 'In Treatment'), ('New Patient', 'New Patient'), ('Recovered', 'Recovered'), ('discharged', 'Discharged')])
-    assigned_doctor = models.ForeignKey('Doctor', on_delete=models.SET_NULL, null=True, blank=True)
-    assigned_room = models.ForeignKey('facilities.Room', null=True, blank=True, on_delete=models.SET_NULL, related_name='patients')
-    document = models.FileField(upload_to='patients/documents', null=True, blank=True)
-    preferred_language = models.CharField(max_length=50, blank=True, null=True)
+class MedicalReport(models.Model):
+    patient = models.ForeignKey('accounts.Patient', on_delete=models.CASCADE)
+    doctor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    date_of_examination = models.DateTimeField()
+    chief_complaint = models.TextField()
+    history_of_present_illness = models.TextField()
+    past_medical_history = models.TextField(blank=True, null=True)
+    family_history = models.TextField(blank=True, null=True)
+    social_history = models.TextField(blank=True, null=True)
+    physical_examination = models.TextField()
+    diagnosis = models.TextField()
+    treatment_plan = models.TextField()
+    follow_up_instructions = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user.get_full_name()
+        return f"Medical Report for {self.patient} on {self.date_of_examination}"
 
 
 class Nurse(models.Model):
@@ -251,8 +271,7 @@ class Accountant(models.Model):
     department = models.ForeignKey('human_resource.Department', null=True, on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return "Accountant"
-        # return self.employee.user.get_full_name()
+        return self.employee.user.get_full_name()
 
 
 class Representative(models.Model):

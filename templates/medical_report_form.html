@@ -7,17 +7,18 @@
 {% endblock %}
 
 {% block title %}
-  {% if form.instance.pk %} Update Schedule {% else %} Create Schedule {% endif %}
+  {% if form.instance.pk %} Update Medical Report {% else %} Create Medical Report {% endif %}
 {% endblock %}
 
 {% block content %}
   {% include 'includes/sidebar_content.html' %}
+  
   <div class="content-wrapper rounded-0">
     <div class="container-full">
       <div class="content-header">
         <div class="d-flex align-items-center">
           <div class="me-auto">
-            <h4 class="page-title">Medication</h4>
+            <h4 class="page-title">Medical Report</h4>
             <div class="d-inline-block align-items-center">
               <nav>
                 <ol class="breadcrumb">
@@ -25,9 +26,9 @@
                     <a href="#"><i class="mdi mdi-home-outline"></i></a>
                   </li>
                   <li class="breadcrumb-item">
-                    <a href="{% url 'medication_list' %}">Medication</a>
+                    <a href="{% url 'medical_report_list' %}">Medical Reports</a>
                   </li>
-                  <li class="breadcrumb-item active" aria-current="page">Medication Form</li>
+                  <li class="breadcrumb-item active" aria-current="page">Medical Report Form</li>
                 </ol>
               </nav>
             </div>
@@ -42,10 +43,9 @@
             <div class="box">
               <div class="box-header">
                 <h3 class="box-title">
-                  {% if form.instance.pk %} Edit Medication {% else %} Add Medication {% endif %}
+                  {% if form.instance.pk %} Update Medical Report {% else %} Create Medical Report {% endif %}
                 </h3>
               </div>
-              
               <div class="box-body">
                 <form method="post">
                   {% csrf_token %}
@@ -61,9 +61,9 @@
                     </div>
                   {% endfor %}
                   <button type="submit" class="btn btn-primary">
-                    {% if form.instance.pk %} Update Medication {% else %} Create Medication {% endif %}
+                    {% if form.instance.pk %} Update {% else %} Create {% endif %}
                   </button>
-                  <a href="{% url 'schedule_list' %}" class="btn btn-secondary">
+                  <a href="{% url 'medical_report_list' %}" class="btn btn-secondary">
                     Cancel
                   </a>
                 </form>

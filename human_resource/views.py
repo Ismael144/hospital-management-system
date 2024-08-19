@@ -8,7 +8,7 @@ from messaging.models import Notification
 from .models import Department, Schedule, StaffOnDuty, NoticeBoard, Shift
 from .models import *
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import ScheduleForm, StaffOnDutyForm, NoticeBoardForm, ShiftForm, DepartmentForm
+from .forms import ScheduleForm, StaffOnDutyForm, NoticeBoardForm, ShiftForm, DepartmentForm, LeaveForm
 
 def log_activity(user, action, description=''):
     Activity.objects.create(user=user, action=action, description=description, timestamp=timezone.now())
@@ -327,8 +327,8 @@ class LeaveDetailView(DetailView):
 class LeaveCreateView(CreateView):
     model = Leave
     template_name = 'human_resource/leave_form.html'
-    fields = ['employee', 'leave_type', 'start_date', 'end_date', 'reason', 'status', 'approved_by']
-
+    form_class = LeaveForm
+    
     def form_valid(self, form):
         log_activity(self.request.user, 'create', f"Created Leave: {form.instance.employee} ({form.instance.leave_type})")
         return super().form_valid(form)
@@ -337,7 +337,7 @@ class LeaveCreateView(CreateView):
 class LeaveUpdateView(UpdateView):
     model = Leave
     template_name = 'human_resource/leave_form.html'
-    fields = ['employee', 'leave_type', 'start_date', 'end_date', 'reason', 'status', 'approved_by']
+    form_class = LeaveForm
 
     def form_valid(self, form):
         log_activity(self.request.user, 'update', f"Updated Leave: {form.instance.employee} ({form.instance.leave_type})")

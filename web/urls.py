@@ -5,7 +5,7 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path("", DashboardView.as_view(), name="dashboard_page"),
+    path("", dashboard_view, name="dashboard_page"),
     path("signin/", login_view, name="signin_page"),
     path("signout/", logout_view, name="signout_page"),
 ]
