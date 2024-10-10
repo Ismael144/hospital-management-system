@@ -45,24 +45,35 @@ class Medication(models.Model):
 
 class MedicationAssignment(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    medication = models.ManyToManyField(Medication)
+    medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
     dosage = models.CharField(max_length=100)
     frequency = models.CharField(max_length=100)
+    quantity = models.IntegerField(default=1)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     prescribing_doctor = models.ForeignKey('accounts.Doctor', null=True, on_delete=models.SET_NULL)
     notes = models.TextField(blank=True, null=True)
     
     def __str__(self):
-        return f"{self.patient.username} - {self.medication.name}"
+        medications = ""
+        for med in self.medication.all(): 
+            medications += f"{med.name}, "
+
+        return f"Med Assgnt for {self.patient.user.get_full_name()} • {medications} • {self.start_date} to {self.end_date}"
 
     class Meta:
         unique_together = ['patient', 'start_date']
+    
+    def clean(self): 
+        if self.quantity > self.medication.stock_quantity:
+            raise ValidationError(f"You are trying to set a quantity beyond stock quantity of selected medication, which is {self.medication.stock_quantity}")
+        
+        return super().clean() 
         
 
 class Prescription(models.Model):
     patient = models.ForeignKey("accounts.Patient", on_delete=models.CASCADE)
-    doctor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    doctor = models.ForeignKey("accounts.Doctor", on_delete=models.CASCADE)
     medication = models.ManyToManyField(Medication)
     issue_date = models.DateTimeField(auto_now_add=True)
     instructions = models.TextField(blank=True, null=True)

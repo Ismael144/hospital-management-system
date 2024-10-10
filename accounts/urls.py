@@ -71,4 +71,6 @@ urlpatterns = [
     path('patients/medical-reports/create/', MedicalReportCreateView.as_view(), name='medical_report_create'),
     path('patients/medical-reports/<int:pk>/update/', MedicalReportUpdateView.as_view(), name='medical_report_update'),
     path('patients/medical-reports/<int:pk>/delete/', MedicalReportDeleteView.as_view(), name='medical_report_delete'),
+
+    path('comprehensive_analysis/', comprehensive_analysis, name='comprehensive_analysis'),
 ]

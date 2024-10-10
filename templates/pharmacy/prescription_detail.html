@@ -14,18 +14,74 @@
 
   <div class="content-wrapper rounded-0">
     <div class="container-full">
+      <!-- Content Header (Page header) -->
+      <div class="content-header">
+        <div class="d-flex align-items-center">
+          <div class="me-auto">
+            <h4 class="page-title">Prescription Detail</h4>
+            <div class="d-inline-block align-items-center">
+              <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="{% url 'dashboard_page' %}"><i class="mdi mdi-home-outline"></i> Home</a>
+                  </li>
+                  <li class="breadcrumb-item">
+                    <a href="{% url 'prescription_list' %}">Prescriptions</a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Prescription Detail</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content -->
       <section class="content">
-        <h2>Prescription for {{ prescription.patient.get_full_name }}</h2>
-        <p>Doctor: {{ prescription.doctor.get_full_name }}</p>
-        <p>Medication: {{ prescription.medication.all|join:", " }}</p>
-        <p>Instructions: {{ prescription.instructions }}</p>
-        <p>Status: {{ prescription.get_status_display }}</p>
-        <a href="{% url 'prescription_update' prescription.pk %}" class="btn btn-primary">Edit</a>
-        <a data-bs-toggle="modal" data-bs-target="#prescription-delete-modal-{{ prescription.id }}" class="btn btn-danger" style="cursor: pointer;">Delete</a>
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Prescription Details</h3>
+          </div>
+          <div class="box-body">
+            <div class="row">
+              <div class="col-lg-6">
+                <h5>Patient Information</h5>
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <strong>Patient Name:</strong> {{ prescription.patient.user.get_full_name }}
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Doctor:</strong> {{ prescription.doctor.employee.user.get_full_name }}
+                  </li>
+                </ul>
+              </div>
+              <div class="col-lg-6">
+                <h5>Prescription Details</h5>
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <strong>Medications:</strong> {{ prescription.medication.all|join:", " }}
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Instructions:</strong> {{ prescription.instructions }}
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Status:</strong> {{ prescription.get_status_display }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4 d-flex justify-content-end">
+              <a href="{% url 'prescription_update' prescription.pk %}" class="btn btn-primary me-2">Edit</a>
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#prescription-delete-modal-{{ prescription.id }}">Delete</button>
+            </div>
+          </div>
+        </div>
       </section>
+      <!-- /.content -->
     </div>
   </div>
 
+  <!-- Delete Prescription Modal -->
   <div class="modal fade" id="prescription-delete-modal-{{ prescription.id }}" tabindex="-1" aria-labelledby="prescription-delete-modal-Label" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -46,4 +102,5 @@
       </div>
     </div>
   </div>
+
 {% endblock %}

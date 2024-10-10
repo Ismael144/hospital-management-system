@@ -1,4 +1,7 @@
 # medications/tasks.py
+
+# This celery task checks whether a medication is approaching its expiry and notifies  
+
 from datetime import date, timedelta
 from celery import shared_task
 from django.urls import reverse
@@ -8,7 +11,7 @@ from messaging.helpers import send_notification
 
 @shared_task
 def check_medication_expiry():
-    """Check if any medication is approaching its expiry date and send notifications."""
+    """ Check if any medication is approaching its expiry date and send notifications. """
     today = date.today()
     warning_period = timedelta(days=30)  # Set the warning period (e.g., 30 days before expiry)
     

@@ -62,18 +62,28 @@
                   {% for leave in object_list %}
                     <tr>
                       <td>{{ forloop.counter }}</td>
-                      <td>{{ leave.employee.get_full_name }}</td>
+                      <td>{{ leave.employee.user.get_full_name }}({{ leave.employee.user.role|title }})</td>
                       <td>{{ leave.get_leave_type_display }}</td>
                       <td>{{ leave.start_date|date:"d M Y" }}</td>
                       <td>{{ leave.end_date|date:"d M Y" }}</td>
-                      <td>{{ leave.get_status_display }}</td>
+                      <td>
+                        {% if leave.status.lower == "approved" %}
+                          <div class="badge bg-success-light">{{ leave.status }}</div>
+                        {% elif leave.status.lower == "rejected" %}
+                          <div class="badge bg-danger-light">{{ leave.status }}</div>
+                        {% else %}
+                          <div class="badge bg-primary-light">{{ leave.status }}</div>
+                        {% endif %}
+                      </td>
                       <td>
                         <div class="btn-group">
                           <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
                           <div class="dropdown-menu">
                             <a class="dropdown-item" href="{% url 'leave-detail' leave.pk %}">View Details</a>
                             <a class="dropdown-item" href="{% url 'leave-update' leave.pk %}">Edit</a>
-                            <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#leave-delete-modal-{{ leave.id }}">Delete</a>
+                            {% if leave.status.lower != "rejected" %}
+                              <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#leave-cancel-modal-{{ leave.id }}">Cancel Request</a>
+                            {% endif %}
                           </div>
                         </div>
                       </td>
@@ -98,6 +108,37 @@
                         </div>
                       </div>
                     </div>
+                    {% if leave.status.lower != "rejected" %}
+                      <div class="modal fade" id="leave-cancel-modal-{{ leave.id }}" tabindex="-1" aria-labelledby="leave-cancel-modal-Label" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="leave-delete-modal-Label">Cancel Leave</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="" method="post">
+                              {% csrf_token %}
+                              <div class="modal-body">
+                                <p>
+                                  Cancel leave for employee <strong>'{{ leave.employee.user.get_full_name }}({{ leave.employee.user.role|title }})'</strong>.
+                                </p>
+                                <span class="text-muted">Provide a meaningful reason for cancelling this leave request</span><span class="text-dark">(Remember that once you cancel it, you can't reverse it, you have to create a new leave request)</span>
+                                <input type="hidden" name="leave_id" value="{{ leave.pk }}" />
+                                <input type="hidden" name="action" value="reject" />
+                                <div class="form-group my-2">
+                                  <label for="" class="form-label">Cancellation Reason: <span class="text-danger">*</span></label>
+                                  <textarea name="rejection_reason" placeholder="Provide a meaningful reason..." class="form-control" rows="5" required></textarea>
+                                </div>
+                              </div>
+                              <div class="modal-footer d-flex align-items-center">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button class="btn btn-danger">Submit</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
                   {% empty %}
                   {% endfor %}
                 </tbody>

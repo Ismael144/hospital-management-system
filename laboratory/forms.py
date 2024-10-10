@@ -15,6 +15,7 @@ class SpecimenForm(forms.ModelForm):
         fields = ['lab_test', 'specimen_type', 'collection_date', 'condition', 'notes']
         widgets = {
             'condition': forms.Select(choices=Specimen.CONDITION_CHOICES),
+            'collection_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
         }
 
 class LabEquipmentForm(forms.ModelForm):
@@ -23,6 +24,9 @@ class LabEquipmentForm(forms.ModelForm):
         fields = ['name', 'serial_number', 'date_purchased', 'last_maintenance_date', 'next_maintenance_due', 'calibration_status']
         widgets = {
             'calibration_status': forms.Select(choices=LabEquipment.CALIBRATION_STATUS_CHOICES),
+            'date_purchased': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'fp'}),
+            'last_maintenance_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'next_maintenance_due': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
 
 class LabResultForm(forms.ModelForm):

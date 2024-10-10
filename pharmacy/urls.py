@@ -1,9 +1,5 @@
 from django.urls import path
-from .views import (
-    MedicationListView, MedicationDetailView, MedicationCreateView, MedicationUpdateView, MedicationDeleteView,
-    PrescriptionListView, PrescriptionDetailView, PrescriptionCreateView, PrescriptionUpdateView, PrescriptionDeleteView,
-    DispensationListView, DispensationDetailView, DispensationCreateView, DispensationUpdateView, DispensationDeleteView, 
-)
+from .views import *
 
 urlpatterns = [
     path('medications/', MedicationListView.as_view(), name='medication_list'),
@@ -23,4 +19,10 @@ urlpatterns = [
     path('dispensations/new/', DispensationCreateView.as_view(), name='dispensation_create'),
     path('dispensations/<int:pk>/edit/', DispensationUpdateView.as_view(), name='dispensation_update'),
     path('dispensations/<int:pk>/delete/', DispensationDeleteView.as_view(), name='dispensation_delete'),
+
+        path('medication-assignments/', MedicationAssignmentListView.as_view(), name='medication-assignment-list'),
+    path('medication-assignments/<int:pk>/', MedicationAssignmentDetailView.as_view(), name='medication-assignment-detail'),
+    path('medication-assignments/create/', MedicationAssignmentCreateView.as_view(), name='medication-assignment-create'),
+    path('medication-assignments/<int:pk>/update/', MedicationAssignmentUpdateView.as_view(), name='medication-assignment-update'),
+    path('medication-assignments/<int:pk>/delete/', MedicationAssignmentDeleteView.as_view(), name='medication-assignment-delete'),
 ]

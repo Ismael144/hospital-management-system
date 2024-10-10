@@ -7,6 +7,7 @@ from django.utils import timezone
 class Appointment(models.Model):
     patient = models.ForeignKey('accounts.Patient', on_delete=models.CASCADE)
     employee = models.ForeignKey('accounts.Employee', on_delete=models.CASCADE) 
+    medication_assignments = models.ForeignKey('pharmacy.MedicationAssignment', on_delete=models.SET_NULL, blank=True, null=True)
     appointment_date = models.DateTimeField()
     reason = models.TextField()
     status = models.CharField(max_length=50, choices=[('Scheduled', 'Scheduled'), ('Completed', 'Completed'), ('Cancelled', 'Cancelled')], default='Scheduled')
@@ -48,7 +49,7 @@ class Appointment(models.Model):
 
 
 @receiver(post_save, sender=Appointment)
-def appointment_created(sender, instance, created, **kwargs):
+def appointment_created(_, instance, created, **_kwargs):
     if created:
         # Create a notification for the doctor
         Notification.objects.create(

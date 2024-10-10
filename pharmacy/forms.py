@@ -1,5 +1,5 @@
 from django import forms
-from .models import Medication, Prescription, Dispensation
+from .models import Medication, Prescription, Dispensation, MedicationAssignment
 
 class MedicationForm(forms.ModelForm):
     class Meta:
@@ -39,4 +39,15 @@ class DispensationForm(forms.ModelForm):
             'dispensed_by': forms.Select(attrs={'class': 'form-control'}),
             'batch_number': forms.TextInput(attrs={'class': 'form-control'}),
             'expiry_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
+
+class MedicationAssignmentForm(forms.ModelForm):
+    class Meta:
+        model = MedicationAssignment
+        fields = ['patient', 'medication', 'dosage', 'frequency', 'start_date', 'end_date', 'prescribing_doctor', 'notes']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+            'notes': forms.Textarea(attrs={'rows': 3}),
         }

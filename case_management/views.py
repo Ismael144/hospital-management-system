@@ -5,6 +5,9 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Case, CaseNote, CarePlan
 from .forms import CaseForm, CaseNoteForm, CarePlanForm
 from activities.models import Activity
+from django.http import HttpResponseForbidden
+from accounts.models import Employee, CaseManager
+from django.shortcuts import redirect
 
 # Helper function to log activities
 def log_activity(user, action, description):
@@ -22,16 +25,27 @@ class CaseDetailView(DetailView):
     template_name = 'cases/case_detail.html'
     context_object_name = 'case'
 
-@method_decorator([login_required, permission_required('app.add_case', raise_exception=True)], name='dispatch')
 class CaseCreateView(CreateView):
     model = Case
     form_class = CaseForm
     template_name = 'cases/case_form.html'
+    success_url = reverse_lazy('case_list')  # Define the success URL after creation
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        log_activity(self.request.user, 'Create', f'Created case with ID {self.object.pk}')
-        return response
+        # Automatically set the case_manager to the logged-in user if they are a case manager
+        if self.request.user.role == 'case_manager':
+            case = form.save(commit=False)
+            employee = Employee.objects.filter(user=self.request.user).first()
+            case_manager = CaseManager.objects.filter(employee=employee).first()
+            case.case_manager = case_manager  # Assign the current user as case_manager
+            case.save()
+
+            # Log the activity
+            log_activity(self.request.user, 'Create', f'Created case with ID {case.pk}')
+            return redirect(self.success_url)  # Redirect to the success URL
+        else:
+            return HttpResponseForbidden("You do not have permission to assign yourself as case manager.")
+
 
 @method_decorator([login_required, permission_required('app.change_case', raise_exception=True)], name='dispatch')
 class CaseUpdateView(UpdateView):

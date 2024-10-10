@@ -16,9 +16,11 @@
   <div class="content-wrapper rounded-0">
     <div class="container-full ">
       <!-- Main content -->
-      <section class="content">
+      <section class="content mb-5">
         <div class="container mt-4">
-          <h2>Activity Logs</h2>
+          <h2 class="my-3">Activity Logs</h2>
+          <div class="box">
+            <div class="box-body mb-4">
           <table class="table border-no" id="data-table">
               <thead>
                   <tr>
@@ -34,8 +36,8 @@
                   {% for log in activity_logs %}
                       <tr>
                           <td>{{ forloop.counter }}</td>
-                          <td>By {{ log.user }}</td>
-                          <td>{{ log.user.role }}</td>
+                          <td>By {{ log.user.get_full_name }}</td>
+                          <td class="text-capitalize">{{ log.user.role }}</td>
                           <td>{{ log.description }}</td>
                           <td>{{ log.timestamp }}</td>
                           <td>{{ log.action }}</td>
@@ -44,22 +46,13 @@
                   {% endfor %}
               </tbody>
           </table>
+        </div>
+      </div>
       </section>
       <!-- /.content -->
     </div>
   </div>
   <!-- /.content-wrapper -->
 
-  <footer class="main-footer">
-    <div class="pull-right d-none d-sm-inline-block">
-      <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
-        <li class="nav-item">
-          <a class="nav-link" href="https://themeforest.net/item/doclinic-medical-responsive-bootstrap-admin-dashboard/32737529">Purchase Now</a>
-        </li>
-      </ul>
-    </div>
-    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
-  </footer>
-  
 
 {% endblock %}

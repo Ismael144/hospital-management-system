@@ -28,46 +28,6 @@
   <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   
-<script type="text/javascript" src="{% static 'admin/js/admin/RelatedObjectLookups.js' %}"></script>
-<script type="text/javascript">
-  function showAddAnotherPopup(triggeringLink) {
-      const name = triggeringLink.id.replace(/^add_/, '');
-      const href = triggeringLink.href;
-
-      // Try opening the popup and check for success
-      const win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
-      if (!win) {
-          alert('Please allow popups for this site to add related objects.');
-          return false;
-      }
-
-      win.focus();
-      return false;
-  }
-
-  function dismissAddAnotherPopup(win, newId, newRepr) {
-      const name = win.name;
-      const elem = document.getElementById(name);
-
-      if (!elem) {
-          console.error('Element not found:', name);
-          win.close();
-          return;
-      }
-
-      // Use querySelector to find the select element
-      const selectElement = elem.parentNode.querySelector('select');
-      if (!selectElement) {
-          console.error('Select element not found.');
-          win.close();
-          return;
-      }
-
-      const option = new Option(newRepr, newId, true, true);
-      selectElement.add(option);
-      win.close();
-  }
-</script>
 </head>
 <style>
   #toast-container {
@@ -133,7 +93,7 @@
     function showToast(message, type, timeout) {
       const toastContainer = document.getElementById('toast-container');
       const toast = document.createElement('div');
-            toast.classList.add('toast', type);
+            toast.classList.add(`toast ${type}`);
             toast.textContent = message;
             
             // Append toast to container

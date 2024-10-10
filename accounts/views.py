@@ -1,7 +1,6 @@
 from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View, ListView, DetailView, DeleteView, CreateView, UpdateView
 from django.contrib import messages
 from .models import Receptionist, Patient, Doctor, Nurse, CustomUser, DischargeSummary, Pharmacist, LabTechnician, CaseManager, Accountant, MedicalReport
@@ -118,7 +117,7 @@ class PatientCreateView(View):
         return render(request, self.template_name, {'form': form})
     
 
-@login_required
+@login_required(login_url="/signin")
 def comprehensive_analysis(request):
     # Time range for analysis
     end_date = timezone.now().date()
@@ -175,8 +174,8 @@ def comprehensive_analysis(request):
 
     return render(request, 'comprehensive_analysis.html', context)
 
-    
-class PatientUpdateView(View):
+
+class PatientUpdateView(View, SignInRequiredMixin):
     template_name = 'patient_update.html'
 
     def get(self, request, pk):
@@ -335,8 +334,10 @@ class UserProfileView(View):
         employee = Employee.objects.filter(user=user).first()
         print("Employee: ", employee)
 
+        is_employee = True if employee is not None else False
+
         activities = Activity.objects.filter(user=user).order_by('-timestamp')
-        return render(request, self.template_name, {'user_profile': user, 'activities': activities, 'user_form': CustomUserForm(instance=self.request.user), 'employee_form': EmployeeForm(instance=employee)})
+        return render(request, self.template_name, {'user_profile': user, 'activities': activities, 'user_form': CustomUserForm(instance=self.request.user), 'employee_form': EmployeeForm(instance=employee), 'is_employee': is_employee, 'employee': employee})
 
 
 class PharmacistListView(ListView):
@@ -454,7 +455,7 @@ class LabTechnicianDetailView(DetailView):
         return context
     
     
-class CaseManagerListView(LoginRequiredMixin, ListView):
+class CaseManagerListView(SignInRequiredMixin, ListView):
     model = CaseManager
     template_name = 'case_manager_list.html'
     context_object_name = 'case_managers'
@@ -463,7 +464,7 @@ class CaseManagerListView(LoginRequiredMixin, ListView):
         return CaseManager.objects.all()
 
 
-class CaseManagerCreateView(LoginRequiredMixin, CreateView):
+class CaseManagerCreateView(SignInRequiredMixin, CreateView):
     model = CaseManager
     form_class = CaseManagerForm
     template_name = 'case_manager_form.html'
@@ -482,7 +483,7 @@ class CaseManagerCreateView(LoginRequiredMixin, CreateView):
         return response
 
 
-class CaseManagerDetailView(LoginRequiredMixin, DetailView):
+class CaseManagerDetailView(SignInRequiredMixin, DetailView):
     model = CaseManager
     template_name = 'case_manager_detail.html'
     context_object_name = 'case_manager'
@@ -491,7 +492,7 @@ class CaseManagerDetailView(LoginRequiredMixin, DetailView):
         return CaseManager.objects.get(pk=self.kwargs.get('pk'))
 
 
-class CaseManagerUpdateView(LoginRequiredMixin, UpdateView):
+class CaseManagerUpdateView(SignInRequiredMixin, UpdateView):
     model = CaseManager
     form_class = CaseManagerForm
     template_name = 'case_manager_form.html'
@@ -510,7 +511,7 @@ class CaseManagerUpdateView(LoginRequiredMixin, UpdateView):
         return response
     
     
-class AccountantListView(LoginRequiredMixin, ListView):
+class AccountantListView(SignInRequiredMixin, ListView):
     model = Accountant
     template_name = 'accountant_list.html'
     context_object_name = 'accountants'
@@ -519,7 +520,7 @@ class AccountantListView(LoginRequiredMixin, ListView):
         return Accountant.objects.all()
 
 
-class AccountantCreateView(LoginRequiredMixin, CreateView):
+class AccountantCreateView(SignInRequiredMixin, CreateView):
     model = Accountant
     form_class = AccountantForm
     template_name = 'accountant_form.html'
@@ -535,7 +536,7 @@ class AccountantCreateView(LoginRequiredMixin, CreateView):
         return response
 
 
-class AccountantUpdateView(LoginRequiredMixin, UpdateView):
+class AccountantUpdateView(SignInRequiredMixin, UpdateView):
     model = Accountant
     form_class = AccountantForm
     template_name = 'accountant_form.html'
@@ -550,12 +551,12 @@ class AccountantUpdateView(LoginRequiredMixin, UpdateView):
         )
         return response
 
-class AccountantDetailView(LoginRequiredMixin, DetailView):
+class AccountantDetailView(SignInRequiredMixin, DetailView):
     model = Accountant
     template_name = 'accountant/accountant_detail.html'
     context_object_name = 'accountant'
 
-class AccountantDeleteView(LoginRequiredMixin, DeleteView):
+class AccountantDeleteView(SignInRequiredMixin, DeleteView):
     model = Accountant
     template_name = 'accountant/accountant_confirm_delete.html'
     success_url = reverse_lazy('accountant_list')
@@ -571,7 +572,7 @@ class AccountantDeleteView(LoginRequiredMixin, DeleteView):
         return response
     
 
-class DischargeSummaryListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+class DischargeSummaryListView(SignInRequiredMixin, PermissionRequiredMixin, ListView):
     model = DischargeSummary
     template_name = 'discharge_summary_list.html'
     context_object_name = 'discharge_summaries'
@@ -612,14 +613,14 @@ class DischargeSummaryListView(LoginRequiredMixin, PermissionRequiredMixin, List
         return context
  
  
-class DischargeSummaryDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+class DischargeSummaryDetailView(SignInRequiredMixin, PermissionRequiredMixin, DetailView):
     model = DischargeSummary
     template_name = 'discharge_summary_detail.html'
     context_object_name = 'discharge_summary'
     permission_required = 'accounts.view_dischargesummary'
 
 
-class DischargeSummaryCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class DischargeSummaryCreateView(SignInRequiredMixin, PermissionRequiredMixin, CreateView):
     model = DischargeSummary
     form_class = DischargeSummaryForm
     template_name = 'discharge_summary_form.html'
@@ -632,7 +633,7 @@ class DischargeSummaryCreateView(LoginRequiredMixin, PermissionRequiredMixin, Cr
         return response
 
 
-class DischargeSummaryUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class DischargeSummaryUpdateView(SignInRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = DischargeSummary
     form_class = DischargeSummaryForm
     template_name = 'discharge_summary_form.html'
@@ -645,7 +646,7 @@ class DischargeSummaryUpdateView(LoginRequiredMixin, PermissionRequiredMixin, Up
         return response
 
 
-class DischargeSummaryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+class DischargeSummaryDeleteView(SignInRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = DischargeSummary
     template_name = 'discharge_summary_confirm_delete.html'
     success_url = reverse_lazy('discharge_summary_list')
@@ -657,7 +658,7 @@ class DischargeSummaryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, De
         return super().delete(request, *args, **kwargs)
 
 
-class MedicalReportListView(LoginRequiredMixin, ListView):
+class MedicalReportListView(SignInRequiredMixin, ListView):
     model = MedicalReport
     template_name = 'medical_report_list.html'
     context_object_name = 'medical_reports'
@@ -683,12 +684,12 @@ class MedicalReportListView(LoginRequiredMixin, ListView):
 
         return context_data
 
-class MedicalReportDetailView(LoginRequiredMixin, DetailView):
+class MedicalReportDetailView(SignInRequiredMixin, DetailView):
     model = MedicalReport
     template_name = 'medical_report_detail.html'
     context_object_name = 'medical_report'
 
-class MedicalReportCreateView(LoginRequiredMixin, CreateView):
+class MedicalReportCreateView(SignInRequiredMixin, CreateView):
     model = MedicalReport
     form_class = MedicalReportForm
     template_name = 'medical_report_form.html'
@@ -699,7 +700,7 @@ class MedicalReportCreateView(LoginRequiredMixin, CreateView):
         log_activity(self.request.user, 'create', f"Created Medical Report for patient {self.object.patient} on {self.object.date_of_examination}")
         return response
 
-class MedicalReportUpdateView(LoginRequiredMixin, UpdateView):
+class MedicalReportUpdateView(SignInRequiredMixin, UpdateView):
     model = MedicalReport
     form_class = MedicalReportForm
     template_name = 'medical_report_form.html'
@@ -710,7 +711,7 @@ class MedicalReportUpdateView(LoginRequiredMixin, UpdateView):
         log_activity(self.request.user, 'update', f"Updated Medical Report for patient {self.object.patient} on {self.object.date_of_examination}")
         return response
 
-class MedicalReportDeleteView(LoginRequiredMixin, DeleteView):
+class MedicalReportDeleteView(SignInRequiredMixin, DeleteView):
     model = MedicalReport
     template_name = 'medical_report_confirm_delete.html'
     success_url = reverse_lazy('medical_report_list')

@@ -40,7 +40,7 @@
                   <tr>
                     <td>{{ attendance.id }}</td>
                     <td>{{ attendance.user.get_full_name }}</td>
-                    <td>{{ attendance.get_role_display }}</td>
+                    <td>{{ attendance.user.role.title }}</td>
                     <td>{{ attendance.date }}</td>
                     <td>{{ attendance.time_in }}</td>
                     <td>{{ attendance.time_out|default:'N/A' }}</td>

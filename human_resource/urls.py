@@ -96,5 +96,4 @@ urlpatterns = [
     path('departments/new/', DepartmentCreateView.as_view(), name='department-create'),
     path('departments/<int:pk>/edit/', DepartmentUpdateView.as_view(), name='department-update'),
     path('departments/<int:pk>/delete/', DepartmentDeleteView.as_view(), name='department-delete'),
-
 ]

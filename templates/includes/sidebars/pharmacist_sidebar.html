@@ -146,7 +146,6 @@
           </li>
 
           <!-- Appointments -->
-          {% if request.user.role == 'admin' or request.user.role == 'doctor' or request.user.role == 'nurse' %}
             <li class="treeview">
               <a href="{% url 'appointment_list' %}"><i data-feather="calendar"></i><span>Appointments</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
               <ul class="treeview-menu">
@@ -159,9 +158,7 @@
                 <!-- Add more appointment-related links here -->
               </ul>
             </li>
-          {% endif %}
 
-          {% if request.user.role == 'admin' or request.user.role == 'doctor' or request.user.role == 'nurse' %}
           <!-- Patients -->
             <li class="treeview">
               <a href="#"><i data-feather="users"></i><span>Patients</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -178,188 +175,6 @@
                 <!-- Add more patient-related links here -->
               </ul>
             </li>
-          {% endif %}
-
-          {% if request.user.role == 'admin' %}
-          <!-- Doctors -->
-            <li class="treeview">
-              <a href="#"><i data-feather="user-check"></i><span>Doctors</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
-              <ul class="treeview-menu">
-                <li class="{% if request.resolver_match.url_name == 'doctor_list' %}active{% endif %}">
-                  <a href="{% url 'doctor_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>View All</a>
-                </li>
-                <li class="{% if request.resolver_match.url_name == 'doctor_create' %}active{% endif %}">
-                  <a href="{% url 'doctor_create' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Doctor</a>
-                </li>
-                <!-- Add more doctor-related links here -->
-              </ul>
-            </li>
-          {% endif %}
-
-          {% if request.user.role == 'admin' %}
-          <!-- Nurses -->
-          <li class="treeview">
-            <a href="#"><i data-feather="user-plus"></i><span>Nurses</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
-            <ul class="treeview-menu">
-              <li class="{% if request.resolver_match.url_name == 'nurse_list' %}active{% endif %}">
-                <a href="{% url 'nurse_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>All</a>
-              </li>
-              <li class="{% if request.resolver_match.url_name == 'nurse_create' %}active{% endif %}">
-                <a href="{% url 'nurse_create' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Nurse</a>
-              </li>
-              <!-- Add more nurse-related links here -->
-            </ul>
-          </li>
-          {% endif %}
-
-          {% if request.user.role == 'accountant' or request.user.role == 'admin' %}
-            <!-- Financial Management -->
-            <li class="treeview">
-              <a href="#"><i data-feather="file-text"></i><span>Financial Management</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
-              <ul class="treeview-menu">
-                <!-- Invoices -->
-                <li class="{% if request.resolver_match.url_name == 'invoice_list' %}active{% endif %}">
-                  <a href="{% url 'invoice_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Invoices</a>
-                </li>
-                <!-- Bills -->
-                <li class="{% if request.resolver_match.url_name == 'bill_list' %}active{% endif %}">
-                  <a href="{% url 'bill_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Bills</a>
-                </li>
-                <!-- Payments -->
-                <li class="{% if request.resolver_match.url_name == 'payment_list' %}active{% endif %}">
-                  <a href="{% url 'payment_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Payments</a>
-                </li>
-                <!-- Payroll -->
-                <li class="{% if request.resolver_match.url_name == 'payroll_list' %}active{% endif %}">
-                  <a href="{% url 'payroll_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Payroll</a>
-                </li>
-                <!-- Accounts -->
-                <li class="{% if request.resolver_match.url_name == 'account_list' %}active{% endif %}">
-                  <a href="{% url 'account_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Accounts</a>
-                </li>
-                <!-- Cash Collections -->
-                <li class="{% if request.resolver_match.url_name == 'cashcollection_list' %}active{% endif %}">
-                  <a href="{% url 'cashcollection_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Cash Collections</a>
-                </li>
-                <!-- Expenses -->
-                <li class="{% if request.resolver_match.url_name == 'expense-list' %}active{% endif %}">
-                  <a href="{% url 'expense-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Expenses</a>
-                </li>
-                <!-- Budgets -->
-                <li class="{% if request.resolver_match.url_name == 'budget-list' %}active{% endif %}">
-                  <a href="{% url 'budget-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Budgets</a>
-                </li>
-                <!-- Financial Reports -->
-                <li class="{% if request.resolver_match.url_name == 'financial-report-list' %}active{% endif %}">
-                  <a href="{% url 'financial-report-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Financial Reports</a>
-                </li>
-                <!-- Insurance Providers -->
-                <li class="{% if request.resolver_match.url_name == 'insurance-provider-list' %}active{% endif %}">
-                  <a href="{% url 'insurance-provider-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Insurance Providers</a>
-                </li>
-              </ul>
-            </li>
-          {% endif %}
-
-          {% if request.user.role == 'hr_manager' or request.user.role == 'admin' %}
-          <!-- Human Resources -->
-            <li class="treeview">
-              <a href="#"><i data-feather="briefcase"></i><span>Human Resource</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
-              <ul class="treeview-menu">
-                <li class="{% if request.resolver_match.url_name == 'leave-list' %}active{% endif %}">
-                  <a href="{% url 'leave-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Leaves</a>
-                </li>
-                <li class="{% if request.resolver_match.url_name == 'shift_list' %}active{% endif %}">
-                  <a href="{% url 'shift_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Shifts</a>
-                </li>
-                <li class="{% if request.resolver_match.url_name == 'job-posting-list' %}active{% endif %}">
-                  <a href="{% url 'job-posting-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Job Postings</a>
-                </li>
-                <li class="{% if request.resolver_match.url_name == 'schedule_list' %}active{% endif %}">
-                  <a href="{% url 'schedule_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Schedules</a>
-                </li>
-                <li class="{% if request.resolver_match.url_name == 'department_list' %}active{% endif %}">
-                  <a href="{% url 'department_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Departments</a>
-                </li>
-                <li class="{% if request.resolver_match.url_name == 'noticeboard_list' %}active{% endif %}">
-                  <a href="{% url 'noticeboard_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Notice Board</a>
-                </li>
-              </li>
-              <li class="{% if request.resolver_match.url_name == 'training-list' %}active{% endif %}">
-                <a href="{% url 'training-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Trainings</a>
-              </li>
-              </li>
-              <li class="{% if request.resolver_match.url_name == 'applicant-list' %}active{% endif %}">
-                <a href="{% url 'applicant-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Applicants</a>
-              </li>
-              </li>
-              <li class="{% if request.resolver_match.url_name == 'training-participant-list' %}active{% endif %}">
-                <a href="{% url 'training-participant-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Training Participants</a>
-              </li>
-                <li class="{% if request.resolver_match.url_name == 'performance-review-list' %}active{% endif %}">
-                  <a href="{% url 'performance-review-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Performance reviews</a>
-                <!-- Add more HR-related links here -->
-              </ul>
-            </li>
-          {% endif %}
-
-          {% if request.user.role == 'admin' %}
-            <li class="treeview">
-              <a href="#"><i data-feather="user-check"></i><span>Employees</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
-              <ul class="treeview-menu">
-                  <li class="{% if request.resolver_match.url_name == 'lab_technician_list' %}active{% endif %}">
-                      <a href="{% url 'lab_technician_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Lab Technicians</a>
-                  </li>
-                  <li class="{% if request.resolver_match.url_name == 'pharmacist-list' %}active{% endif %}">
-                      <a href="{% url 'pharmacist-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Pharmacists</a>
-                  </li>
-                  <li class="{% if request.resolver_match.url_name == 'hr_manager_list' %}active{% endif %}">
-                      <a href="#"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>HR Managers</a>
-                  </li>
-                  <li class="{% if request.resolver_match.url_name == 'receptionist_list' %}active{% endif %}">
-                      <a href="{% url 'receptionist_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Receptionists</a>
-                  </li>
-                  <li class="{% if request.resolver_match.url_name == 'accountant_list' %}active{% endif %}">
-                      <a href="{% url 'accountant_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Accountants</a>
-                  </li>
-                  <li class="{% if request.resolver_match.url_name == 'case_manager_list' %}active{% endif %}">
-                      <a href="{% url 'case_manager_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Case Managers</a>
-                  </li>
-              </ul>
-            </li>
-          {% endif %}
-          
-          {% if request.user.role == 'admin' or request.user.role == 'pharmacist' %}
-            <!-- Inventory Management -->
-            <li class="treeview">
-              <a href="#"><i data-feather="archive"></i><span>Inventory Management</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
-              <ul class="treeview-menu">
-                <li class="{% if request.resolver_match.url_name == 'inventory_list' %}active{% endif %}">
-                  <a href="{% url 'inventory_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>View Inventory List</a>
-                </li>
-                <li class="{% if request.resolver_match.url_name == 'inventory_create' %}active{% endif %}">
-                  <a href="{% url 'inventory_create' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Inventory Item</a>
-                </li>
-                <!-- Add more inventory management links here -->
-              </ul>
-            </li>
-          {% endif %}
-
-          {% if request.user.role == 'admin' %}
-            <!-- Reports and Analytics -->
-            <li class="treeview">
-              <a href="#"><i data-feather="bar-chart-2"></i><span>Reports & Analytics</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
-              <ul class="treeview-menu">
-                <li class="{% if request.resolver_match.url_name == 'reports_dashboard' %}active{% endif %}">
-                  <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Financials Analysis</a>
-                </li>
-                <li class="{% if request.resolver_match.url_name == 'reports_dashboard' %}active{% endif %}">
-                  <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Attendance Analysis</a>
-                </li>
-                <!-- Add more reports-related links here -->
-              </ul>
-            </li>
-          {% endif %}
 
           <!-- Messaging -->
     <li class="treeview position-relative">
@@ -415,65 +230,6 @@
     </ul>
   </li>
 
-  {% if request.user.role == 'nurse' or request.user.role == 'admin' or request.user.role == 'docto r'  %}
-  <!-- Facilities -->
-  <li class="treeview">
-    <a href="#"><i data-feather="home"></i><span>Facilities</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
-    <ul class="treeview-menu">
-      <li class="{% if request.resolver_match.url_name == 'room_list' %}active{% endif %}">
-        <a href="{% url 'inventory_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Rooms</a>
-      </li>
-      <li class="{% if request.resolver_match.url_name == 'allocation_list' %}active{% endif %}">
-        <a href="{% url 'inventory_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Allocations</a>
-      </li>
-      <li class="{% if request.resolver_match.url_name == 'allocation_list' %}active{% endif %}">
-        <a href="{% url 'supplier_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Suppliers</a>
-      </li>
-      <li class="{% if request.resolver_match.url_name == 'allocation_list' %}active{% endif %}">
-        <a href="{% url 'sickbay_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Sickbays</a>
-      </li>
-    </ul>
-  </li>
-  {% endif  %}
-
-  {% if request.user.role == 'admin' or request.user.role == 'case_manager' %}
-  <!-- Case Management -->
-  <li class="treeview">
-    <a href="#"><i data-feather="briefcase"></i><span>Case Management</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
-    <ul class="treeview-menu">
-      <li class="{% if request.resolver_match.url_name == 'case_list' %}active{% endif %}">
-        <a href="{% url 'case_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Cases</a>
-      </li>
-      <li class="{% if request.resolver_match.url_name == 'case_list' %}active{% endif %}">
-        <a href="{% url 'case_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Care Plans</a>
-      </li>
-    </ul>
-  </li>
-  {% endif %}
-
-  {% if request.user.role == 'admin' or request.user.role == 'laboratorist' %}
-  <!-- Laboratory -->
-  <li class="treeview">
-    <a href="#"><i data-feather="sliders"></i><span>Laboratory</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
-    <ul class="treeview-menu">
-      <li class="{% if request.resolver_match.url_name == 'labtest_list' %}active{% endif %}">
-        <a href="{% url 'labtest_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Tests</a>
-      </li>
-      <li class="{% if request.resolver_match.url_name == 'result_list' %}active{% endif %}">
-        <a href="{% url 'result_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Results</a>
-      </li>
-      <li class="{% if request.resolver_match.url_name == 'specimen_list' %}active{% endif %}">
-        <a href="{% url 'specimen_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Specimens</a>
-      </li>
-      <li class="{% if request.resolver_match.url_name == 'equipment_list' %}active{% endif %}">
-        <a href="{% url 'equipment_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Equipments</a>
-      </li>
-    </ul>
-  </li>
-  {% endif %}
-
-
-  {% if request.user.role == 'admin' or request.user.role == 'pharmacist' %}
       <!-- Pharmacy -->
     <li class="treeview">
       <a href="#"><i data-feather="package"></i><span>Pharmacy</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -492,9 +248,7 @@
         </li>
       </ul>
     </li>
-  {% endif %}
 
-  {% if request.user.role == 'admin' or request.user.role == 'receptionist' %}
     <!-- Attendance -->
     <li class="treeview">
       <a href="#"><i data-feather="calendar"></i><span>Attendance</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -510,9 +264,7 @@
         </li>
       </ul>
     </li>
-  {% endif %}
 
-  {% if request.user.role == 'admin' %}
     <!-- User Activities -->
     <li class="treeview">
       <a href="#"><i data-feather="activity"></i><span>User Activities</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -522,18 +274,6 @@
         </li>
       </ul>
     </li>
-    {% endif %}
-    <!-- Settings -->
-    <li class="treeview">
-      <a href="#"><i data-feather="settings"></i><span>Settings</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
-      <ul class="treeview-menu">
-        <li class="{% if request.resolver_match.url_name == 'general_settings' %}active{% endif %}">
-          <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>General Settings</a>
-        </li>
-        <!-- Add more settings-related links here -->
-      </ul>
-    </li>
-
   
     <!-- Logout -->
     <li>

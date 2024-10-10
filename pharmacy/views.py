@@ -4,19 +4,22 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from .models import Medication, Prescription, Dispensation
 from .forms import MedicationForm, PrescriptionForm, DispensationForm
-from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 from activities.models import Activity
+from django.utils import timezone
+from .models import MedicationAssignment
+from .forms import MedicationAssignmentForm
+from django.contrib import messages
 
 # Utility function to log activity
 def log_activity(user, action, description):
     Activity.objects.create(user=user, action=action, description=description)
 
-# Medication Views
 
+# Medication Views
 @method_decorator([login_required, permission_required('pharmacy.view_medication', raise_exception=True)], name='dispatch')
 class MedicationListView(ListView):
     model = Medication
@@ -71,8 +74,8 @@ class MedicationDeleteView(SuccessMessageMixin, DeleteView):
         log_activity(request.user, 'Delete Medication', f'Medication {self.object.name} was deleted.')
         return super().delete(request, *args, **kwargs)
 
-# Prescription Views
 
+# Prescription Views
 @method_decorator([login_required, permission_required('pharmacy.view_prescription', raise_exception=True)], name='dispatch')
 class PrescriptionListView(ListView):
     model = Prescription
@@ -127,8 +130,8 @@ class PrescriptionDeleteView(SuccessMessageMixin, DeleteView):
         log_activity(request.user, 'Delete Prescription', f'Prescription {self.object.id} was deleted.')
         return super().delete(request, *args, **kwargs)
 
-# Dispensation Views
 
+# Dispensation Views
 @method_decorator([login_required, permission_required('pharmacy.view_dispensation', raise_exception=True)], name='dispatch')
 class DispensationListView(ListView):
     model = Dispensation
@@ -181,4 +184,103 @@ class DispensationDeleteView(SuccessMessageMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         log_activity(request.user, 'Delete Dispensation', f'Dispensation {self.object.id} was deleted.')
+        return super().delete(request, *args, **kwargs)
+
+
+class MedicationAssignmentListView(LoginRequiredMixin, ListView):
+    model = MedicationAssignment
+    template_name = 'medication_assignment_list.html'
+    context_object_name = 'assignments'
+
+    def get_queryset(self):
+        # Log the activity
+        Activity.objects.create(
+            user=self.request.user,
+            action='viewed',
+            description='Viewed the medication assignment list.',
+            timestamp=timezone.now()
+        )
+        print(super().get_queryset())
+        return super().get_queryset()
+
+
+class MedicationAssignmentDetailView(LoginRequiredMixin, DetailView):
+    model = MedicationAssignment
+    template_name = 'medication_assignment_detail.html'
+    context_object_name = 'assignment'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Log the activity
+        Activity.objects.create(
+            user=self.request.user,
+            action='viewed',
+            description=f'Viewed medication assignment details for {self.object.patient.user.get_full_name()}.',
+            timestamp=timezone.now()
+        )
+        return context
+
+
+class MedicationAssignmentCreateView(LoginRequiredMixin, CreateView):
+    model = MedicationAssignment
+    form_class = MedicationAssignmentForm
+    template_name = 'medication_assignment_form.html'
+    success_url = reverse_lazy('medication-assignment-list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # Log the activity
+        Activity.objects.create(
+            user=self.request.user,
+            action='created',
+            description=f'Created a new medication assignment for {self.object.patient.user.get_full_name()}.',
+            timestamp=timezone.now()
+        )
+        
+        print("Errors: ", self.form_class.errors)
+        
+        # Set session message
+        messages.success(self.request, f'A new medication assignment has been created for you by Dr. {self.object.prescribing_doctor.employee.user.get_full_name()}.')
+        
+        return response
+
+
+class MedicationAssignmentUpdateView(LoginRequiredMixin, UpdateView):
+    model = MedicationAssignment
+    form_class = MedicationAssignmentForm
+    template_name = 'medication_assignment_form.html'
+    success_url = reverse_lazy('medication-assignment-list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # Log the activity
+        Activity.objects.create(
+            user=self.request.user,
+            action='updated',
+            description=f'Updated the medication assignment for {self.object.patient.user.get_full_name()}.',
+            timestamp=timezone.now()
+        )
+        # Send a message
+        messages.success(self.request, f'Your medication assignment has been updated by Dr. {self.object.prescribing_doctor.employee.user.get_full_name()}.')
+        
+        return response
+
+
+class MedicationAssignmentDeleteView(LoginRequiredMixin, DeleteView):
+    model = MedicationAssignment
+    template_name = 'medication_assignment_confirm_delete.html'
+    success_url = reverse_lazy('medication-assignment-list')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        # Log the activity
+        Activity.objects.create(
+            user=request.user,
+            action='deleted',
+            description=f'Deleted the medication assignment for {self.object.patient.user.get_full_name()}.',
+            timestamp=timezone.now()
+        )
+        # Send a message
+        messages.success(self.request, f'Your medication assignment has been updated by Dr. {self.object.prescribing_doctor.employee.user.get_full_name()}.')
+
         return super().delete(request, *args, **kwargs)

@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from appointments.models import Appointment
 from messaging.models import Message
 from accounts.models import Patient, Doctor, Nurse
+from pharmacy.models import Prescription
 
 User = get_user_model()
 
@@ -46,11 +47,13 @@ def dashboard_view(request):
 
     if user.role.lower() == 'doctor':
         assigned_doctor = Doctor.objects.filter(employee__user=request.user).first()
+
         context = {
             'appointments': Appointment.objects.filter(employee__user=request.user),
             'appointment_count': Appointment.objects.count(),
             'new_messages_count': Message.objects.filter(read=False).count(),
-            'assigned_patients_count': Patient.objects.filter(status='New Patient', assigned_doctor=assigned_doctor)
+            'assigned_patients_count': Patient.objects.filter(status='New Patient', assigned_doctor=assigned_doctor), 
+            'assigned_prescriptions': Prescription.objects.filter(doctor=assigned_doctor)
         }
         
         return render(request, 'doctor_dashboard.html', context)

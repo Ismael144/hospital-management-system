@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from pharmacy.models import MedicationAssignment
+
 
 class Invoice(models.Model):
     STATUS_CHOICES = [
@@ -96,7 +98,8 @@ class Bill(models.Model):
         self.save()
 
     def calculate_total_amount(self):
-        total = sum(medication.price for medication in self.medication.all())
+        medication_assignments = MedicationAssignment.objects.filter(patient=self.appointment.patient)
+        total = sum(medication.calculate_total_amount() for medication in medication_assignments)
         self.total_amount = total
         self.save()
 
@@ -110,17 +113,10 @@ class Payroll(models.Model):
     employee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     month = models.DateField()
     salary = models.DecimalField(max_digits=10, decimal_places=2)
-    overtime_hours = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    overtime_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     bonuses = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     deductions = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     net_pay = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
     status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Paid', 'Paid')], default='Pending')
-    
-    def calculate_net_pay(self):
-        overtime_pay = self.overtime_hours * self.overtime_rate
-        self.net_pay = self.salary + overtime_pay + self.bonuses - self.deductions
-        return self.net_pay
     
     def save(self, *args, **kwargs):
         self.calculate_net_pay()

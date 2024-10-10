@@ -1,5 +1,6 @@
 from django import forms
 from .models import Payroll, Account, CashCollection, Expense, Budget, FinancialReport, InsuranceProvider, Bill, Payment, Invoice
+from appointments.models import Appointment
 
 class InvoiceForm(forms.ModelForm):
     class Meta:
@@ -22,9 +23,7 @@ class PayrollForm(forms.ModelForm):
         widgets = {
             'employee': forms.Select(),
             'month': forms.DateInput(attrs={'type': 'date'}),
-            'salary': forms.NumberInput(attrs={'step': '0.01'}),
-            'overtime_hours': forms.NumberInput(attrs={'step': '0.01'}),
-            'overtime_rate': forms.NumberInput(attrs={'step': '0.01'}),
+            'salary': forms.NumberInput(attrs={'step': '0.01', 'value': 0}),
             'bonuses': forms.NumberInput(attrs={'step': '0.01'}),
             'deductions': forms.NumberInput(attrs={'step': '0.01'}),
             'status': forms.Select(),
@@ -103,24 +102,54 @@ class InsuranceProviderForm(forms.ModelForm):
             'address': forms.Textarea(),
         }
 
+
 class BillForm(forms.ModelForm):
+    set_amount_automatically = forms.BooleanField(
+        required=False,
+        label='Set total amount based on medications',
+        initial=False,
+    )
+
     class Meta:
         model = Bill
         fields = '__all__'
         widgets = {
             'appointment': forms.Select(),
-            'treatment': forms.SelectMultiple(),
+            'medication': forms.SelectMultiple(),
             'date_issued': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'total_amount': forms.NumberInput(attrs={'step': '0.01'}),
+            'total_amount': forms.NumberInput(attrs={'step': '0.01', 'required': False}),
             'amount_paid': forms.NumberInput(attrs={'step': '0.01'}),
             'status': forms.Select(),
             'details': forms.Textarea(),
-            'installment_plan': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'installments_remaining': forms.NumberInput(),
-            'installment_amount': forms.NumberInput(attrs={'step': '0.01'}),
-            'insurance_provider': forms.Select(),
             'insurance_claim_status': forms.Select(),
         }
+        
+    def __init__(self, *args, **kwargs):
+        appt_id = kwargs.pop('appt_id', None)
+        super().__init__(*args, **kwargs)
+        if appt_id:
+            try:
+                # Fetch the Appointment object using the appt_id
+                appointment = Appointment.objects.get(pk=appt_id)
+                # Set the initial value of the appointment field
+                self.fields['appointment'].initial = appointment.id
+            except Appointment.DoesNotExist:
+                pass  
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        set_amount_automatically = cleaned_data.get('set_amount_automatically')
+        medications = cleaned_data.get('medication')
+        total_amount = cleaned_data.get('total_amount')
+        
+        if set_amount_automatically and medications:
+            # Calculate the total price of selected medications
+            medication_total = sum(med.price for med in medications)
+            # Add the calculated medication total to the entered total amount
+            cleaned_data['total_amount'] = total_amount + medication_total
+        
+        return cleaned_data
+
 
 class PaymentForm(forms.ModelForm):
     class Meta:
@@ -134,3 +163,4 @@ class PaymentForm(forms.ModelForm):
             'installment': forms.CheckboxInput(),
             'processed_by': forms.Select(),
         }
+

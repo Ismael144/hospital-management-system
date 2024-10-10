@@ -10,7 +10,6 @@ from messaging.helpers import *
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.http import Http404
-from django.db.models import Q
 from accounts.models import Patient, Employee
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
@@ -34,10 +33,6 @@ class AppointmentListView(ListView):
             return Appointment.objects.filter(patient__user=user)
         elif user.role in ['receptionist', 'doctor', 'nurse', 'pharmacist']:
             employee = Employee.objects.filter(user=user).first()
-            # Show appointments for the logged-in doctor
-            print(employee, user)
-            print(Employee.objects.all().first().pk, user.pk)
-            print(Appointment.objects.filter(employee__pk=user.pk))
             return Appointment.objects.filter(employee__user=user)
         else:
             # Default behavior: show all appointments (admin or other roles)
@@ -52,7 +47,7 @@ class AppointmentListView(ListView):
         request_data = request.POST
         appt_id = request_data.get('appt_id') 
         cancellation_reason = str(request_data.get('cancellation_reason')).strip()
-
+        
         if appt_id is not None:
             # Process the cancellation here
             print(f"Appointment ID: {appt_id}, Cancellation Reason: {cancellation_reason}")
@@ -115,6 +110,7 @@ class AppointmentDetailView(DetailViewMixin, DetailView):
     def get_queryset(self):
         queryset = super().get_queryset()
         user = self.request.user
+        employee = Employee.objects.filter(user=user).first()
 
         if not user.is_authenticated:
             raise Http404("You must be logged in to view appointment details.")
@@ -158,7 +154,7 @@ class AppointmentCreateView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         log_activity(self.request.user, 'Create', f'Created a new appointment with ID {self.object.pk}')
-        
+        print("Form is valid")
         # Send notifications
         appointment = self.object
         patient = appointment.patient

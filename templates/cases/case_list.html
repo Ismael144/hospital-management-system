@@ -15,65 +15,77 @@
   <div class="content-wrapper rounded-0">
     <div class="container-full">
       <section class="content">
-        <h2>Cases</h2>
-        <a href="{% url 'case_create' %}" class="btn btn-primary mb-2">Add Case</a>
-        <table class="table border-no" id="data-table">
-          <thead>
-            <tr>
-              <th>S.No</th>
-              <th>Case Number</th>
-              <th>Patient</th>
-              <th>Case Manager</th>
-              <th>Status</th>
-              <th>Created At</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for case in cases %}
-              <tr>
-                <td>{{ forloop.counter }}</td>
-                <td><a href="{% url 'case_detail' case.pk %}">{{ case.case_number }}</a></td>
-                <td>{{ case.patient }}</td>
-                <td>{{ case.case_manager }}</td>
-                <td>{{ case.get_status_display }}</td>
-                <td>{{ case.created_at }}</td>
-                <td>
-                  <div class="btn-group">
-                    <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
-                    <div class="dropdown-menu">
-                      <a class="dropdown-item" href="{% url 'case_detail' case.pk %}">View Details</a>
-                      <a class="dropdown-item" href="{% url 'case_update' case.pk %}">Edit</a>
-                      <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#case-delete-modal-{{ case.id }}">Delete</a>
+        <div class="box">
+          <div class="box-header with-border">
+            <div class="d-flex align-items-center justify-content-between">
+              <h2 class="box-title">Cases</h2>
+              <a href="{% url 'case_create' %}" class="btn btn-primary mb-2">Add Case</a>
+            </div>
+          </div>
+          <div class="box-body">
+            <table class="table border-no" id="data-table">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Case Number</th>
+                  <th>Patient</th>
+                  <th>Case Manager</th>
+                  <th>Status</th>
+                  <th>Created At</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for case in cases %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                      <a href="{% url 'case_detail' case.pk %}">{{ case.case_number }}</a>
+                    </td>
+                    <td>{{ case.patient }}</td>
+                    <td>{{ case.case_manager }}</td>
+                    <td>{{ case.get_status_display }}</td>
+                    <td>{{ case.created_at }}</td>
+                    <td>
+                      <div class="btn-group">
+                        <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                        <div class="dropdown-menu">
+                          <a class="dropdown-item" href="{% url 'case_detail' case.pk %}">View Details</a>
+                          <a class="dropdown-item" href="{% url 'case_update' case.pk %}">Edit</a>
+                          <a class="dropdown-item" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#case-delete-modal-{{ case.id }}">Delete</a>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <div class="modal fade" id="case-delete-modal-{{ case.id }}" tabindex="-1" aria-labelledby="case-delete-modal-Label" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="case-delete-modal-Label">Confirm Delete case</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to delete case of 'patient' made with <strong>'{{ case.user.get_full_name }}'</strong>?
+                          </div>
+                          <div class="modal-footer d-flex align-items-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="{% url 'case_delete' case.pk %}" method="POST">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
-              <div class="modal fade" id="case-delete-modal-{{ case.id }}" tabindex="-1" aria-labelledby="case-delete-modal-Label" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="case-delete-modal-Label">Confirm Delete case</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      Are you sure you want to delete case of 'patient' made with <strong>'{{ case.user.get_full_name }}'</strong>?
-                    </div>
-                    <div class="modal-footer d-flex align-items-center">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                      <form action="{% url 'case_delete' case.pk %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              </tr>
-            {% empty %}
-            {% endfor %}
-          </tbody>
-        </table>
+                  </tr>
+                {% empty %}
+
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
     </div>
   </div>

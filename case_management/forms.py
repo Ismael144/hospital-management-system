@@ -4,7 +4,7 @@ from .models import Case, CaseNote, CarePlan
 class CaseForm(forms.ModelForm):
     class Meta:
         model = Case
-        fields = ['patient', 'case_manager', 'case_number', 'status', 'notes']
+        fields = ['patient', 'case_number', 'status', 'notes']
         widgets = {
             'status': forms.Select(choices=Case.STATUS_CHOICES),
             'notes': forms.Textarea(attrs={'rows': 3}),

@@ -19,13 +19,6 @@ class ScheduleForm(forms.ModelForm):
         model = Schedule
         fields = ['employee', 'shift', 'department', 'notes']
         
-    # Customize field widgets if necessary
-    # shift_start = forms.DateTimeField(
-    #     widget=forms.TimeInput(attrs={'type': 'time'})
-    # )
-    # shift_end = forms.DateTimeField(
-    #     widget=forms.TimeInput(attrs={'type': 'time'})
-    # )
     department = forms.Select()
     notes = forms.CharField(
         widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Additional notes'})
@@ -106,7 +99,7 @@ class DepartmentForm(forms.ModelForm):
 class LeaveForm(forms.ModelForm):
     class Meta:
         model = Leave
-        fields = ['employee', 'leave_type', 'start_date', 'end_date', 'reason', 'status', 'approved_by']
+        fields = ['employee', 'leave_type', 'start_date', 'end_date', 'reason', 'status']
         widgets = {
             'employee': forms.Select(attrs={'class': 'form-control'}),
             'leave_type': forms.Select(attrs={'class': 'form-control'}),

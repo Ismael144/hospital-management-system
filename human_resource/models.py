@@ -1,12 +1,12 @@
 from django.db import models
-from django.conf import settings 
-
-from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
 from django.db import models
 from django.conf import settings
+from messaging.helpers import send_notification 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Shift(models.Model): 
     name = models.CharField(max_length=100)
@@ -158,7 +158,8 @@ class Leave(models.Model):
     end_date = models.DateField()
     reason = models.TextField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
-    approved_by = models.ForeignKey('accounts.HRManager', on_delete=models.SET_NULL, null=True)
+    rejection_reason = models.TextField(null=True, blank=True)
+    approved_by = models.ForeignKey('accounts.HRManager', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"{self.employee} - {self.leave_type} ({self.start_date} to {self.end_date})"

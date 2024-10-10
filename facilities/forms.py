@@ -41,6 +41,7 @@ class RoomForm(forms.ModelForm):
 
 class InventoryForm(forms.ModelForm):
     item_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    item_type = forms.CharField(max_length=100, widget=forms.Select(choices=Inventory.ITEM_TYPE_CHOICES, attrs={'class': 'form-control select'}))
     description = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}))
     quantity = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
     unit_price = forms.DecimalField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
@@ -50,7 +51,7 @@ class InventoryForm(forms.ModelForm):
 
     class Meta:
         model = Inventory
-        fields = ['item_name', 'description', 'quantity', 'unit_price', 'quantity_in_stock', 'reorder_threshold', 'supplier', 'expiry_date']
+        fields = ['item_name', 'item_type', 'description', 'quantity', 'unit_price', 'quantity_in_stock', 'reorder_threshold', 'supplier', 'expiry_date']
 
 
 class SupplierForm(forms.ModelForm):

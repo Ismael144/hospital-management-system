@@ -9,6 +9,9 @@ from .models import Department, Schedule, StaffOnDuty, NoticeBoard, Shift
 from .models import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ScheduleForm, StaffOnDutyForm, NoticeBoardForm, ShiftForm, DepartmentForm, LeaveForm
+from django.contrib import messages 
+from django.shortcuts import redirect, get_object_or_404
+
 
 def log_activity(user, action, description=''):
     Activity.objects.create(user=user, action=action, description=description, timestamp=timezone.now())
@@ -306,6 +309,7 @@ class DepartmentUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('department_list')
 
 
+
 class LeaveListView(ListView):
     model = Leave
     template_name = 'human_resource/leave_list.html'
@@ -314,6 +318,47 @@ class LeaveListView(ListView):
     def get_queryset(self):
         log_activity(self.request.user, 'view', 'Viewed Leave List')
         return super().get_queryset()
+
+    def post(self, request, *args, **kwargs):
+        leave = get_object_or_404(Leave, pk=request.POST.get('leave_id'))
+        action = request.POST.get('action')
+        
+        if action == 'approved':
+            leave.status = 'Approved'
+            leave.save()
+            send_notification(
+                    user=leave.employee.user,
+                    content=f'Your Leave request was successfuly approved by {leave.employee.user.get_full_name()}.', 
+                    icon="fa-bell", 
+                    link=f"/financials/leaves/{leave.pk}", 
+                    link_name="View Leave", 
+                    bg_color="success"
+            )
+            log_activity(self.request.user, 'approve', f'Approved leave request for {leave.employee.user.get_full_name}')
+            messages.success(request, 'Leave request approved successfully.')
+
+        elif action == 'reject':
+            reason = request.POST.get('rejection_reason')
+            if not reason:
+                messages.error(request, 'Reason for rejection is required.')
+                print("Reason not given")
+                return redirect('leave_list')
+            
+            leave.status = 'Rejected'
+            leave.rejection_reason = reason
+            leave.save()
+            send_notification(
+                    user=leave.employee.user,
+                    content=f'Your leave request was rejected.', 
+                    icon="fa-bell", 
+                    link=f"/financials/leaves/{leave.pk}", 
+                    link_name="View Leave Request", 
+                    bg_color="danger"
+                )
+            log_activity(self.request.user, 'reject', f'Rejected leave request for {leave.employee.user.get_full_name} with reason: {reason}')
+            messages.success(request, 'Leave request rejected successfully.')
+        
+        return redirect('leave-list')
 
 class LeaveDetailView(DetailView):
     model = Leave
@@ -328,9 +373,18 @@ class LeaveCreateView(CreateView):
     model = Leave
     template_name = 'human_resource/leave_form.html'
     form_class = LeaveForm
+    success_url = reverse_lazy('leave-list')
     
     def form_valid(self, form):
         log_activity(self.request.user, 'create', f"Created Leave: {form.instance.employee} ({form.instance.leave_type})")
+        send_notification(
+            user=form.instance.employee.user,
+            content=f'You successfully requested a pending leave.', 
+            icon="fa-bell", 
+            link=f"/financials/leaves/{form.instance.pk}", 
+            link_name="View Leave", 
+            bg_color="primary"
+        )
         return super().form_valid(form)
     
 

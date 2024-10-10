@@ -6,7 +6,7 @@
 class="hold-transition light-skin sidebar-mini theme-primary fixed"
 {% endblock %}
 
-{% block title %} Dashboard {% endblock %}
+{% block title %} Patients List {% endblock %}
 
 {% block content %}
 
@@ -40,7 +40,7 @@ class="hold-transition light-skin sidebar-mini theme-primary fixed"
                 </nav>
               </div>
               <div class="d-flex align-items-center gap-2">
-                <a href="{% url 'discharge_summary_list' %}" class="btn btn-primary d-flex align-items-center gap-3">Discharge Summary
+                <a href="{% url 'discharge_summary_list' %}" class="btn btn-primary d-flex align-items-center gap-3">Discharge Summaries
                 </a>
                 <a href="{% url 'patient_create' %}" class="btn btn-success d-flex align-items-center gap-3">Create
                   <span><i class="fas fa-plus" style="font-size: 10px !important;"></i></span>
@@ -70,6 +70,7 @@ class="hold-transition light-skin sidebar-mini theme-primary fixed"
                           <th>Status</th>
                           <th>Emergency Contact</th>
                           <th>Discharge Summaries</th>
+                          <th>Medical Reports</th>
                           <th>Room Assigned</th>
                           <th></th>
                         </tr>
@@ -99,6 +100,7 @@ class="hold-transition light-skin sidebar-mini theme-primary fixed"
                           </td>
                           <td>{% if patient.emergency_contact_phone %}{{ patient.emergency_contact_phone }}{% else %}N/A {% endif %}</td>
                           <td><a href="{% url 'discharge_summary_list' %}?patient={{ patient.pk }}">View all</a></td>
+                          <td><a href="{% url 'medical_report_list' %}?patient={{ patient.pk }}">View all</a></td>
                           <td>{{ patient.assigned_room.room_number|default:"N/A" }}</td>
                           <td>
                             <div class="btn-group">
@@ -122,7 +124,7 @@ class="hold-transition light-skin sidebar-mini theme-primary fixed"
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                               </div>
                               <div class="modal-body">
-                                Are you sure you want to delete {{ patient.profile.user.get_full_name }}?
+                                Are you sure you want to delete '{{ patient.profile.user.get_full_name }}'?
                               </div>
                               <div class="modal-footer d-flex align-items-center">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -167,7 +169,5 @@ class="hold-transition light-skin sidebar-mini theme-primary fixed"
   <script>document.write(new Date().getFullYear())</script> <a href="https://www.multipurposethemes.com/">Hospital
     System</a>. All Rights Reserved.
 </footer>
-
-</div>
 
 {% endblock %}

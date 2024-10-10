@@ -7,7 +7,6 @@ class AppointmentForm(forms.ModelForm):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         
-        
 
         if self.user and self.user.is_authenticated:
             role = getattr(self.user, 'role', '').lower()
@@ -41,10 +40,11 @@ class AppointmentForm(forms.ModelForm):
                 
     class Meta:
         model = Appointment
-        fields = ['patient', 'employee', 'appointment_date', 'reason']
+        fields = ['patient', 'employee', 'medication_assignments', 'appointment_date', 'reason']
         widgets = {
             'patient': forms.Select(attrs={'class':'form-control select2'}),
             'employee': forms.Select(attrs={'class':'form-control select2'}),
+            'medication_assignments': forms.Select(attrs={'class':'form-control select2'}),
             'appointment_date': forms.DateTimeInput(attrs={'class': 'form-control datetimepicker-input', 'type': 'datetime-local'}),
             'reason': forms.Textarea(attrs={'class': 'form-control'}),
         }

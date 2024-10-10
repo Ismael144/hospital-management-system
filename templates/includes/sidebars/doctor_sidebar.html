@@ -1,0 +1,387 @@
+{% load static %}
+
+<header class="main-header">
+  <div class="d-flex align-items-center logo-box justify-content-start">
+    <!-- Logo -->
+    <a href="{% url 'dashboard_page' %}" class="logo">
+      <!-- logo -->
+      <div class="logo-mini w-50">
+        <span class="light-logo"><img src="{% static 'images/logo-letter.png' %}" alt="logo" /></span>
+        <span class="dark-logo"><img src="{% static 'images/logo-letter.png' %}" alt="logo" /></span>
+      </div>
+      <div class="logo-lg">
+        <span class="light-logo"><img src="{% static 'images/logo-dark-text.png' %}" alt="logo" /></span>
+        <span class="dark-logo"><img src="{% static 'images/logo-light-text.png' %}" alt="logo" /></span>
+      </div>
+    </a>
+  </div>
+  <!-- Header Navbar -->
+  <nav class="navbar navbar-static-top">
+    <!-- Sidebar toggle button -->
+    <div class="app-menu">
+      <ul class="header-megamenu nav">
+        <li class="btn-group nav-item">
+          <a href="#" class="waves-effect waves-light nav-link push-btn btn-primary-light" data-toggle="push-menu" role="button"><i class="icon-Menu"><span class="path1"></span><span class="path2"></span></i></a>
+        </li>
+        <li class="btn-group d-lg-inline-flex d-none">
+          <div class="app-menu">
+            <div class="search-bx mx-5">
+              <form>
+                <div class="input-group">
+                  <input type="search" class="form-control" placeholder="Search" />
+                  <div class="input-group-append">
+                    <button class="btn" type="submit" id="button-addon3"><i class="icon-Search"><span class="path1"></span><span class="path2"></span></i></button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="navbar-custom-menu r-side">
+      <ul class="nav navbar-nav">
+        <!-- User Account -->
+        <li class="dropdown user user-menu">
+          <a href="{% url 'dashboard_page' %}" class="waves-effect waves-light dropdown-toggle w-auto l-h-12 bg-transparent p-0 no-shadow" data-bs-toggle="dropdown" title="User">
+            <div class="d-flex pt-1">
+              <div class="text-end me-10">
+                <p class="pt-5 fs-14 mb-0 fw-700 text-primary">{{ request.user.get_full_name }}</p>
+                <small class="fs-10 mb-0 text-uppercase text-mute">{{ request.user.role }}</small>
+              </div>
+              <img src="{% static 'images/avatar/avatar-1.png' %}" class="avatar rounded-10 bg-lightgreen h-40 w-40" alt="" />
+            </div>
+          </a>
+          <ul class="dropdown-menu animated flipInX">
+            <li class="user-body">
+              <a class="dropdown-item" href="{% url 'user_profile' %}"><i class="ti-user text-muted me-2"></i> Profile</a>
+              <a class="dropdown-item" href="{% url 'signout_page' %}"><i class="ti-lock text-muted me-2"></i> Logout</a>
+            </li>
+          </ul>
+        </li>
+        <li class="btn-group nav-item d-lg-inline-flex d-none">
+          <a href="#" data-provide="fullscreen" class="waves-effect waves-light nav-link full-screen btn-warning-light" title="Full Screen"><i class="icon-Position"></i></a>
+        </li>
+        <!-- Notifications -->
+        <li class="dropdown notifications-menu">
+          <a href="#" id="notifications-button" class="waves-effect waves-light dropdown-toggle btn-info-light" data-bs-toggle="dropdown" title="Notifications">
+            <i class="icon-Notification">
+              <span class="path1"></span>
+              <span class="path2"></span>
+              <span id="unread-notification-count" class="badge badge-primary"></span>
+            </i>
+          </a>
+          <ul class="dropdown-menu animated bounceIn" style="width: 270px;">
+            <li class="header">
+              <div class="p-20">
+                <div class="flexbox">
+                  <div>
+                    <h6 class="mb-0 mt-0">Notifications</h6>
+                  </div>
+                  <div>
+                    <small><a href="#" class="text-danger" id="clear-all">Clear All</a></small>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <!-- inner menu: contains the actual data -->
+              <ul class="menu sm-scrol" id="notifications-messages">
+                <!-- Notifications and messages will be dynamically inserted here -->
+              </ul>
+            </li>
+            <li class="footer">
+              <a href="{% url 'notifications' %}">View all</a>
+            </li>
+          </ul>
+        </li>
+
+        <style>
+          #unread-notification-count.badge {
+            position: absolute;
+            top: 2px;
+            right: 3px;
+            padding: 5px auto;
+            border-radius: 50%;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            font-family: inherit;
+          }
+          
+          #unread-notification-count {
+            display: none; /* Hide initially */
+          }
+
+          #unread-message-count.badge {
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            border-radius: 50%;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            font-family: inherit;
+          }
+          
+          #unread-message-count {
+            /* display: none;  Hide initially */
+          }
+        </style>
+
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<aside class="main-sidebar">
+  <section class="sidebar">
+    <div class="multinav">
+      <div class="multinav-scroll" style="height: 100%;">
+        <ul class="sidebar-menu" data-widget="tree">
+          <!-- Dashboard -->
+          <li class="{% if request.resolver_match.url_name == 'dashboard_page' %}active{% endif %}">
+            <a href="{% url 'dashboard_page' %}"><i data-feather="monitor"></i><span>Dashboard</span></a>
+          </li>
+
+          <!-- Appointments -->
+            <li class="treeview">
+              <a href="{% url 'appointment_list' %}"><i data-feather="calendar"></i><span>Appointments</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
+              <ul class="treeview-menu">
+                <li class="{% if request.resolver_match.url_name == 'appointment_list' %}active{% endif %}">
+                  <a href="{% url 'appointment_create' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Create Appointment</a>
+                </li>
+                <li class="{% if request.resolver_match.url_name == 'appointment_list' %}active{% endif %}">
+                  <a href="{% url 'appointment_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Appointments List</a>
+                </li>
+                <!-- Add more appointment-related links here -->
+              </ul>
+            </li>
+
+          <!-- Patients -->
+            <li class="treeview">
+              <a href="#"><i data-feather="users"></i><span>Patients</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
+              <ul class="treeview-menu">
+                <li class="{% if request.resolver_match.url_name == 'patient_list' %}active{% endif %}">
+                  <a href="{% url 'patient_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>All Patients</a>
+                </li>
+                <li class="{% if request.resolver_match.url_name == 'patient_discharge' %}active{% endif %}">
+                  <a href="{% url 'medical_report_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Medical Reports</a>
+                </li>
+                <li class="{% if request.resolver_match.url_name == 'patient_discharge' %}active{% endif %}">
+                  <a href="{% url 'discharge_summary_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Discharge Summaries</a>
+                </li>
+                <!-- Add more patient-related links here -->
+              </ul>
+            </li>
+
+          <!-- Doctors -->
+            <li class="treeview">
+              <a href="#"><i data-feather="user-check"></i><span>Doctors</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
+              <ul class="treeview-menu">
+                <li class="{% if request.resolver_match.url_name == 'doctor_list' %}active{% endif %}">
+                  <a href="{% url 'doctor_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>View All</a>
+                </li>
+                <li class="{% if request.resolver_match.url_name == 'doctor_create' %}active{% endif %}">
+                  <a href="{% url 'doctor_create' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Doctor</a>
+                </li>
+                <!-- Add more doctor-related links here -->
+              </ul>
+            </li>
+
+          <!-- Nurses -->
+          <li class="treeview">
+            <a href="#"><i data-feather="user-plus"></i><span>Nurses</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
+            <ul class="treeview-menu">
+              <li class="{% if request.resolver_match.url_name == 'nurse_list' %}active{% endif %}">
+                <a href="{% url 'nurse_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>All</a>
+              </li>
+              <li class="{% if request.resolver_match.url_name == 'nurse_create' %}active{% endif %}">
+                <a href="{% url 'nurse_create' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Nurse</a>
+              </li>
+              <!-- Add more nurse-related links here -->
+            </ul>
+          </li>
+
+          <!-- Messaging -->
+    <li class="treeview position-relative">
+      <a href="#"><i data-feather="message-square"></i><span>Messaging</span>
+        {% comment %} <span id="unread-message-count"></span> {% endcomment %}
+        <i class="icon-Notification">
+          <span id="unread-message-count" class="badge badge-primary"></span>
+        </i>
+        <span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
+      <ul class="treeview-menu">
+        <li class="{% if request.resolver_match.url_name == 'inbox' %}active{% endif %}">
+          <a href="{% url 'inbox' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Inbox</a>
+        </li>
+        <li class="{% if request.resolver_match.url_name == 'sent_messages' %}active{% endif %}">
+          <a href="{% url 'sent_messages' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Outbox</a>
+        </li>
+        <li class="{% if request.resolver_match.url_name == 'send_message' %}active{% endif %}">
+          <a href="{% url 'send_message' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Compose Message</a>
+        </li>
+        <li class="{% if request.resolver_match.url_name == 'send_message' %}active{% endif %}">
+          <a href="{% url 'send_message' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Send Email</a>
+        </li>
+      </ul>
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const messageCountSpan = document.getElementById('unread-message-count')
+          // Fetch unread messages count
+          $.ajax({
+            url: "{% url 'inbox_count_api' %}", // URL to the inbox_api view
+            method: 'GET',
+            success: function (data) {
+              messageCountSpan.textContent = data.received_message_count
+            },
+            error: function (xhr, status, error) {
+              console.error('Error fetching unread message count:', error)
+            }
+          })
+        })
+      </script>
+    </li>
+
+  <!-- Notifications -->
+  <li class="treeview">
+    <a href="#"><i data-feather="bell"></i><span>Notifications
+      <span id="unread-notification-count" class="badge badge-primary"></span>
+    </span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
+    <ul class="treeview-menu">
+      <li class="{% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
+        <a href="{% url 'notifications' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>
+          Notifications
+        </a>
+      </li>
+    </ul>
+  </li>
+  
+    <!-- Logout -->
+    <li>
+      <a href="{% url 'signout_page' %}"><i data-feather="log-out"></i><span>Logout</span></a>
+    </li>
+
+        </ul>
+      </div>
+    </div>
+
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const notificationsButton = document.getElementById('notifications-button')
+        const unreadCountSpan = document.getElementById('unread-notification-count')
+      
+        // Fetch notifications and messages on page load
+        fetchNotificationsAndMessages()
+      
+        // Fetch notifications and messages when the notifications button is clicked
+        notificationsButton.addEventListener('click', function (event) {
+          event.preventDefault()
+          markAllNotificationsAsRead()
+        })
+      
+        // Function to fetch notifications and messages
+        function fetchNotificationsAndMessages() {
+          fetch("{% url 'user_notifications_messages' %}")
+            .then((response) => response.json())
+            .then((data) => {
+              const notificationsMessagesDiv = document.getElementById('notifications-messages')
+              notificationsMessagesDiv.innerHTML = '' // Clear previous content
+      
+              let unreadCount = 0
+      
+              // Append notifications
+              data.notifications.forEach((notification) => {
+                const notificationElement = document.createElement('li')
+                notificationElement.setAttribute('ntf-id', notification.id)
+      
+                notificationElement.innerHTML = `
+                            <a href="${notification.link}" class="d-flex gap-2 align-items-center" title="${notification.link_name}"><i class="fa ${notification.icon} text-${notification.bg_color}"></i> ${notification.content}</a>
+                          `
+                if (!notification.read) {
+                  unreadCount++
+                }
+                notificationsMessagesDiv.appendChild(notificationElement)
+              })
+      
+              // Append messages
+              data.messages.forEach((message) => {
+                const messageElement = document.createElement('li')
+                messageElement.setAttribute('msg-id', message.id)
+                messageElement.innerHTML = `
+                            <a href="messaging/message/${message.id}"><i class="fa fa-envelope text-info"></i> ${message.subject}</a>
+                          `
+                notificationsMessagesDiv.appendChild(messageElement)
+              })
+      
+              // Update unread notifications count
+              if (unreadCount > 0) {
+                unreadCountSpan.textContent = unreadCount
+                unreadCountSpan.style.display = 'inline' // Show the badge
+              } else {
+                unreadCountSpan.style.display = 'none' // Hide the badge if no unread notifications
+              }
+            })
+            .catch((error) => console.error('Error fetching notifications and messages:', error))
+        }
+      
+        // Function to clear all notifications and messages
+        document.getElementById('clear-all').addEventListener('click', function (event) {
+          event.preventDefault()
+          clearAllNotificationsAndMessages()
+        })
+      
+        function clearAllNotificationsAndMessages() {
+          fetch("{% url 'clear_notifications' %}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCookie('csrftoken') // Add CSRF token if using Django
+            },
+            body: JSON.stringify({
+              notifications: Array.from(document.querySelectorAll('#notifications-messages li')).map((notification) => notification.getAttribute('ntf-id'))
+            })
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.status === 'success') {
+                fetchNotificationsAndMessages() // Refresh the notifications and messages
+              } else {
+                alert("No Status")
+              }
+            })
+            .catch((error) => console.error('Error clearing notifications and messages:', error))
+        }
+      
+        // Function to mark all notifications as read
+        function markAllNotificationsAsRead() {
+          fetch("{% url 'clear_notifications' %}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCookie('csrftoken') // Add CSRF token if using Django
+            },
+            body: JSON.stringify({
+              notifications: Array.from(document.querySelectorAll('#notifications-messages li')).map((notification) => notification.getAttribute('ntf-id'))
+            })
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.status === 'success') {
+                fetchNotificationsAndMessages() // Refresh the notifications and messages
+              }
+            })
+            .catch((error) => console.error('Error marking notifications as read:', error))
+        }
+      
+        // Function to get CSRF token (Django specific)
+        function getCookie(name) {
+          const cookieValue = document.cookie.split(';').find((cookie) => cookie.trim().startsWith(name + '='))
+          return cookieValue ? decodeURIComponent(cookieValue.split('=')[1]) : null
+        }
+      })
+    </script>
+  </section>
+</aside>

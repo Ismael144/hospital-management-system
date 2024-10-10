@@ -2,108 +2,108 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid mt-4">
+  <div class="container-fluid mt-4">
     <h1 class="mb-4">Comprehensive Hospital Analysis</h1>
     <p>Analysis period: {{ start_date }} to {{ end_date }}</p>
 
     <div class="row">
-        <!-- Discharge Summary Analysis -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Discharge Summary Analysis</h5>
-                    <canvas id="dischargeStatusChart"></canvas>
-                    <h6 class="mt-3">Top 5 Discharge Reasons</h6>
-                    <ul class="list-group">
-                        {% for reason in discharge_reasons %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                {{ reason.discharge_reason|default:"Not specified" }}
-                                <span class="badge bg-primary rounded-pill">{{ reason.count }}</span>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
+      <!-- Discharge Summary Analysis -->
+      <div class="col-md-6 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Discharge Summary Analysis</h5>
+            <canvas id="dischargeStatusChart"></canvas>
+            <h6 class="mt-3">Top 5 Discharge Reasons</h6>
+            <ul class="list-group">
+              {% for reason in discharge_reasons %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  {{ reason.discharge_reason|default:'Not specified' }}
+                  <span class="badge bg-primary rounded-pill">{{ reason.count }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
         </div>
+      </div>
 
-        <!-- Patient Analysis -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Patient Analysis</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <canvas id="patientStatusChart"></canvas>
-                        </div>
-                        <div class="col-md-6">
-                            <canvas id="ageGroupChart"></canvas>
-                        </div>
-                    </div>
-                </div>
+      <!-- Patient Analysis -->
+      <div class="col-md-6 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Patient Analysis</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <canvas id="patientStatusChart"></canvas>
+              </div>
+              <div class="col-md-6">
+                <canvas id="ageGroupChart"></canvas>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Payment and Bill Analysis -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Payment and Bill Analysis</h5>
-                    <canvas id="paymentMethodChart"></canvas>
-                    <h6 class="mt-3">Bill Status</h6>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Status</th>
-                                <th>Count</th>
-                                <th>Total Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for status in bill_status %}
-                                <tr>
-                                    <td>{{ status.status }}</td>
-                                    <td>{{ status.count }}</td>
-                                    <td>${{ status.total|floatformat:2 }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+      <!-- Payment and Bill Analysis -->
+      <div class="col-md-6 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Payment and Bill Analysis</h5>
+            <canvas id="paymentMethodChart"></canvas>
+            <h6 class="mt-3">Bill Status</h6>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Count</th>
+                  <th>Total Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for status in bill_status %}
+                  <tr>
+                    <td>{{ status.status }}</td>
+                    <td>{{ status.count }}</td>
+                    <td>${{ status.total|floatformat:2 }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
 
-        <!-- Prescription Analysis -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Prescription Analysis</h5>
-                    <h6>Top 10 Prescribed Medications</h6>
-                    <canvas id="topMedicationsChart"></canvas>
-                </div>
-            </div>
+      <!-- Prescription Analysis -->
+      <div class="col-md-6 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Prescription Analysis</h5>
+            <h6>Top 10 Prescribed Medications</h6>
+            <canvas id="topMedicationsChart"></canvas>
+          </div>
         </div>
+      </div>
 
-        <!-- Appointment Analysis -->
-        <div class="col-md-12 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Appointment Analysis</h5>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <canvas id="appointmentStatusChart"></canvas>
-                        </div>
-                        <div class="col-md-8">
-                            <canvas id="appointmentsByDayChart"></canvas>
-                        </div>
-                    </div>
-                </div>
+      <!-- Appointment Analysis -->
+      <div class="col-md-12 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Appointment Analysis</h5>
+            <div class="row">
+              <div class="col-md-4">
+                <canvas id="appointmentStatusChart"></canvas>
+              </div>
+              <div class="col-md-8">
+                <canvas id="appointmentsByDayChart"></canvas>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
 document.addEventListener('DOMContentLoaded', function() {
     const dischargeData = {{ discharge_status|json_script:"discharge_status" }};
     const patientData = {{ patient_status|json_script:"patient_status" }};

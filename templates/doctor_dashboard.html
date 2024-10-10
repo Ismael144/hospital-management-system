@@ -88,8 +88,12 @@
         <!-- /.box-header -->
         <div class="card-body">
           <div class="box">
-            <div class="box-header with-border">
+            <div class="box-header with-border d-flex align-items-center justify-content-between">
               <h3 class="box-title">Appointments</h3>
+              <a href="{% url 'comprehensive_analysis' %}" class="btn btn-success">
+                <i class="fas fa-plus"></i> 
+                Create
+              </a>  
             </div>
             <div class="box-body">
               <div class="table-responsive">
@@ -100,9 +104,7 @@
                       {% if not appointment.patient.user.is_authenticated %}
                         <th>Patient Name</th>
                       {% endif %}
-                      {% if appointment.doctor.employee.user.is_authenticated or appointment.nurse.employee.user.is_authenticated %}
                         <th>Nurse/Doctor</th>
-                      {% endif %}
                       <th>Appointment Date</th>
                       <th>Reason</th>
                       <th>Status</th>
@@ -114,21 +116,18 @@
                       <tr>
                         <td>{{ forloop.counter }}</td>
                         {% if appointment.patient.user.is_authenticated %}
-                          <td>
-                            <a href="{% url 'patient_detail' appointment.patient.pk %}">{{ appointment.patient.user.get_full_name }}</a>
-                          </td>
+                        <td>
+                          <a href="{% url 'patient_detail' appointment.patient.pk %}">{{ appointment.patient.user.get_full_name }}</a>
+                        </td>
                         {% endif %}
-                        {% if not appointment.doctor.employee.user.is_authenticated %}
-                          <td>
-                            {% if appointment.nurse %}
-                              <a href="{% url 'nurse_detail' appointment.nurse.pk %}">Nr. {{ appointment.nurse.employee.user.get_full_name }}</a>
-                            {% elif appointment.doctor %}
-                              <a href="{% url 'doctor_detail' appointment.doctor.pk %}">Dr. {{ appointment.doctor.employee.user.get_full_name }}</a>
-                            {% else %}
-                              N/A
-                            {% endif %}
-                          </td>
-                        {% endif %}
+                        <td>
+                          {% if appointment.employee %} 
+                          {{ appointment.employee.user }}
+                          {% if appointment.employee.user.is_authenticated %}(You){% endif %}
+                          {% else %}  
+
+                          {% endif %}  
+                        </td>
                         <td>{{ appointment.appointment_date }}</td>
                         <td>{{ appointment.reason }}</td>
                         <td>

@@ -114,6 +114,7 @@ class NotificationDetailView(DetailView):
 
 @login_required
 def inbox(request):
+    import html
     query = request.GET.get('q')
     filter = request.GET.get('filter')  # Get the read/unread filter
     
@@ -137,9 +138,9 @@ def inbox(request):
         messages = paginator.page(1)
     except EmptyPage:
         messages = paginator.page(paginator.num_pages)
-    
+        
     context = {
-        'messages': messages,
+        'messages': list(map(lambda item: html.escape(item.content), messages)),
         'inbox_count': Message.objects.filter(receiver=request.user).count(),
         'sent_count': Message.objects.filter(sender=request.user).count(),
         'query': query,
@@ -150,7 +151,7 @@ def inbox(request):
 
 class FetchMessagesView(ListView):
     model = Message
-    paginate_by = 1  # Number of messages per page
+    paginate_by = 10  # Number of messages per page
 
     def get_queryset(self):
         # Fetch messages for the current user, adjust this as necessary
@@ -180,8 +181,6 @@ class FetchMessagesView(ListView):
                 'timestamp': naturaltime(message.timestamp),
             })
             
-            print(naturaltime(message.timestamp))
-
         return JsonResponse({
             'messages': message_list,
             'has_next': page.has_next(),

@@ -436,6 +436,13 @@ class BillCreateView(CreateView):
     template_name = 'bill_form.html'
     success_url = reverse_lazy('bill_list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        appt_id = self.request.GET.get('appt_id')
+        if appt_id:
+            kwargs['appt_id'] = appt_id
+        return kwargs
+
     def form_valid(self, form):
         response = super().form_valid(form)
         log_activity(self.request.user, 'Create', f'Created a new bill with ID {self.object.pk}')

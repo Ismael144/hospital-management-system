@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
-APP=$1
+APP_NAME=$1
 
 # Make migrations
 echo "Making Migrations" 
-if [ $APP ]; then 
-    python manage.py makemigrations $APP
+if [ $APP_NAME ]; then 
+    python manage.py makemigrations $APP_NAME
 else 
     python manage.py makemigrations 
 fi

@@ -59,7 +59,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
-        return f'{self.get_full_name()}({self.role})'
+        return f'[{self.role.title()}] {self.get_full_name()}'
 
     def save(self, *args, **kwargs):
         # Check if the profile_image has changed
@@ -112,7 +112,7 @@ class Doctor(models.Model):
 
     def __str__(self):
         return self.employee.user.get_full_name()
-
+    
 
 class Patient(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

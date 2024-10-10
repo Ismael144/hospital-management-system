@@ -1,13 +1,13 @@
 {% extends 'includes/base.html' %}
 {% load static %}
-{% block body_attr %} class="hold-transition theme-primary bg-img" style="background-image: url({% static 'images/auth-bg/bg-1.jpg' %})" {% endblock %}
+{% block body_attr %} class="hold-transition theme-primary bg-img" {% endblock %}
 {% block title %} Sign In {% endblock %}
 {% block content %}
 <div class="container h-p100">
     <div class="row align-items-center justify-content-md-center h-p100">	
         <div class="col-12">
             <div class="row justify-content-center g-0">
-                <div class="col-lg-5 col-md-5 col-12">
+                <div class="col-lg-5 col-md-5 col-12 py-4">
                     <div class="bg-white rounded10 shadow-lg">
                         <div class="content-top-agile p-20 pb-0">
                             <h2 class="text-primary">Let's Get Started</h2>
@@ -52,9 +52,6 @@
                                     </div>
                                 </div>
                             </form>
-                            <div class="text-center">
-                                <p class="mt-15 mb-0">Don't have an account? <a href="auth_register.html" class="text-warning ms-5">Sign Up</a></p>
-                            </div>	
                         </div>						
                     </div>
                 </div>

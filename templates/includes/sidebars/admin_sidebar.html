@@ -146,7 +146,6 @@
           </li>
 
           <!-- Appointments -->
-          {% if request.user.role == 'admin' or request.user.role == 'doctor' or request.user.role == 'nurse' %}
             <li class="treeview">
               <a href="{% url 'appointment_list' %}"><i data-feather="calendar"></i><span>Appointments</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
               <ul class="treeview-menu">
@@ -159,9 +158,7 @@
                 <!-- Add more appointment-related links here -->
               </ul>
             </li>
-          {% endif %}
 
-          {% if request.user.role == 'admin' or request.user.role == 'doctor' or request.user.role == 'nurse' %}
           <!-- Patients -->
             <li class="treeview">
               <a href="#"><i data-feather="users"></i><span>Patients</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -178,9 +175,7 @@
                 <!-- Add more patient-related links here -->
               </ul>
             </li>
-          {% endif %}
 
-          {% if request.user.role == 'admin' %}
           <!-- Doctors -->
             <li class="treeview">
               <a href="#"><i data-feather="user-check"></i><span>Doctors</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -194,9 +189,7 @@
                 <!-- Add more doctor-related links here -->
               </ul>
             </li>
-          {% endif %}
 
-          {% if request.user.role == 'admin' %}
           <!-- Nurses -->
           <li class="treeview">
             <a href="#"><i data-feather="user-plus"></i><span>Nurses</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -210,9 +203,7 @@
               <!-- Add more nurse-related links here -->
             </ul>
           </li>
-          {% endif %}
 
-          {% if request.user.role == 'accountant' or request.user.role == 'admin' %}
             <!-- Financial Management -->
             <li class="treeview">
               <a href="#"><i data-feather="file-text"></i><span>Financial Management</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -259,9 +250,7 @@
                 </li>
               </ul>
             </li>
-          {% endif %}
 
-          {% if request.user.role == 'hr_manager' or request.user.role == 'admin' %}
           <!-- Human Resources -->
             <li class="treeview">
               <a href="#"><i data-feather="briefcase"></i><span>Human Resource</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -301,9 +290,7 @@
                 <!-- Add more HR-related links here -->
               </ul>
             </li>
-          {% endif %}
 
-          {% if request.user.role == 'admin' %}
             <li class="treeview">
               <a href="#"><i data-feather="user-check"></i><span>Employees</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
               <ul class="treeview-menu">
@@ -327,9 +314,7 @@
                   </li>
               </ul>
             </li>
-          {% endif %}
-          
-          {% if request.user.role == 'admin' or request.user.role == 'pharmacist' %}
+
             <!-- Inventory Management -->
             <li class="treeview">
               <a href="#"><i data-feather="archive"></i><span>Inventory Management</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -343,9 +328,7 @@
                 <!-- Add more inventory management links here -->
               </ul>
             </li>
-          {% endif %}
 
-          {% if request.user.role == 'admin' %}
             <!-- Reports and Analytics -->
             <li class="treeview">
               <a href="#"><i data-feather="bar-chart-2"></i><span>Reports & Analytics</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -359,7 +342,6 @@
                 <!-- Add more reports-related links here -->
               </ul>
             </li>
-          {% endif %}
 
           <!-- Messaging -->
     <li class="treeview position-relative">
@@ -415,7 +397,6 @@
     </ul>
   </li>
 
-  {% if request.user.role == 'nurse' or request.user.role == 'admin' or request.user.role == 'docto r'  %}
   <!-- Facilities -->
   <li class="treeview">
     <a href="#"><i data-feather="home"></i><span>Facilities</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -434,9 +415,7 @@
       </li>
     </ul>
   </li>
-  {% endif  %}
 
-  {% if request.user.role == 'admin' or request.user.role == 'case_manager' %}
   <!-- Case Management -->
   <li class="treeview">
     <a href="#"><i data-feather="briefcase"></i><span>Case Management</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -449,9 +428,7 @@
       </li>
     </ul>
   </li>
-  {% endif %}
 
-  {% if request.user.role == 'admin' or request.user.role == 'laboratorist' %}
   <!-- Laboratory -->
   <li class="treeview">
     <a href="#"><i data-feather="sliders"></i><span>Laboratory</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -459,8 +436,8 @@
       <li class="{% if request.resolver_match.url_name == 'labtest_list' %}active{% endif %}">
         <a href="{% url 'labtest_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Tests</a>
       </li>
-      <li class="{% if request.resolver_match.url_name == 'result_list' %}active{% endif %}">
-        <a href="{% url 'result_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Results</a>
+      <li class="{% if request.resolver_match.url_name == 'labresult_list' %}active{% endif %}">
+        <a href="{% url 'labtest_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Results</a>
       </li>
       <li class="{% if request.resolver_match.url_name == 'specimen_list' %}active{% endif %}">
         <a href="{% url 'specimen_list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Specimens</a>
@@ -470,10 +447,7 @@
       </li>
     </ul>
   </li>
-  {% endif %}
 
-
-  {% if request.user.role == 'admin' or request.user.role == 'pharmacist' %}
       <!-- Pharmacy -->
     <li class="treeview">
       <a href="#"><i data-feather="package"></i><span>Pharmacy</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -492,9 +466,7 @@
         </li>
       </ul>
     </li>
-  {% endif %}
 
-  {% if request.user.role == 'admin' or request.user.role == 'receptionist' %}
     <!-- Attendance -->
     <li class="treeview">
       <a href="#"><i data-feather="calendar"></i><span>Attendance</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -510,9 +482,7 @@
         </li>
       </ul>
     </li>
-  {% endif %}
 
-  {% if request.user.role == 'admin' %}
     <!-- User Activities -->
     <li class="treeview">
       <a href="#"><i data-feather="activity"></i><span>User Activities</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
@@ -522,7 +492,7 @@
         </li>
       </ul>
     </li>
-    {% endif %}
+    
     <!-- Settings -->
     <li class="treeview">
       <a href="#"><i data-feather="settings"></i><span>Settings</span><span class="pull-right-container"><i class="fa fa-angle-right pull-right"></i></span></a>
